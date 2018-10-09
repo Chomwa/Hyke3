@@ -1,6 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-<item android:id="@+id/history" android:title="History" android:icon="@mipmap/baseline_history_black_24dp"/>
-<item android:id="@+id/settings" android:title="Profile" android:icon="@mipmap/baseline_person_black_24dp"/>
-<item android:id="@+id/logout" android:title="Logout" android:icon="@mipmap/baseline_power_settings_new_black_24dp"/>
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/settings"
+            android:icon="@mipmap/baseline_person_black_24dp"
+            android:title="Profile" />
+        <item
+            android:id="@+id/history"
+            android:title="History"
+            android:icon="@mipmap/baseline_history_black_24dp" />
+
+        <item
+            android:id="@+id/logout"
+            android:title="Logout"
+            android:icon="@mipmap/baseline_power_settings_new_black_24dp"
+             />
+    </group>
+
+
+
 </menu>

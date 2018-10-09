@@ -1,30 +1,23 @@
 package com.eafricar.hyke;
 
-import android.*;
 import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationListener;
 import android.os.Build;
 import android.os.Looper;
-import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -35,15 +28,13 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import android.support.v7.widget.Toolbar;
+
 import com.bumptech.glide.Glide;
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.GeoQuery;
 import com.firebase.geofire.GeoQueryEventListener;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
-import com.google.android.gms.common.GooglePlayServicesRepairableException;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -51,10 +42,8 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -62,22 +51,19 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.vision.text.Line;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CustomerMapActivity extends FragmentActivity implements OnMapReadyCallback{
+public class CustomerMapActivity extends AppCompatActivity implements OnMapReadyCallback, NavigationView.OnNavigationItemSelectedListener{
 
     private GoogleMap mMap;
     Location mLastLocation;
@@ -85,7 +71,7 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
 
     private FusedLocationProviderClient mFusedLocationClient;
 
-    private Button mLogout, mRequest, mSettings, mHistory;
+    private Button  mRequest;
 
     private LatLng pickupLocation;
 
@@ -109,23 +95,26 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
 
     private RatingBar mRatingBar;
 
-    private DrawerLayout mDrawerLayout;
-    private ActionBarDrawerToggle mToggle;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_costumer_map);
+        setContentView(R.layout.activity_customer_map);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
 
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawerLayout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
 
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
 
-
-        mToggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        mDrawerLayout.addDrawerListener(mToggle);
-        mToggle.syncState();
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -147,21 +136,11 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
         mRadioGroup = (RadioGroup) findViewById(R.id.radioGroup);
         mRadioGroup.check(R.id.HykeShared);
 
-        mLogout = (Button) findViewById(R.id.logout);
-        mRequest = (Button) findViewById(R.id.request);
-        mSettings = (Button) findViewById(R.id.settings);
-        mHistory = (Button) findViewById(R.id.history);
 
-        mLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                FirebaseAuth.getInstance().signOut();
-                Intent intent = new Intent(CustomerMapActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
-                return;
-            }
-        });
+        mRequest = (Button) findViewById(R.id.request);
+
+// Request Button Purpose: Send a Request for a ride to a nearby Driver
+
 
         mRequest.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -199,27 +178,9 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
                 }
             }
         });
-        mSettings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(CustomerMapActivity.this, CustomerSettingsActivity.class);
-                startActivity(intent);
-                return;
-            }
-        });
 
-        mHistory.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(CustomerMapActivity.this, HistoryActivity.class);
-                intent.putExtra("customerOrDriver", "Customers");
-                startActivity(intent);
-                return;
-            }
-        });
 
-        mDrawerLayout.addDrawerListener(mToggle);
-        mToggle.syncState();
+
 
 
         PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
@@ -644,15 +605,58 @@ public class CustomerMapActivity extends FragmentActivity implements OnMapReadyC
         });
     }
 
+//Navigation Drawer
+
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (mToggle.onOptionsItemSelected(item)){
-            return true;
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawerLayout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
         }
 
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.nav_drawer, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        int id = item.getItemId();
+
+        if (id == R.id.action_settings) {
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
+    public boolean onNavigationItemSelected(MenuItem item){
+        int id = item.getItemId();
+
+        if (id == R.id.history){
+            Intent intent = new Intent(CustomerMapActivity.this, HistoryActivity.class);
+            intent.putExtra("customerOrDriver", "Customers");
+            startActivity(intent);
+            overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
+        }else if (id == R.id.settings){
+            Intent searchIntent = new Intent(CustomerMapActivity.this, CustomerSettingsActivity.class);
+            startActivity(searchIntent);
+            overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
+        }else if (id == R.id.logout){
+            FirebaseAuth.getInstance().signOut();
+            Intent intent = new Intent(CustomerMapActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawerLayout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
+    }
 
 }
 

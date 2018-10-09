@@ -11,10 +11,18 @@ import android.os.Build;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -63,7 +71,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class DriverMapActivity extends FragmentActivity implements OnMapReadyCallback, RoutingListener {
+public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCallback, RoutingListener, NavigationView.OnNavigationItemSelectedListener{
 
     private GoogleMap mMap;
     Location mLastLocation;
@@ -98,6 +106,17 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
         setContentView(R.layout.activity_driver_map);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         polylines = new ArrayList<>();
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawerLayout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
 
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -539,6 +558,57 @@ public class DriverMapActivity extends FragmentActivity implements OnMapReadyCal
             line.remove();
         }
         polylines.clear();
+    }
+
+    @Override
+    public void onBackPressed() {
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawerLayout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu){
+        getMenuInflater().inflate(R.menu.nav_drawer, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item){
+        int id = item.getItemId();
+
+        if (id == R.id.action_settings) {
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public boolean onNavigationItemSelected(MenuItem item){
+        int id = item.getItemId();
+
+        if (id == R.id.history){
+            Intent intent = new Intent(DriverMapActivity.this, HistoryActivity.class);
+            intent.putExtra("customerOrDriver", "Drivers");
+            startActivity(intent);
+            overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
+        }else if (id == R.id.settings){
+            Intent searchIntent = new Intent(DriverMapActivity.this, DriverSettingsActivity.class);
+            startActivity(searchIntent);
+            overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
+        }else if (id == R.id.logout){
+            FirebaseAuth.getInstance().signOut();
+            Intent intent = new Intent(DriverMapActivity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawerLayout);
+        drawer.closeDrawer(GravityCompat.START);
+        return true;
     }
 
 }

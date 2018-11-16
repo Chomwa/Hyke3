@@ -96,17 +96,20 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
     private LinearLayout mCustomerInfo;
 
-    private ImageView mCustomerProfileImage;
+    private ImageView mCustomerProfileImage, NavigationHeaderImage;;
 
-    private TextView mCustomerName, mCustomerPhone, mCustomerDestination;
+    private TextView mCustomerName, mCustomerPhone, mCustomerDestination, mNavigationHeaderText;
+
+    private DatabaseReference mDriverDatabase;
+    private String userID;
+
+    private String mNavigationHeaderImageUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driver_map);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        polylines = new ArrayList<>();
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawerLayout);
@@ -118,6 +121,52 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+        //calling Navigation Header
+        View header = navigationView.getHeaderView(0);
+        NavigationHeaderImage = (ImageView) header.findViewById(R.id.profileImage);
+        mNavigationHeaderText = (TextView) header.findViewById(R.id.navigationtextView);
+
+        //Database reference in relation to navigation header image
+        userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        mDriverDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(userID);
+
+        mDriverDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists() && dataSnapshot.getChildrenCount()>0){
+                    Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+
+                    if(map.get("profileImageUrl")!=null){
+                        mNavigationHeaderImageUrl = map.get("profileImageUrl").toString();
+                        Glide.with(getApplication()).load(mNavigationHeaderImageUrl).into(NavigationHeaderImage);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        //Database reference with reference to Navigation header Text
+        mDriverDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists() && dataSnapshot.getChildrenCount()>0){
+                    if(dataSnapshot.child("name")!=null){
+                        mNavigationHeaderText.setText(dataSnapshot.child("name").getValue().toString());
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+        polylines = new ArrayList<>();
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -422,7 +471,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
                     LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                    mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
+                    mMap.animateCamera(CameraUpdateFactory.zoomTo(16));
 
                     String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
                     DatabaseReference refAvailable = FirebaseDatabase.getInstance().getReference("driversAvailable");
@@ -600,6 +649,9 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
             startActivity(searchIntent);
             overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
         }else if (id == R.id.logout){
+            isLoggingOut = true;
+
+            disconnectDriver();
             FirebaseAuth.getInstance().signOut();
             Intent intent = new Intent(DriverMapActivity.this, MainActivity.class);
             startActivity(intent);

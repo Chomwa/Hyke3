@@ -54,6 +54,14 @@ public class DriverLoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 final String email = mEmail.getText().toString();
                 final String password = mPassword.getText().toString();
+                if (email.isEmpty()){
+                    mEmail.setError("Email is Required");
+                    mEmail.requestFocus();
+                    return;
+                }if (password.isEmpty()){
+                    mPassword.setError("Password is Required");
+                    mPassword.requestFocus();
+                } else{
                 mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(DriverLoginActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -66,6 +74,7 @@ public class DriverLoginActivity extends AppCompatActivity {
                         }
                     }
                 });
+                }
             }
         });
 
@@ -74,6 +83,14 @@ public class DriverLoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 final String email = mEmail.getText().toString();
                 final String password = mPassword.getText().toString();
+                if (email.isEmpty()){
+                    mEmail.setError("Email is Required");
+                    mEmail.requestFocus();
+                    return;
+                }if (password.isEmpty()){
+                    mPassword.setError("Password is Required");
+                    mPassword.requestFocus();
+                } else{
                 mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(DriverLoginActivity.this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -82,6 +99,7 @@ public class DriverLoginActivity extends AppCompatActivity {
                         }
                     }
                 });
+                }
 
             }
         });

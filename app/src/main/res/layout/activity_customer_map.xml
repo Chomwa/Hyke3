@@ -129,8 +129,8 @@
                     <RadioButton
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="HyKe Luxury"
-                        android:id="@+id/HykeLuxury"/>
+                        android:text="HyKe Taxi"
+                        android:id="@+id/HykeTaxi"/>
                 </RadioGroup>
 
                 <Button

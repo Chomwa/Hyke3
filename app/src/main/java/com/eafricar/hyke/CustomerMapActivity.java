@@ -44,6 +44,7 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
@@ -87,14 +88,18 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
 
     private LinearLayout mDriverInfo;
 
-    private ImageView mDriverProfileImage;
+    private ImageView mDriverProfileImage, NavigationHeaderImage;
 
-    private TextView mDriverName, mDriverPhone, mDriverCar;
+    private TextView mDriverName, mDriverPhone, mDriverCar, mNavigationHeaderText;
 
     private RadioGroup mRadioGroup;
 
     private RatingBar mRatingBar;
 
+    private DatabaseReference mCustomerDatabase;
+    private String userID;
+
+    private String mNavigationHeaderImageUrl;
 
 
 
@@ -114,8 +119,51 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+        //calling Navigation Header
+        View header = navigationView.getHeaderView(0);
+        NavigationHeaderImage = (ImageView) header.findViewById(R.id.profileImage);
+        mNavigationHeaderText = (TextView) header.findViewById(R.id.navigationtextView);
 
+        //Database reference in relation to navigation header image
+        userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        mCustomerDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(userID);
 
+        mCustomerDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists() && dataSnapshot.getChildrenCount()>0){
+                    Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+
+                if(map.get("profileImageUrl")!=null){
+                    mNavigationHeaderImageUrl = map.get("profileImageUrl").toString();
+                    Glide.with(getApplication()).load(mNavigationHeaderImageUrl).into(NavigationHeaderImage);
+                }
+              }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+         //Database reference with reference to Navigation header Text
+        mCustomerDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists() && dataSnapshot.getChildrenCount()>0){
+                    if(dataSnapshot.child("name")!=null){
+                        mNavigationHeaderText.setText(dataSnapshot.child("name").getValue().toString());
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        //Calling Location services
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -167,14 +215,22 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
 
                     DatabaseReference ref = FirebaseDatabase.getInstance().getReference("customerRequest");
                     GeoFire geoFire = new GeoFire(ref);
-                    geoFire.setLocation(userId, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                    if (mLastLocation== null){
+                        Toast.makeText(CustomerMapActivity.this, "Turn on Location", Toast.LENGTH_LONG).show();
+                        endRide();
+                    }else{
+                    geoFire.setLocation(userId, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()));}
 
+                    if (mLastLocation== null){
+                        Toast.makeText(CustomerMapActivity.this, "Turn on Location", Toast.LENGTH_LONG).show();
+                        endRide();
+                    }else{
                     pickupLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
                     pickupMarker = mMap.addMarker(new MarkerOptions().position(pickupLocation).title("Pickup Here").icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_pickup)));
 
                     mRequest.setText("Getting your Driver....");
 
-                    getClosestDriver();
+                    getClosestDriver();}
                 }
             }
         });
@@ -413,9 +469,11 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
 
     private void endRide(){
         requestBol = false;
-        geoQuery.removeAllListeners();
+        if (geoQuery != null){
+        geoQuery.removeAllListeners();}
+        if (driverLocationRef != null && driveHasEndedRef != null){
         driverLocationRef.removeEventListener(driverLocationRefListener);
-        driveHasEndedRef.removeEventListener(driveHasEndedRefListener);
+        driveHasEndedRef.removeEventListener(driveHasEndedRefListener);}
 
         if (driverFoundID != null){
             DatabaseReference driverRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverFoundID).child("customerRequest");
@@ -488,9 +546,9 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
                     LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
 
                     //mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                    //mMap.animateCamera(CameraUpdateFactory.zoomTo(11));
+                    //mMap.animateCamera(CameraUpdateFactory.zoomTo(16));
                     if(!getDriversAroundStarted)
-                        getDriversAround();
+                         getDriversAround();
                 }
             }
         }

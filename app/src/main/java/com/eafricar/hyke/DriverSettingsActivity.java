@@ -135,8 +135,8 @@ public class DriverSettingsActivity extends AppCompatActivity {
                             case"Hyke Personal":
                                 mRadioGroup.check(R.id.HykePersonal);
                                 break;
-                            case"Hyke Luxury":
-                                mRadioGroup.check(R.id.HykeLuxury);
+                            case"Hyke Taxi":
+                                mRadioGroup.check(R.id.HykeTaxi);
                                 break;
                         }
                     }

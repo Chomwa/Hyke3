@@ -34,7 +34,7 @@ import java.util.Map;
 
 public class CustomerSettingsActivity extends AppCompatActivity {
 
-    private EditText mNameField, mPhoneField;
+    private EditText mNameField, mPhoneField,mLastNameField,mEmailField;
 
     private Button mBack, mConfirm;
 
@@ -45,7 +45,11 @@ public class CustomerSettingsActivity extends AppCompatActivity {
 
     private String userID;
     private String mName;
+    private String mLastName;
+    private String mEmail;
     private String mPhone;
+
+
     private String mProfileImageUrl;
 
     private Uri resultUri;
@@ -58,6 +62,8 @@ public class CustomerSettingsActivity extends AppCompatActivity {
 
         mNameField = (EditText) findViewById(R.id.name);
         mPhoneField = (EditText) findViewById(R.id.phone);
+        mLastNameField = (EditText) findViewById(R.id.lastname);
+        mEmailField = (EditText) findViewById(R.id.email);
 
         mProfileImage = (ImageView) findViewById(R.id.profileImage);
 
@@ -66,7 +72,7 @@ public class CustomerSettingsActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         userID = mAuth.getCurrentUser().getUid();
-        mCustomerDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(userID);
+        mCustomerDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(userID).child("Personal Information");
 
         getUserInfo();
 
@@ -100,9 +106,17 @@ public class CustomerSettingsActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists() && dataSnapshot.getChildrenCount()>0){
                     Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
-                    if(map.get("name")!=null){
-                        mName = map.get("name").toString();
+                    if(map.get("first name")!=null){
+                        mName = map.get("first name").toString();
                         mNameField.setText(mName);
+                    }
+                    if(map.get("last name")!=null){
+                        mLastName = map.get("last name").toString();
+                        mLastNameField.setText(mLastName);
+                    }
+                    if(map.get("Email")!=null) {
+                        mEmail = map.get("Email").toString();
+                        mEmailField.setText(mEmail);
                     }
                     if(map.get("phone")!=null){
                         mPhone = map.get("phone").toString();
@@ -125,16 +139,20 @@ public class CustomerSettingsActivity extends AppCompatActivity {
 
     private void saveUserInformation() {
         mName = mNameField.getText().toString();
+        mLastName = mLastNameField.getText().toString();
         mPhone = mPhoneField.getText().toString();
+        mEmail = mEmailField.getText().toString();
 
         Map userInfo = new HashMap();
-        userInfo.put("name", mName);
+        userInfo.put("first name", mName);
+        userInfo.put("last name", mLastName);
+        userInfo.put("Email", mEmail);
         userInfo.put("phone", mPhone);
         mCustomerDatabase.updateChildren(userInfo);
 
         if(resultUri != null) {
 
-            StorageReference filePath = FirebaseStorage.getInstance().getReference().child("profile_images").child(userID);
+            StorageReference filePath = FirebaseStorage.getInstance().getReference().child("profile_images").child(userID).child("Personal Information");
             Bitmap bitmap = null;
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(getApplication().getContentResolver(), resultUri);

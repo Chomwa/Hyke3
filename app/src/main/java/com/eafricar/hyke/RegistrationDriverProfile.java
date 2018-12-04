@@ -2,14 +2,10 @@ package com.eafricar.hyke;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -18,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.Spinner;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -32,50 +29,53 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DriverSettingsActivity extends AppCompatActivity {
+public class RegistrationDriverProfile extends AppCompatActivity {
+    private EditText mNameField,mLastNameField,mEmailField, mPhoneField, mCarField;
 
-    private EditText mNameField, mPhoneField, mCarField;
-
-    private Button mBack, mConfirm;
+    private Button mConfirm;
 
     private ImageView mProfileImage;
+
+    private Spinner mDropDown;
 
     private FirebaseAuth mAuth;
     private DatabaseReference mDriverDatabase;
 
     private String userID;
     private String mName;
+    private String mLastName;
+    private String mEmail;
     private String mPhone;
     private String mCar;
     private String mService;
+
     private String mProfileImageUrl;
 
     private Uri resultUri;
 
     private RadioGroup mRadioGroup;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_driver_settings);
-
+        setContentView(R.layout.activity_registration_driver_profile);
 
         mNameField = (EditText) findViewById(R.id.name);
         mPhoneField = (EditText) findViewById(R.id.phone);
         mCarField = (EditText) findViewById(R.id.car);
+        mLastNameField = (EditText) findViewById(R.id.lastname);
+        mEmailField = (EditText) findViewById(R.id.email);
 
         mProfileImage = (ImageView) findViewById(R.id.profileImage);
 
         mRadioGroup = (RadioGroup) findViewById(R.id.radioGroup);
 
-        mBack = (Button) findViewById(R.id.back);
+
         mConfirm = (Button) findViewById(R.id.confirm);
 
         mAuth = FirebaseAuth.getInstance();
@@ -96,18 +96,41 @@ public class DriverSettingsActivity extends AppCompatActivity {
         mConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                saveUserInformation();
-            }
-        });
+                final String name = mNameField.getText().toString();
+                final String lastname = mLastNameField.getText().toString();
+                final String phone = mPhoneField.getText().toString();
+                final String email = mEmailField.getText().toString();
 
-        mBack.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-                return;
+                if (name.isEmpty()) {
+                    mNameField.setError("First Name is Required");
+                    mNameField.requestFocus();
+                    return;
+                }
+                if (lastname.isEmpty()) {
+                    mLastNameField.setError("Last Name is Required");
+                    mLastNameField.requestFocus();
+                    return;
+                }
+                if (email.isEmpty()) {
+                    mEmailField.setError("Email Address is Required");
+                    mEmailField.requestFocus();
+                    return;
+                }
+                if (phone.isEmpty()) {
+                    mPhoneField.setError("Phone Number is Required");
+                    mPhoneField.requestFocus();
+                    return;
+                }
+                else {
+                saveUserInformation();
+                    Intent intent = new Intent(RegistrationDriverProfile.this, DriverLicenseDetails.class);
+                    startActivity(intent);
+                    return;
+                }
             }
         });
     }
+
     private void getUserInfo(){
         mDriverDatabase.addValueEventListener(new ValueEventListener() {
             @Override
@@ -152,13 +175,12 @@ public class DriverSettingsActivity extends AppCompatActivity {
             }
         });
     }
-
-
-
     private void saveUserInformation() {
         mName = mNameField.getText().toString();
+        mLastName = mLastNameField.getText().toString();
         mPhone = mPhoneField.getText().toString();
         mCar = mCarField.getText().toString();
+        mEmail = mEmailField.getText().toString();
 
         int selectId = mRadioGroup.getCheckedRadioButtonId();
 
@@ -171,8 +193,10 @@ public class DriverSettingsActivity extends AppCompatActivity {
         mService = radioButton.getText().toString();
 
         Map userInfo = new HashMap();
-        userInfo.put("name", mName);
+        userInfo.put("first name", mName);
+        userInfo.put("last name", mLastName);
         userInfo.put("phone", mPhone);
+        userInfo.put("Email", mEmail);
         userInfo.put("car", mCar);
         userInfo.put("service", mService);
         mDriverDatabase.updateChildren(userInfo);

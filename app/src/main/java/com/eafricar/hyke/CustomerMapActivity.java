@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Criteria;
 import android.location.Location;
 import android.os.Build;
 import android.os.Looper;
@@ -19,6 +20,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -100,22 +102,44 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
     private String userID;
 
     private String mNavigationHeaderImageUrl;
-
+    //tool bar variables
+    private Toolbar mToolbar;
+    private ImageView mToggleImage;
+    private DrawerLayout mDrawer;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_customer_map);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawerLayout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
+        setContentView(R.layout.activity_customer_map);
+
+
+
+        //Calling tool bar and tool bar functions
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        mToggleImage = (ImageView) findViewById(R.id.toolbarprofileImage);
+        mDrawer = (DrawerLayout) findViewById(R.id.drawerLayout);
+        //calling toolbar toggle
+        mToggleImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mDrawer.isDrawerVisible(GravityCompat.START)) {
+                    mDrawer.closeDrawer(GravityCompat.START);
+                } else {
+                    mDrawer.openDrawer(GravityCompat.START);
+                }
+            }
+        });
+
+
+
+
+
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -126,7 +150,7 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
 
         //Database reference in relation to navigation header image
         userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        mCustomerDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(userID);
+        mCustomerDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(userID).child("Personal Information");
 
         mCustomerDatabase.addValueEventListener(new ValueEventListener() {
             @Override
@@ -138,6 +162,10 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
                     mNavigationHeaderImageUrl = map.get("profileImageUrl").toString();
                     Glide.with(getApplication()).load(mNavigationHeaderImageUrl).into(NavigationHeaderImage);
                 }
+                    if(map.get("profileImageUrl")!=null){
+                        mNavigationHeaderImageUrl = map.get("profileImageUrl").toString();
+                        Glide.with(getApplication()).load(mNavigationHeaderImageUrl).into(mToggleImage);
+                    }
               }
             }
 
@@ -151,8 +179,8 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists() && dataSnapshot.getChildrenCount()>0){
-                    if(dataSnapshot.child("name")!=null){
-                        mNavigationHeaderText.setText(dataSnapshot.child("name").getValue().toString());
+                    if(dataSnapshot.child("first name")!=null){
+                        mNavigationHeaderText.setText(dataSnapshot.child("first name").getValue().toString());
                     }
                 }
             }
@@ -232,12 +260,13 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
 
                     getClosestDriver();}
                 }
+                
             }
         });
 
 
 
-
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
 
         PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
                 getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
@@ -257,6 +286,7 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
 
 
     }
+    //Getting the driver closest to the customer
     private int radius = 1;
     private Boolean driverFound = false;
     private String driverFoundID;
@@ -341,7 +371,7 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
     |  Purpose:  Get's most updated driver location and it's always checking for movements.
     |
     |  Note:
-    |	   Even tho we used geofire to push the location of the driver we can use a normal
+    |	   Even though geofire is used to push the location of the driver we can use a normal
     |      Listener to get it's location with no problem.
     |
     |      0 -> Latitude
@@ -410,7 +440,7 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
     *-------------------------------------------------------------------*/
     private void getDriverInfo(){
         mDriverInfo.setVisibility(View.VISIBLE);
-        DatabaseReference mCustomerDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverFoundID);
+        DatabaseReference mCustomerDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverFoundID).child("Personal Information");
         mCustomerDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -534,6 +564,7 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
 
         mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
         mMap.setMyLocationEnabled(true);
+
     }
 
     LocationCallback mLocationCallback = new LocationCallback(){
@@ -545,6 +576,8 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
 
                     LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
 
+
+                    //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,17));
                     //mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
                     //mMap.animateCamera(CameraUpdateFactory.zoomTo(16));
                     if(!getDriversAroundStarted)
@@ -676,21 +709,21 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
 
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu){
-        getMenuInflater().inflate(R.menu.nav_drawer, menu);
-        return true;
-    }
+    //@Override
+    //public boolean onCreateOptionsMenu(Menu menu){
+      //  getMenuInflater().inflate(R.menu.nav_drawer, menu);
+      //  return true;
+    //}
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        int id = item.getItemId();
+   // @Override
+    //public boolean onOptionsItemSelected(MenuItem item){
+      //  int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+        //if (id == R.id.action_settings) {
+          //  return true;
+        //}
+     //   return super.onOptionsItemSelected(item);
+   // }
 
     public boolean onNavigationItemSelected(MenuItem item){
         int id = item.getItemId();

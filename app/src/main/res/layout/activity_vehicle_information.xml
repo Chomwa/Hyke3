@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    tools:context=".VehicleInformation"
+    android:fillViewport="false">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Vehicle Information"
+                android:textColor="#9f0e1c"
+                android:textAllCaps="false"
+                android:textStyle="bold"
+                android:textSize="30sp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="17sp"
+                android:text="Enter The details of your Vehicle"
+                android:textColor="#9f0e1c"
+                android:textStyle="normal"
+                android:textAllCaps="false"
+                android:layout_marginTop="15dp"
+                android:layout_gravity="center"/>
+
+            <ImageView
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_marginBottom="20sp"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginLeft="15dp">
+
+            <EditText
+                android:id="@+id/car_make"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:inputType="text"
+                android:textAlignment="center"
+                android:hint="Car Make"
+                android:layout_gravity="center"
+                android:layout_marginRight="4dp"
+                android:ems="10"
+                android:textSize="20sp"
+                android:textStyle="normal"
+                android:background="@drawable/edittext_background2"/>
+            <EditText
+                android:id="@+id/car_model"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:inputType="text"
+                android:textAlignment="center"
+                android:hint="Model"
+                android:layout_gravity="center"
+                android:layout_marginLeft="4dp"
+                android:ems="10"
+                android:textSize="20sp"
+                android:textStyle="normal"
+                android:background="@drawable/edittext_background2"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginLeft="15dp">
+
+            <EditText
+                android:id="@+id/car_year"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:inputType="text"
+                android:textAlignment="center"
+                android:hint="Year"
+                android:layout_gravity="center"
+                android:layout_marginRight="4dp"
+                android:ems="10"
+                android:textSize="20sp"
+                android:textStyle="normal"
+                android:background="@drawable/edittext_background2"/>
+            <EditText
+                android:id="@+id/car_doors"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:inputType="text"
+                android:textAlignment="center"
+                android:hint="Number of Doors"
+                android:layout_gravity="center"
+                android:layout_marginLeft="4dp"
+                android:ems="10"
+                android:textSize="20sp"
+                android:textStyle="normal"
+                android:background="@drawable/edittext_background2"/>
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/car_license_plate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:textAlignment="center"
+            android:hint="License Plate"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginLeft="15dp"
+            android:ems="10"
+            android:textSize="20sp"
+            android:textStyle="normal"
+            android:background="@drawable/edittext_background2"/>
+
+        <EditText
+            android:id="@+id/car_color"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="text"
+            android:textAlignment="center"
+            android:hint="Color of the Car"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginLeft="15dp"
+            android:ems="10"
+            android:textSize="20sp"
+            android:textStyle="normal"
+            android:background="@drawable/edittext_background2"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/continue_to_next_page"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginLeft="15dp">
+
+            <Button
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_marginRight="40dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/back2"
+                android:text="Back"
+                android:layout_gravity="center"
+                android:layout_centerHorizontal="true"
+                android:background="#9f0e1c"
+                android:textColor="#fff"/>
+            <Button
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_marginLeft="40dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/next2"
+                android:text="Next"
+                android:layout_gravity="center"
+                android:layout_centerHorizontal="true"
+                android:background="#9f0e1c"
+                android:textColor="#fff"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

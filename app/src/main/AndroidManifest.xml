@@ -19,7 +19,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme.NoActionBar">
-        <service android:name=".onAppKilled" android:stopWithTask="false"/>
+        <service
+            android:name=".onAppKilled"
+            android:stopWithTask="false" />
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -44,11 +47,20 @@
         <activity
             android:name=".DriverMapActivity"
             android:label="@string/title_activity_driver_map" />
-        <activity android:name=".CustomerMapActivity" />
+        <activity android:name=".CustomerMapActivity"
+            android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".CustomerSettingsActivity" />
         <activity android:name=".DriverSettingsActivity" />
         <activity android:name=".HistoryActivity" />
-        <activity android:name=".HistorySingleActivity"></activity>
+        <activity android:name=".HistorySingleActivity" />
+        <activity android:name=".PhoneNumberVerification" />
+        <activity android:name=".RegistrationCustomerProfile" />
+        <activity android:name=".CustomerRegistration" />
+        <activity android:name=".DriverRegistration" />
+        <activity android:name=".DriverPhoneNumberVerification" />
+        <activity android:name=".RegistrationDriverProfile" />
+        <activity android:name=".DriverLicenseDetails" />
+        <activity android:name=".VehicleInformation"/>
     </application>
 
 </manifest>

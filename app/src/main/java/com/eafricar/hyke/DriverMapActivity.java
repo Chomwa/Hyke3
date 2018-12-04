@@ -24,6 +24,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
@@ -103,20 +104,40 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     private DatabaseReference mDriverDatabase;
     private String userID;
 
-    private String mNavigationHeaderImageUrl;
+    private String mNavigationHeaderImageUrl, mName;
+
+    //tool bar variables
+    private Toolbar mToolbar;
+    private ImageView mToggleImage;
+    private DrawerLayout mDrawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+
         setContentView(R.layout.activity_driver_map);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawerLayout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
+
+        //Calling tool bar and tool bar functions
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+        mToggleImage = (ImageView) findViewById(R.id.toolbarprofileImage);
+        mDrawer = (DrawerLayout) findViewById(R.id.drawerLayout);
+        //calling toolbar toggle
+        mToggleImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mDrawer.isDrawerVisible(GravityCompat.START)) {
+                    mDrawer.closeDrawer(GravityCompat.START);
+                } else {
+                    mDrawer.openDrawer(GravityCompat.START);
+                }
+            }
+        });
+
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -128,7 +149,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
         //Database reference in relation to navigation header image
         userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        mDriverDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(userID);
+        mDriverDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(userID).child("Personal Information");
 
         mDriverDatabase.addValueEventListener(new ValueEventListener() {
             @Override
@@ -140,21 +161,13 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                         mNavigationHeaderImageUrl = map.get("profileImageUrl").toString();
                         Glide.with(getApplication()).load(mNavigationHeaderImageUrl).into(NavigationHeaderImage);
                     }
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-        //Database reference with reference to Navigation header Text
-        mDriverDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if(dataSnapshot.exists() && dataSnapshot.getChildrenCount()>0){
-                    if(dataSnapshot.child("name")!=null){
-                        mNavigationHeaderText.setText(dataSnapshot.child("name").getValue().toString());
+                    if(map.get("profileImageUrl")!=null){
+                        mNavigationHeaderImageUrl = map.get("profileImageUrl").toString();
+                        Glide.with(getApplication()).load(mNavigationHeaderImageUrl).into(mToggleImage);
+                    }
+                    if (map.get("first name")!=null){
+                        mName = map.get("first name").toString();
+                        mNavigationHeaderText.setText(dataSnapshot.child("first name").getValue().toString());
                     }
                 }
             }
@@ -166,6 +179,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         });
 
 
+
         polylines = new ArrayList<>();
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
@@ -174,7 +188,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         mapFragment.getMapAsync(this);
 
 
-
+        //Calling Customer Information Variables
         mCustomerInfo = (LinearLayout) findViewById(R.id.customerInfo);
 
         mCustomerProfileImage = (ImageView) findViewById(R.id.customerProfileImage);
@@ -195,10 +209,9 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
             }
         });
 
-        mSettings = (Button) findViewById(R.id.settings);
-        mLogout = (Button) findViewById(R.id.logout);
+
         mRideStatus = (Button) findViewById(R.id.rideStatus);
-        mHistory = (Button) findViewById(R.id.history);
+
         mRideStatus.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -220,37 +233,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
             }
         });
 
-        mLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                isLoggingOut = true;
 
-                disconnectDriver();
-
-                FirebaseAuth.getInstance().signOut();
-                Intent intent = new Intent(DriverMapActivity.this, MainActivity.class);
-                startActivity(intent);
-                finish();
-                return;
-            }
-        });
-        mSettings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(DriverMapActivity.this, DriverSettingsActivity.class);
-                startActivity(intent);
-                return;
-            }
-        });
-        mHistory.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(DriverMapActivity.this, HistoryActivity.class);
-                intent.putExtra("customerOrDriver", "Drivers");
-                startActivity(intent);
-                return;
-            }
-        });
         getAssignedCustomer();
     }
 
@@ -357,7 +340,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
     private void getAssignedCustomerInfo(){
         mCustomerInfo.setVisibility(View.VISIBLE);
-        DatabaseReference mCustomerDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(customerId);
+        DatabaseReference mCustomerDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(customerId).child("Personal Information");
         mCustomerDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -609,6 +592,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         polylines.clear();
     }
 
+    // Navigation Drawer
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawerLayout);
@@ -620,21 +604,21 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu){
-        getMenuInflater().inflate(R.menu.nav_drawer, menu);
-        return true;
-    }
+    //@Override
+    //public boolean onCreateOptionsMenu(Menu menu){
+      //  getMenuInflater().inflate(R.menu.nav_drawer, menu);
+        //return true;
+    //}
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item){
-        int id = item.getItemId();
+   // @Override
+    //public boolean onOptionsItemSelected(MenuItem item){
+      //  int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+        //if (id == R.id.action_settings) {
+        //    return true;
+       // }
+       // return super.onOptionsItemSelected(item);
+  //  }
 
     public boolean onNavigationItemSelected(MenuItem item){
         int id = item.getItemId();
@@ -652,6 +636,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
             isLoggingOut = true;
 
             disconnectDriver();
+
             FirebaseAuth.getInstance().signOut();
             Intent intent = new Intent(DriverMapActivity.this, MainActivity.class);
             startActivity(intent);

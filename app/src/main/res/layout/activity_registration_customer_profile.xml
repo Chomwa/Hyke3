@@ -1,10 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.eafricar.hyke.CustomerSettingsActivity"
+    tools:context=".RegistrationCustomerProfile"
     android:orientation="vertical"
     android:padding="20sp">
     <de.hdodenhof.circleimageview.CircleImageView
@@ -81,24 +80,20 @@
         android:ems="10"
         android:textSize="20sp"
         android:textStyle="normal"/>
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@android:drawable/btn_dropdown"
+        android:spinnerMode="dropdown"/>
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/confirm"
-        android:text="confirm"
+        android:text="Next"
         android:layout_gravity="center"
         android:layout_centerHorizontal="true"
         android:background="#9f0e1c"
-        android:textColor="#fff"/>
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/back"
-        android:text="back"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        android:textColor="#fff"
-        android:layout_centerHorizontal="true"
-        android:background="#9f0e1c" />
+        android:textColor="#fff" />
 
 </LinearLayout>

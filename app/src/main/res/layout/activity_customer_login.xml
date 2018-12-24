@@ -9,71 +9,97 @@
     android:id="@+id/customer_login"
     android:orientation="vertical">
 
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:ems="10"
-            android:inputType="textEmailAddress"
-            android:textSize="20sp"
-            android:textStyle="normal"
-            android:hint="Email"
-            android:textColorHint="#A9A9A9"
-            android:textColor="#fff"
-            android:id="@+id/email"
-            android:background="@drawable/edit_text_bottom_border"/>
-        <EditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:ems="10"
-            android:textSize="20sp"
-            android:inputType="textPassword"
-            android:textStyle="normal"
-            android:hint="Password"
-            android:textColorHint="#A9A9A9"
-            android:textColor="#fff"
-            android:id="@+id/password"
-            android:background="@drawable/edit_text_bottom_border"/>
-        <Button
-            style="@style/button_style"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:text="Log In"
-            android:textColor="#fff"
-            android:textAllCaps="false"
-            android:id="@+id/login"/>
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="121dp"
+        app:srcCompat="@drawable/hyke_logo" />
 
-        <TextView
-            android:id="@+id/textview"
+    <EditText
+        android:id="@+id/email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/edit_text_bottom_border"
+        android:ems="10"
+        android:hint="Email"
+        android:inputType="textEmailAddress"
+        android:padding="10dp"
+        android:textColor="#ffff"
+        android:textColorHint="#cccccc"
+        android:textSize="20sp"
+        android:textStyle="normal" />
+
+    <EditText
+        android:id="@+id/password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/edit_text_bottom_border"
+        android:ems="10"
+        android:hint="Password"
+        android:inputType="textPassword"
+        android:padding="10dp"
+        android:textColor="#fff"
+        android:textColorHint="#cccccc"
+        android:textSize="20sp"
+        android:textStyle="normal" />
+
+    <Button
+        android:id="@+id/login"
+        style="@style/button_style"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="10dp"
+        android:text="Log In"
+        android:textAllCaps="false"
+        android:textColor="#fff" />
+
+    <TextView
+        android:id="@+id/textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:text="or connect with"
+        android:textAlignment="center"
+        android:textColor="#ffffff"
+        android:textStyle="bold|italic" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10px"
+        android:orientation="horizontal">
+
+        <com.google.android.gms.common.SignInButton
+            android:id="@+id/googlesignin"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="or"
-            android:textColor="#ffffff"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:textStyle="italic"
-            android:textAlignment="center" />
+            android:layout_weight="1"
+            android:background="@null"
+            android:text="Sign In with Google"
+            android:textAllCaps="false" />
 
         <Button
             android:id="@+id/phonenumberregistration"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
+            android:layout_gravity="center"
+            android:layout_margin="5px"
+            android:layout_weight="1"
+            android:background="@drawable/button_background"
             android:text="Sign In using your Phone number"
             android:textAllCaps="false"
-            android:layout_gravity="center"
-            android:background="@drawable/button_background"
-            android:textColor="#fff"/>
+            android:textColor="#fff" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/prof_section"
@@ -189,25 +215,14 @@
 
     </LinearLayout>
 
-    <com.google.android.gms.common.SignInButton
-        android:id="@+id/googlesignin"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:background="@null"
-        android:text="Sign In with Google"
-        android:textAllCaps="false"
-        android:layout_gravity="center"/>
-
     <LinearLayout
         android:id="@+id/registration_section"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
+        android:layout_marginBottom="2dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginTop="30dp"
         android:background="@drawable/registration_linear_layout_background"
         android:orientation="vertical">
 
@@ -239,7 +254,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
             android:layout_marginTop="3dp"
-            android:text="Cost Sharing with multiple  passengers and Low Rates"
+            android:text="- Cost Sharing with multiple  passengers and Low Rates"
             android:textColor="#ffffff"
             android:textStyle="normal" />
 
@@ -248,7 +263,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
-            android:text="A ride focused on your safety"
+            android:text="- A ride focused on your safety"
             android:textColor="#ffffff"
             android:textStyle="normal" />
 
@@ -257,7 +272,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
-            android:text="Making friends and Connections"
+            android:text="- Making friends and Connections"
             android:textColor="#ffffff"
             android:textStyle="normal" />
 

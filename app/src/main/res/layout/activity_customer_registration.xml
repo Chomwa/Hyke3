@@ -8,42 +8,54 @@
     android:background="@drawable/hyke_background_1"
     tools:context=".CustomerRegistration">
 
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="match_parent"
+        android:layout_height="121dp"
+        app:srcCompat="@drawable/hyke_logo" />
+
     <EditText
-        android:background="@drawable/edit_text_bottom_border"
         android:id="@+id/email"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
-        android:ems="10"
-        android:textAlignment="center"
-        android:hint="Email"
-        android:inputType="textEmailAddress"/>
-    <EditText
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="20dp"
         android:background="@drawable/edit_text_bottom_border"
+        android:ems="10"
+        android:hint="Email"
+        android:inputType="textEmailAddress"
+        android:padding="10dp"
+        android:textAlignment="textStart"
+        android:textColorHint="#cccccc" />
+
+    <EditText
         android:id="@+id/password"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
+        android:layout_gravity="center"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="20dp"
+        android:background="@drawable/edit_text_bottom_border"
         android:ems="10"
         android:hint="Password"
-        android:textAlignment="center"
         android:inputType="textPassword"
-        android:layout_gravity="center"/>
+        android:padding="10dp"
+        android:textAlignment="textStart"
+        android:textColorHint="#cccccc" />
 
     <Button
-        style="@style/button_style"
         android:id="@+id/signup"
+        style="@style/button_style"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginRight="10dp"
-        android:layout_marginLeft="10dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
         android:layout_marginTop="20dp"
         android:text="Sign Up"
-        android:textAllCaps="false"/>
+        android:textAllCaps="false"
+        android:textColor="#fff" />
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

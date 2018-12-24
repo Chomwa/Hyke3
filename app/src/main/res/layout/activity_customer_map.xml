@@ -56,13 +56,66 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/buttons"
-                android:layout_margin="20sp">
+                android:layout_margin="20sp"
+                app:cardElevation="10dp">
 
-                <fragment
-                    android:id="@+id/place_autocomplete_fragment"
-                    android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+                <LinearLayout
+                    android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content">
+
+                    <LinearLayout
+                        android:weightSum="6"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:layout_width="0dp"
+                            android:layout_gravity="center_vertical"
+                            android:src="@drawable/ic_pin_drop_black_24dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"/>
+
+                        <fragment
+                            android:id="@+id/place_location"
+                            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="5"/>
+
+                    </LinearLayout>
+                    
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_margin="20sp"
+                        android:background="@color/dividerColor2"/>
+
+
+                    <LinearLayout
+                        android:weightSum="6"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <ImageView
+                            android:layout_width="0dp"
+                            android:layout_gravity="center_vertical"
+                            android:src="@drawable/ic_map_black_24dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"/>
+
+                        <fragment
+                            android:id="@+id/place_destination"
+                            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="5"/>
+
+                    </LinearLayout>
+
+                </LinearLayout>
             </android.support.v7.widget.CardView>
         </RelativeLayout>
 
@@ -142,32 +195,59 @@
                         android:id="@+id/HykeShared"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="HyKe Shared" />
+                        android:text="HyKe Shared"
+                        android:textColor="#fff"/>
 
                     <RadioButton
                         android:id="@+id/HykePersonal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="HyKe Personal" />
+                        android:text="HyKe Personal"
+                        android:textColor="#fff"/>
 
                     <RadioButton
                         android:id="@+id/HykeTaxi"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="HyKe Taxi" />
+                        android:text="HyKe Taxi"
+                        android:textColor="#fff"/>
                 </RadioGroup>
 
-                <Button
-                    android:id="@+id/request"
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                app:cardElevation="10dp">
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="bottom"
-                    android:layout_marginBottom="10dp"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    android:background="#9f0e1c"
-                    android:text="Take a HyKe"
-                    android:textColor="#fff" />
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:id="@+id/img_Expandable"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginBottom="2dp"
+                        android:src="@drawable/ic_keyboard_arrow_up_maroon_24dp"/>
+
+                    <Button
+                        android:id="@+id/request"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:layout_marginBottom="10dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:background="#9f0e1c"
+                        android:text="Take a HyKe"
+                        android:textColor="#fff" />
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+
             </LinearLayout>
         </LinearLayout>
     </FrameLayout>

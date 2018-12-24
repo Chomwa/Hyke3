@@ -1,5 +1,6 @@
 package com.eafricar.hyke;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -7,10 +8,14 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -42,18 +47,23 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import dmax.dialog.SpotsDialog;
+
+//import dmax.dialog.SpotsDialog;
+
 public class CustomerLoginActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
 
     private EditText mEmailField, mPassword;
     private Button mLogin, mCreateAccount, mPhoneRegistration;
 
-    private TextView mText;
+    private TextView mText, mForgotPassword;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener firebaseAuthListener;
@@ -78,6 +88,7 @@ public class CustomerLoginActivity extends AppCompatActivity implements View.OnC
     private String mPhone;
 
     private Uri resultUri;
+
 
 
     @Override
@@ -109,6 +120,19 @@ public class CustomerLoginActivity extends AppCompatActivity implements View.OnC
         mPhoneRegistration = (Button) findViewById(R.id.phonenumberregistration);
 
         mText = (TextView) findViewById(R.id.textview);
+        mForgotPassword = (TextView) findViewById(R.id.text_forgot_password);
+
+        //calling Dialog
+
+
+        //create forgot password function
+        mForgotPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //create seperate Function
+                showDialogForgotPwd();
+            }
+        });
 
         mCreateAccount.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -243,6 +267,60 @@ public class CustomerLoginActivity extends AppCompatActivity implements View.OnC
                 .build();
     }
 
+    //forgot password function
+    public android.app.AlertDialog waitingDialog;
+    private void showDialogForgotPwd(){
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(CustomerLoginActivity.this);
+        alertDialog.setTitle("FORGOT PASSWORD");
+        alertDialog.setMessage("Please enter your email address");
+
+        //call layout inflator edit text and buttons
+        LayoutInflater inflater = LayoutInflater.from(CustomerLoginActivity.this);
+        View forgot_pwd_layout = inflater.inflate(R.layout.layout_forgot_password, null);
+
+        final MaterialEditText edtEmail = (MaterialEditText) forgot_pwd_layout.findViewById(R.id.edtEmail);
+        alertDialog.setView(forgot_pwd_layout);
+
+        //set Button
+        alertDialog.setPositiveButton("RESET", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(final DialogInterface dialogInterface, int i) {
+                waitingDialog = new SpotsDialog(CustomerLoginActivity.this, "Waiting");
+               waitingDialog.show();
+
+                //Reset Password
+                mAuth.sendPasswordResetEmail(edtEmail.getText().toString().trim())
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                dialogInterface.dismiss();
+                                waitingDialog.dismiss();
+
+                                Snackbar.make(findViewById(R.id.customer_login), "Reset Password Link Sent to Email", Snackbar.LENGTH_LONG)
+                                        .show();
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        dialogInterface.dismiss();
+                        waitingDialog.dismiss();
+
+                        Snackbar.make(findViewById(R.id.customer_login), ""+e.getMessage(), Snackbar.LENGTH_LONG)
+                                .show();
+
+                    }
+                });
+            }
+        });
+        alertDialog.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.dismiss();
+            }
+        });
+
+    }
+
 
     @Override
     protected void onStart() {
@@ -343,6 +421,7 @@ public class CustomerLoginActivity extends AppCompatActivity implements View.OnC
             mText.setVisibility(View.GONE);
             mRegistration_Section.setVisibility(View.GONE);
             mLogin.setVisibility(View.GONE);
+            mForgotPassword.setVisibility(View.GONE);
         }
         else{
             mProf_Section.setVisibility(View.GONE);
@@ -354,6 +433,7 @@ public class CustomerLoginActivity extends AppCompatActivity implements View.OnC
             mText.setVisibility(View.VISIBLE);
             mRegistration_Section.setVisibility(View.VISIBLE);
             mLogin.setVisibility(View.VISIBLE);
+            mForgotPassword.setVisibility(View.VISIBLE);
         }
 
     }

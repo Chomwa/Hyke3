@@ -14,18 +14,47 @@
         android:layout_marginStart="71dp"
         android:layout_marginTop="30dp"
         android:src="@drawable/hyke_icon" />
-
-    <TextView
-        android:id="@+id/navigationtextView"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="16dp"
+        android:orientation="horizontal"
+        android:layout_marginBottom="30dp"
         android:layout_marginStart="71dp"
-        android:text="UserName"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true">
+
+        <TextView
+            android:id="@+id/navigationtextFirstName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="User"
+            android:textColor="@color/common_google_signin_btn_text_dark_default"
+            android:textStyle="italic|bold" />
+
+        <TextView
+            android:id="@+id/navigationtextLastName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Name"
+            android:textColor="@color/common_google_signin_btn_text_dark_default"
+            android:textStyle="italic|bold" />
+
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/navigationtextPhoneNumber"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Phone number"
         android:textColor="@color/common_google_signin_btn_text_dark_default"
-        android:textStyle="italic|bold" />
+        android:textStyle="normal"
+        android:layout_marginBottom="10dp"
+        android:layout_marginStart="71dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"/>
+
+
 
 
 </RelativeLayout>

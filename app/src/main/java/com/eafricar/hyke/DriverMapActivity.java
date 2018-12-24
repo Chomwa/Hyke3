@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.location.Location;
 import android.os.Build;
 import android.os.Looper;
@@ -21,6 +22,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -54,6 +56,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
@@ -99,7 +102,9 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
     private ImageView mCustomerProfileImage, NavigationHeaderImage;;
 
-    private TextView mCustomerName, mCustomerPhone, mCustomerDestination, mNavigationHeaderText;
+    private TextView mCustomerName, mCustomerPhone, mCustomerDestination,
+            mNavigationHeaderTextFirstName,mNavigationHeaderTextLastName,
+            mNavigationHeaderTextPhoneNumber;;
 
     private DatabaseReference mDriverDatabase;
     private String userID;
@@ -145,7 +150,9 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         //calling Navigation Header
         View header = navigationView.getHeaderView(0);
         NavigationHeaderImage = (ImageView) header.findViewById(R.id.profileImage);
-        mNavigationHeaderText = (TextView) header.findViewById(R.id.navigationtextView);
+        mNavigationHeaderTextFirstName = (TextView) header.findViewById(R.id.navigationtextFirstName);
+        mNavigationHeaderTextLastName = (TextView) header.findViewById(R.id.navigationtextLastName);
+        mNavigationHeaderTextPhoneNumber = (TextView) header.findViewById(R.id.navigationtextPhoneNumber);
 
         //Database reference in relation to navigation header image
         userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -165,9 +172,14 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                         mNavigationHeaderImageUrl = map.get("profileImageUrl").toString();
                         Glide.with(getApplication()).load(mNavigationHeaderImageUrl).into(mToggleImage);
                     }
-                    if (map.get("first name")!=null){
-                        mName = map.get("first name").toString();
-                        mNavigationHeaderText.setText(dataSnapshot.child("first name").getValue().toString());
+                    if(dataSnapshot.child("first name")!=null){
+                        mNavigationHeaderTextFirstName.setText(dataSnapshot.child("first name").getValue().toString());
+                    }
+                    if(dataSnapshot.child("last name")!=null){
+                        mNavigationHeaderTextLastName.setText(dataSnapshot.child("last name").getValue().toString());
+                    }
+                    if(dataSnapshot.child("phone")!=null){
+                        mNavigationHeaderTextPhoneNumber.setText(dataSnapshot.child("phone").getValue().toString());
                     }
                 }
             }
@@ -297,6 +309,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                     .withListener(this)
                     .alternativeRoutes(false)
                     .waypoints(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), pickupLatLng)
+                    .key("AIzaSyAaxWUlhVnc2HgmvGyqk_qbFtaSJHRRlVg")
                     .build();
             routing.execute();
         }
@@ -423,6 +436,20 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        //changing map style to Night style
+        try {
+            boolean isSuccess = googleMap.setMapStyle(
+                    MapStyleOptions.loadRawResourceStyle(this, R.raw.my_map_style)
+            );
+
+            if (!isSuccess)
+                Log.e("ERROR","Map Style Failed to Load!");
+        }
+        catch (Resources.NotFoundException ex)
+        {
+            ex.printStackTrace();
+        }
+
         mMap = googleMap;
 
         mLocationRequest = new LocationRequest();

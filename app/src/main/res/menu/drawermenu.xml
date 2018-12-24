@@ -18,6 +18,14 @@
              />
     </group>
 
+    <item android:title="">
+        <menu>
+            <item android:title="Change Password"
+                android:id="@+id/change_password"
+                android:icon="@drawable/ic_border_color_black_24dp"/>
+        </menu>
+    </item>
+
 
 
 </menu>

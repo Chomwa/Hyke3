@@ -62,6 +62,20 @@
         android:textColor="#fff" />
 
     <TextView
+        android:id="@+id/text_forgot_password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="Forgot password? Tap Here"
+        android:onClick="onClick"
+        android:clickable="true"
+        android:focusable="true"
+        android:textColor="#ffffff"
+        android:layout_gravity="left"
+        android:textStyle="italic"
+        android:textAlignment="center" />
+
+    <TextView
         android:id="@+id/textview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

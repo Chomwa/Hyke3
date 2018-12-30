@@ -11,7 +11,7 @@
     <ImageView
         android:id="@+id/imageView3"
         android:layout_width="match_parent"
-        android:layout_height="121dp"
+        android:layout_height="299dp"
         app:srcCompat="@drawable/hyke_logo" />
 
     <EditText
@@ -44,43 +44,57 @@
         android:textAllCaps="false"
         android:textColor="#ffffff"/>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
+    <ProgressBar
+        android:id="@+id/pBar"
+        style="@android:style/Widget.ProgressBar.Large"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="50dp"
-        android:layout_marginRight="50dp"
-        android:layout_marginTop="20dp"
-        android:background="@null"
-        android:orientation="vertical"
-        android:layout_gravity="center">
-
-        <EditText
-            android:id="@+id/verificationcode"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:background="@drawable/edit_text_bottom_border"
-            android:digits="0123456789"
-            android:ems="10"
-            android:hint="Enter Verification Code"
-            android:inputType="number"
-            android:padding="10dp"
-            android:textAlignment="textStart"
-            android:textColorHint="#cccccc" />
-
-        <Button
-            android:id="@+id/signinbutton"
-            style="@style/button_style"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="5dp"
-            android:text="Next"
-            android:textAllCaps="false"
-            android:textColor="#ffffff"/>
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"/>
 
 
-    </LinearLayout>
+    <EditText
+        android:id="@+id/verificationcode"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:background="@drawable/edit_text_bottom_border"
+        android:digits="0123456789"
+        android:ems="10"
+        android:visibility="gone"
+        android:hint="Enter Verification Code"
+        android:inputType="number"
+        android:padding="10dp"
+        android:textAlignment="textStart"
+        android:textColorHint="#cccccc" />
+
+    <Button
+        android:id="@+id/signinbutton"
+        style="@style/button_style"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:visibility="gone"
+        android:text="Next"
+        android:textAllCaps="false"
+        android:textColor="#ffffff"/>
+
+
+    <TextView
+        android:id="@+id/sendingCodeText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Sending your verification code..."
+        android:textAlignment="center"
+        android:textColor="#cccccc"
+        android:visibility="gone"
+        android:textSize="18sp" />
+
+
+
 
 
 </LinearLayout>

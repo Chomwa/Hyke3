@@ -1,11 +1,14 @@
 package com.eafricar.hyke;
 
+import android.app.ProgressDialog;
+import android.util.Log;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -22,15 +25,18 @@ import java.util.concurrent.TimeUnit;
 public class DriverPhoneNumberVerification extends AppCompatActivity {
 
     private EditText editTextPhone, editTextCode;
+    private static final String TAG = "Phone number registration";
 
     private FirebaseAuth mAuth;
 
     private String codeSent;
+    private ProgressBar pgsBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driver_phone_number_verification);
+        pgsBar = findViewById(R.id.pBar);
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -54,6 +60,34 @@ public class DriverPhoneNumberVerification extends AppCompatActivity {
         });
 
 
+    }
+
+    private void displayVerficationInput(String display) {
+
+        switch (display) {
+            case "show":
+                findViewById(R.id.phonenumber).setVisibility(View.VISIBLE);
+                findViewById(R.id.verificationbutton).setVisibility(View.VISIBLE);
+                break;
+            case "hide":
+                findViewById(R.id.phonenumber).setVisibility(View.GONE);
+                findViewById(R.id.verificationbutton).setVisibility(View.GONE);
+                break;
+        }
+    }
+
+    private void displayEnterVerficationInput(String display) {
+
+        switch (display) {
+            case "show":
+                findViewById(R.id.verificationcode).setVisibility(View.VISIBLE);
+                findViewById(R.id.signinbutton).setVisibility(View.VISIBLE);
+                break;
+            case "hide":
+                findViewById(R.id.verificationcode).setVisibility(View.GONE);
+                findViewById(R.id.signinbutton).setVisibility(View.GONE);
+                break;
+        }
     }
 
     private void verifySignInCode(){
@@ -107,7 +141,9 @@ public class DriverPhoneNumberVerification extends AppCompatActivity {
 
     private void sendVerificationCode(){
 
-        String phoneNumber = editTextPhone.getText().toString();
+        String phoneNumber = "+" + editTextPhone.getText().toString();
+        Log.i(TAG, "Number received" + phoneNumber);
+
 
         if (phoneNumber.isEmpty()){
             editTextPhone.setError("Phone Number is Required");
@@ -120,6 +156,9 @@ public class DriverPhoneNumberVerification extends AppCompatActivity {
             return;
         }
 
+        pgsBar.setVisibility(View.VISIBLE);
+        findViewById(R.id.sendingCodeText).setVisibility(View.VISIBLE);
+        displayVerficationInput("hide");
 
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
                 phoneNumber,        // Phone number to verify
@@ -133,19 +172,34 @@ public class DriverPhoneNumberVerification extends AppCompatActivity {
     PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
         @Override
         public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
-
+            Log.i(TAG, "Complete phone verfication " + phoneAuthCredential);
+            findViewById(R.id.sendingCodeText).setVisibility(View.GONE);
+            pgsBar.setVisibility(View.GONE);
+            displayEnterVerficationInput("show");
         }
 
         @Override
         public void onVerificationFailed(FirebaseException e) {
-
+            displayVerficationInput("show");
+            Log.i(TAG, "Failed phone verfication " + e);
+            findViewById(R.id.sendingCodeText).setVisibility(View.GONE);
+            pgsBar.setVisibility(View.GONE);
+            displayVerficationInput("show");
+            showErrorToast( "Verification error:" + e.getMessage());
         }
 
         @Override
         public void onCodeSent(String s, PhoneAuthProvider.ForceResendingToken forceResendingToken) {
             super.onCodeSent(s, forceResendingToken);
-
             codeSent = s;
         }
     };
+
+    public void onClickSendCode (View view){
+
+    }
+
+    private void showErrorToast(String message){
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+    }
 }

@@ -78,6 +78,7 @@ public class CustomerLoginActivity extends AppCompatActivity implements View.OnC
     private ImageView mProfilePic;
     private GoogleApiClient googleApiClient;
 
+    private static final String TAG = "Customer login";
     private static final int REQ_CODE = 9001;
     private DatabaseReference mCustomerDatabase;
 
@@ -103,6 +104,8 @@ public class CustomerLoginActivity extends AppCompatActivity implements View.OnC
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if(user!=null){
+                    DatabaseReference assignedCustomerRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child("GSd1QoyTA1NKa2sprvXrAVd0Epz2").child("Personal Information");
+                    Log.i(TAG, "Customer id -->" + assignedCustomerRef.getKey());
                     Intent intent = new Intent(CustomerLoginActivity.this, CustomerMapActivity.class);
                     startActivity(intent);
                     finish();

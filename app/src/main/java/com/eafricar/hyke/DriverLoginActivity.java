@@ -37,8 +37,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -67,6 +70,7 @@ public class DriverLoginActivity extends AppCompatActivity implements View.OnCli
     private ImageView mProfilePic;
     private GoogleApiClient googleApiClient;
 
+    private static final String TAG = "Driver login";
     private static final int REQ_CODE = 9001;
     private DatabaseReference mCustomerDatabase;
 
@@ -91,10 +95,24 @@ public class DriverLoginActivity extends AppCompatActivity implements View.OnCli
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if(user!=null){
-                    Intent intent = new Intent(DriverLoginActivity.this, DriverMapActivity.class);
-                    startActivity(intent);
-                    finish();
-                    return;
+                    DatabaseReference assignedCustomerRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(user.getUid()).child("Personal Information");
+                    assignedCustomerRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                Intent intent = new Intent(DriverLoginActivity.this, DriverMapActivity.class);
+                                startActivity(intent);
+                                finish();
+                                return;
+                            } else {
+                                Toast.makeText(DriverLoginActivity.this, "You are not yet a registered driver. Kindly register as a driver.", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                        }
+                    });
+
                 }
             }
         };

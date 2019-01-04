@@ -9,6 +9,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.location.Location;
 import android.os.Build;
+import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,6 +22,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -29,6 +31,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Switch;
@@ -43,6 +46,7 @@ import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -50,6 +54,9 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -84,14 +91,14 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     private FusedLocationProviderClient mFusedLocationClient;
 
 
-    private Button mLogout, mSettings, mRideStatus, mHistory;
+    private Button  mRideStatus,  mSetRoute, mDone;
 
     private Switch mWorkingSwitch;
 
     private int status = 0;
 
     private String customerId = "", destination;
-    private LatLng destinationLatLng, pickupLatLng;
+    private LatLng destinationLatLng, pickupLatLng, driverDestinationLatLng, driverStartLatLng;
     private float rideDistance;
 
     private Boolean isLoggingOut = false;
@@ -116,6 +123,15 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     private ImageView mToggleImage;
     private DrawerLayout mDrawer;
 
+    //place auto complete fragment
+    private PlaceAutocompleteFragment mPlace_Location, mPlace_Destination;
+
+    private Marker DriverDestinationMarker, DriverPickupMarker;
+    private String mDriverPickup, mDriverDestination;
+
+    //Passenger payment and Number
+    private EditText mPassengerNumber, mPassengerCharge;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -127,11 +143,12 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         //Calling tool bar and tool bar functions
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);//removing Title from the transparent tool bar
 
-        mToggleImage = (ImageView) findViewById(R.id.toolbarprofileImage);
+        mToggleImage = (ImageView) findViewById(R.id.toolbarprofileImage); //Calling Image that will serve as toggle
         mDrawer = (DrawerLayout) findViewById(R.id.drawerLayout);
-        //calling toolbar toggle
+
+        //calling toolbar toggle function in Image
         mToggleImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -143,16 +160,16 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
             }
         });
 
-
+        //Calling Navigation Drawer View
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        //calling Navigation Header
+        //calling Navigation Drawer Header Variables
         View header = navigationView.getHeaderView(0);
-        NavigationHeaderImage = (ImageView) header.findViewById(R.id.profileImage);
-        mNavigationHeaderTextFirstName = (TextView) header.findViewById(R.id.navigationtextFirstName);
-        mNavigationHeaderTextLastName = (TextView) header.findViewById(R.id.navigationtextLastName);
-        mNavigationHeaderTextPhoneNumber = (TextView) header.findViewById(R.id.navigationtextPhoneNumber);
+        NavigationHeaderImage = (ImageView) header.findViewById(R.id.profileImage); //profile image
+        mNavigationHeaderTextFirstName = (TextView) header.findViewById(R.id.navigationtextFirstName); //First name of User
+        mNavigationHeaderTextLastName = (TextView) header.findViewById(R.id.navigationtextLastName); //Last Name of User
+        mNavigationHeaderTextPhoneNumber = (TextView) header.findViewById(R.id.navigationtextPhoneNumber); //Phone Number of User
 
         //Database reference in relation to navigation header image
         userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -166,20 +183,20 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
                     if(map.get("profileImageUrl")!=null){
                         mNavigationHeaderImageUrl = map.get("profileImageUrl").toString();
-                        Glide.with(getApplication()).load(mNavigationHeaderImageUrl).into(NavigationHeaderImage);
+                        Glide.with(getApplication()).load(mNavigationHeaderImageUrl).into(NavigationHeaderImage); //calling user profile picture into navigation header profile picture
                     }
                     if(map.get("profileImageUrl")!=null){
                         mNavigationHeaderImageUrl = map.get("profileImageUrl").toString();
-                        Glide.with(getApplication()).load(mNavigationHeaderImageUrl).into(mToggleImage);
+                        Glide.with(getApplication()).load(mNavigationHeaderImageUrl).into(mToggleImage); // calling user profile picture into Toggle profile picture
                     }
                     if(dataSnapshot.child("first name")!=null){
-                        mNavigationHeaderTextFirstName.setText(dataSnapshot.child("first name").getValue().toString());
+                        mNavigationHeaderTextFirstName.setText(dataSnapshot.child("first name").getValue().toString()); //Calling user First name
                     }
                     if(dataSnapshot.child("last name")!=null){
-                        mNavigationHeaderTextLastName.setText(dataSnapshot.child("last name").getValue().toString());
+                        mNavigationHeaderTextLastName.setText(dataSnapshot.child("last name").getValue().toString()); //calling user last name
                     }
                     if(dataSnapshot.child("phone")!=null){
-                        mNavigationHeaderTextPhoneNumber.setText(dataSnapshot.child("phone").getValue().toString());
+                        mNavigationHeaderTextPhoneNumber.setText(dataSnapshot.child("phone").getValue().toString()); //Calling Phone Number
                     }
                 }
             }
@@ -192,7 +209,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
 
 
-        polylines = new ArrayList<>();
+        polylines = new ArrayList<>();//Google maps poly lines list
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -200,8 +217,8 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         mapFragment.getMapAsync(this);
 
 
-        //Calling Customer Information Variables
-        mCustomerInfo = (LinearLayout) findViewById(R.id.customerInfo);
+        //Calling Customer Information Variables when receiving a customer ride request
+        mCustomerInfo = (LinearLayout) findViewById(R.id.customerInfo);// Customer info Linear layout which is currently hidden
 
         mCustomerProfileImage = (ImageView) findViewById(R.id.customerProfileImage);
 
@@ -209,20 +226,20 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         mCustomerPhone = (TextView) findViewById(R.id.customerPhone);
         mCustomerDestination = (TextView) findViewById(R.id.customerDestination);
 
-        mWorkingSwitch = (Switch) findViewById(R.id.workingSwitch);
+        mWorkingSwitch = (Switch) findViewById(R.id.workingSwitch); //Calling switch to enable driver to go online and go offline
         mWorkingSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked){
-                    connectDriver();
+                    connectDriver(); //refer to function
                 }else{
-                    disconnectDriver();
+                    disconnectDriver(); //refer to function
                 }
             }
         });
 
 
-        mRideStatus = (Button) findViewById(R.id.rideStatus);
+        mRideStatus = (Button) findViewById(R.id.rideStatus); //calling before and After customer is to be picked up
 
         mRideStatus.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -230,23 +247,139 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 switch(status){
                     case 1:
                         status=2;
-                        erasePolylines();
+                        erasePolylines(); //remove existing poly lines on map
                         if(destinationLatLng.latitude!=0.0 && destinationLatLng.longitude!=0.0){
-                            getRouteToMarker(destinationLatLng);
+                            getRouteToMarker(destinationLatLng); // set new poly line
                         }
-                        mRideStatus.setText("drive completed");
+                        mRideStatus.setText("drive completed");//Changing Button text
 
                         break;
                     case 2:
-                        recordRide();
-                        endRide();
+                        recordRide(); //refer to function
+                        endRide(); //refer to function
                         break;
                 }
             }
         });
 
+        // Set Pickup and Destination
+        final CardView locationCardView = (CardView) findViewById(R.id.route);
+        final CardView passengerDetailsCardView = (CardView) findViewById(R.id.passengerDetails);
 
-        getAssignedCustomer();
+        mPlace_Location = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_location);
+        mPlace_Destination = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_destination);
+
+        mSetRoute = (Button) findViewById(R.id.set_route);
+
+        driverDestinationLatLng = new LatLng(0.0,0.0);
+        driverStartLatLng = new LatLng(0.0, 0.0);
+
+        //event
+        mPlace_Location.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                //remove any old markers
+                mMap.clear();
+
+                //add new pickup marker when destination is set
+
+                DriverPickupMarker = mMap.addMarker(new MarkerOptions().position(place.getLatLng()).title("Pickup Here")
+                        .title("Pickup Here").icon(BitmapDescriptorFactory.defaultMarker()));
+
+                //animate Camera Zoom
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(),17.0f));
+
+                //getting info about Selected Place
+                mDriverPickup = place.getName().toString();
+
+              //  driverStartLatLng = place.getLatLng();// Getting Lat and Lng of Pick up
+
+                //add pickup location
+                //PickupLocation = place.getLatLng();
+
+            }
+
+            @Override
+            public void onError(Status status) {
+
+            }
+        });
+
+        mPlace_Destination.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+
+                //new destination marker
+                DriverDestinationMarker = mMap.addMarker(new MarkerOptions().position(place.getLatLng())
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN)));
+
+                //animate Camera Zoom
+                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(),17.0f));
+
+                //Get info about Selected Place
+                mDriverDestination = place.getName().toString();
+                driverDestinationLatLng = place.getLatLng(); //Get Latitude and Longitude of Destination
+
+                //getRouteToDestinationMarker(destinationLatLng);// add poly line from pickup to destination
+
+                mSetRoute.setVisibility(View.VISIBLE);
+
+            }
+
+            @Override
+            public void onError(Status status) {
+
+            }
+        });
+
+        mSetRoute.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getRouteToDriverDestination(driverDestinationLatLng);
+
+               locationCardView.setVisibility(View.GONE);
+
+                //call Payment and Passenger Cardview after two seconds
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        //call Card view
+
+                        passengerDetailsCardView.setVisibility(View.VISIBLE);
+
+                    }
+                },1000); //time in milli seconds
+            }
+        });
+
+        //Set Passenger Charge and Number of customers to carry
+        mPassengerNumber = (EditText) findViewById(R.id.passenger_number);
+        mPassengerCharge = (EditText) findViewById(R.id.passenger_charge);
+
+        mDone = (Button) findViewById(R.id.set_passenger_details);
+
+        mDone.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //get Text of passenger charge and number
+                mPassengerCharge.getText().toString();
+                mPassengerNumber.getText().toString();
+
+                //updateUI
+                passengerDetailsCardView.setVisibility(View.GONE);
+                mDone.setVisibility(View.GONE);
+
+
+                //turn on working switch
+                if (!mWorkingSwitch.isChecked()){
+                    mWorkingSwitch.performClick();
+                }
+
+            }
+        });
+
+
+        getAssignedCustomer();// Call customer when working switch is turned on/ refer to function
     }
 
     private void getAssignedCustomer(){
@@ -309,6 +442,19 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                     .withListener(this)
                     .alternativeRoutes(false)
                     .waypoints(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), pickupLatLng)
+                    .key("AIzaSyAaxWUlhVnc2HgmvGyqk_qbFtaSJHRRlVg")
+                    .build();
+            routing.execute();
+        }
+    }
+
+    private void getRouteToDriverDestination(LatLng driverDestinationLatLng) {
+        if (driverDestinationLatLng != null && mLastLocation != null){
+            Routing routing = new Routing.Builder()
+                    .travelMode(AbstractRouting.TravelMode.DRIVING)
+                    .withListener(this)
+                    .alternativeRoutes(false)
+                    .waypoints(driverStartLatLng, driverDestinationLatLng)
                     .key("AIzaSyAaxWUlhVnc2HgmvGyqk_qbFtaSJHRRlVg")
                     .build();
             routing.execute();
@@ -433,7 +579,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         return timestamp;
     }
 
-
+    //Getting Google maps Started
     @Override
     public void onMapReady(GoogleMap googleMap) {
         //changing map style to Night style
@@ -453,15 +599,15 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         mMap = googleMap;
 
         mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(1000);
+        mLocationRequest.setInterval(1000); //setting refreshing interval to 1 sec
         mLocationRequest.setFastestInterval(1000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);// setting phone priority to high
 
         if(android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
             if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
 
             }else{
-                checkLocationPermission();
+                checkLocationPermission(); //Calling location permissions
             }
         }
     }
@@ -480,8 +626,8 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
 
                     LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
-                    mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                    mMap.animateCamera(CameraUpdateFactory.zoomTo(16));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng)); //moving camera to location
+                    mMap.animateCamera(CameraUpdateFactory.zoomTo(16));//Zooming in on google maps
 
                     String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
                     DatabaseReference refAvailable = FirebaseDatabase.getInstance().getReference("driversAvailable");
@@ -489,6 +635,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                     GeoFire geoFireAvailable = new GeoFire(refAvailable);
                     GeoFire geoFireWorking = new GeoFire(refWorking);
 
+                    //switching driver from available to working child once customer is received
                     switch (customerId){
                         case "":
                             geoFireWorking.removeLocation(userId);
@@ -554,6 +701,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         mMap.setMyLocationEnabled(true);
     }
 
+    //remove driver from drivers available child
     private void disconnectDriver(){
         if(mFusedLocationClient != null){
             mFusedLocationClient.removeLocationUpdates(mLocationCallback);
@@ -569,9 +717,9 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
 
 
-
+    //creating poly lines
     private List<Polyline> polylines;
-    private static final int[] COLORS = new int[]{R.color.primary_dark_material_light};
+    private static final int[] COLORS = new int[]{R.color.primary_dark_material_light};// only set up one color in list
     @Override
     public void onRoutingFailure(RouteException e) {
         if(e != null) {
@@ -612,6 +760,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     @Override
     public void onRoutingCancelled() {
     }
+    //removepoly line function
     private void erasePolylines(){
         for(Polyline line : polylines){
             line.remove();
@@ -619,7 +768,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         polylines.clear();
     }
 
-    // Navigation Drawer
+    // Navigation Drawer functions
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawerLayout);
@@ -651,26 +800,27 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         int id = item.getItemId();
 
         if (id == R.id.history){
-            Intent intent = new Intent(DriverMapActivity.this, HistoryActivity.class);
+            Intent intent = new Intent(DriverMapActivity.this, HistoryActivity.class); // intent to ride history class
             intent.putExtra("customerOrDriver", "Drivers");
             startActivity(intent);
-            overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
+            overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left); //effect of sliding when accessing new class
         }else if (id == R.id.settings){
-            Intent searchIntent = new Intent(DriverMapActivity.this, DriverSettingsActivity.class);
+            Intent searchIntent = new Intent(DriverMapActivity.this, DriverSettingsActivity.class); //intent to driver profile
             startActivity(searchIntent);
             overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
+            //Log out function
         }else if (id == R.id.logout){
             isLoggingOut = true;
 
-            disconnectDriver();
+            disconnectDriver(); //refer to function
 
             FirebaseAuth.getInstance().signOut();
-            Intent intent = new Intent(DriverMapActivity.this, MainActivity.class);
+            Intent intent = new Intent(DriverMapActivity.this, MainActivity.class); //return to main activity page
             startActivity(intent);
             finish();
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawerLayout);
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawerLayout); //calling the drawer layout
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

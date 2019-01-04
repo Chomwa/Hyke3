@@ -9,7 +9,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.eafricar.hyke.Model.User;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -24,6 +27,8 @@ public class DriverRegistration extends AppCompatActivity {
     private Button mRegistration, mLogin;
 
     private FirebaseAuth mAuth;
+    private FirebaseDatabase mDriverDatabase;
+    private DatabaseReference mUsers;
     private FirebaseAuth.AuthStateListener firebaseAuthListener;
 
     @Override
@@ -32,6 +37,8 @@ public class DriverRegistration extends AppCompatActivity {
         setContentView(R.layout.activity_driver_registration);
 
         mAuth = FirebaseAuth.getInstance();
+        mDriverDatabase = FirebaseDatabase.getInstance();
+        mUsers = mDriverDatabase.getReference("Users");
 
         firebaseAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -56,29 +63,10 @@ public class DriverRegistration extends AppCompatActivity {
         mRegistration.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String email = mEmailField.getText().toString();
-                final String password = mPassword.getText().toString();
-                if (email.isEmpty()){
-                    mEmailField.setError("Email is Required");
-                    mEmailField.requestFocus();
-                    return;
-                }if (password.isEmpty()){
-                    mPassword.setError("Password is Required");
-                    mPassword.requestFocus();
-                } else{
-                    mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(DriverRegistration.this, new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
-                            if(!task.isSuccessful()){
-                                Toast.makeText(DriverRegistration.this, "sign up error", Toast.LENGTH_SHORT).show();
-                            }else{
-                                String user_id = mAuth.getCurrentUser().getUid();
-                                DatabaseReference current_user_db = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(user_id).child("name");
-                                current_user_db.setValue(email);
-                            }
-                        }
-                    });
-                }
+
+
+
+                RegisterNewDriverUser();
             }
         });
 
@@ -91,6 +79,65 @@ public class DriverRegistration extends AppCompatActivity {
                 return;
             }
         });
+    }
+
+    private void RegisterNewDriverUser() {
+
+        final String email = mEmailField.getText().toString();
+        final String password = mPassword.getText().toString();
+        //set errors
+        if (email.isEmpty()){
+            mEmailField.setError("Email is Required");
+            mEmailField.requestFocus();
+            return;
+        }if (password.isEmpty()) {
+            mPassword.setError("Password is Required");
+            mPassword.requestFocus();
+        }if ((mPassword.getText().toString().length()<6)){
+            mPassword.setError("Password should not be less than 6 characters");
+            mPassword.requestFocus();
+        } else{
+
+            mAuth.createUserWithEmailAndPassword(email,password)
+                    .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                        @Override
+                        public void onSuccess(AuthResult authResult) {
+
+                            //Save user to the database
+                            User user = new User();
+                            user.setEmail(mEmailField.getText().toString());
+                            user.setPassword(mPassword.getText().toString());
+
+                            mUsers.child("Drivers").child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                    .setValue(user)
+                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            Toast.makeText(DriverRegistration.this, "Registration Successful!", Toast.LENGTH_SHORT)
+                                                    .show();
+
+                                        }
+                                    })
+                                    .addOnFailureListener(new OnFailureListener() {
+                                        @Override
+                                        public void onFailure(@NonNull Exception e) {
+
+                                            Toast.makeText(DriverRegistration.this, "Failed: " +e.getMessage(), Toast.LENGTH_SHORT)
+                                                    .show();
+
+                                        }
+                                    });
+
+                        }
+                    })
+
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+
+                        }
+                    });
+        }
     }
 
     @Override

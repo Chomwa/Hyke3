@@ -152,15 +152,14 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
         setContentView(R.layout.activity_customer_map);
 
 
-
         //Calling tool bar and tool bar functions
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
-        //remove tool bar title
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayShowTitleEnabled(false); //remove tool bar title
 
-        mToggleImage = (ImageView) findViewById(R.id.toolbarprofileImage);
+        mToggleImage = (ImageView) findViewById(R.id.toolbarprofileImage); //calling tool bar toggle image
         mDrawer = (DrawerLayout) findViewById(R.id.drawerLayout);
+
         //calling toolbar toggle in image view
         mToggleImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -175,16 +174,15 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
 
 
 
-
-
+        //Calling Navigation Drawer View
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        navigationView.setNavigationItemSelectedListener(this);// listen for navigation view items
         //calling Navigation Header
         View header = navigationView.getHeaderView(0);
-        NavigationHeaderImage = (ImageView) header.findViewById(R.id.profileImage);
-        mNavigationHeaderTextFirstName = (TextView) header.findViewById(R.id.navigationtextFirstName);
-        mNavigationHeaderTextLastName = (TextView) header.findViewById(R.id.navigationtextLastName);
-        mNavigationHeaderTextPhoneNumber = (TextView) header.findViewById(R.id.navigationtextPhoneNumber);
+        NavigationHeaderImage = (ImageView) header.findViewById(R.id.profileImage);//navigation profile picture
+        mNavigationHeaderTextFirstName = (TextView) header.findViewById(R.id.navigationtextFirstName); //navigation user first name
+        mNavigationHeaderTextLastName = (TextView) header.findViewById(R.id.navigationtextLastName); //navigation user last name
+        mNavigationHeaderTextPhoneNumber = (TextView) header.findViewById(R.id.navigationtextPhoneNumber); //navigation user phone number
 
         //Database reference in relation to navigation header image and tool bar toggle image
         userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -198,11 +196,11 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
 
                 if(map.get("profileImageUrl")!=null){
                     mNavigationHeaderImageUrl = map.get("profileImageUrl").toString();
-                    Glide.with(getApplication()).load(mNavigationHeaderImageUrl).into(NavigationHeaderImage);
+                    Glide.with(getApplication()).load(mNavigationHeaderImageUrl).into(NavigationHeaderImage);// putting profile picture in header image view
                 }
                     if(map.get("profileImageUrl")!=null){
                         mNavigationHeaderImageUrl = map.get("profileImageUrl").toString();
-                        Glide.with(getApplication()).load(mNavigationHeaderImageUrl).into(mToggleImage);
+                        Glide.with(getApplication()).load(mNavigationHeaderImageUrl).into(mToggleImage); // putting profile picture in tool bar toggle image
                     }
               }
             }
@@ -218,13 +216,13 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists() && dataSnapshot.getChildrenCount()>0){
                     if(dataSnapshot.child("first name")!=null){
-                        mNavigationHeaderTextFirstName.setText(dataSnapshot.child("first name").getValue().toString());
+                        mNavigationHeaderTextFirstName.setText(dataSnapshot.child("first name").getValue().toString()); //navigation user first name
                     }
                     if(dataSnapshot.child("last name")!=null){
-                        mNavigationHeaderTextLastName.setText(dataSnapshot.child("last name").getValue().toString());
+                        mNavigationHeaderTextLastName.setText(dataSnapshot.child("last name").getValue().toString()); //navigation user last name
                     }
                     if(dataSnapshot.child("phone")!=null){
-                        mNavigationHeaderTextPhoneNumber.setText(dataSnapshot.child("phone").getValue().toString());
+                        mNavigationHeaderTextPhoneNumber.setText(dataSnapshot.child("phone").getValue().toString()); //navigation user phone number
                     }
                 }
             }
@@ -244,7 +242,8 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
         destinationLatLng = new LatLng(0.0,0.0);
         pickupLatLng = new LatLng(0.0,0.0);
 
-        mDriverInfo = (LinearLayout) findViewById(R.id.driverInfo);
+        //Calling Driver Information Variables when receiving a customer ride request
+        mDriverInfo = (LinearLayout) findViewById(R.id.driverInfo); // Driver info Linear layout which is currently hidden
 
         mDriverProfileImage = (ImageView) findViewById(R.id.driverProfileImage);
 
@@ -273,19 +272,19 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
             }
         });
 
-        // Set Pickup and Destination
         polylines = new ArrayList<>();
+        // Set Pickup and Destination
         mPlace_Location = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_location);
         mPlace_Destination = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_destination);
 
-        //event
+
         mPlace_Location.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
-                //remove old markers
+                //remove any old markers
                 mMap.clear();
 
-                //add new pickup marker
+                //add new pickup marker when destination is set
 
                 pickupMarker = mMap.addMarker(new MarkerOptions().position(place.getLatLng()).title("Pickup Here")
                         .title("Pickup Here").icon(BitmapDescriptorFactory.defaultMarker()));
@@ -294,7 +293,12 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(),17.0f));
 
                 //getting info about Selected Place
-                pickupLatLng = place.getLatLng();
+                //Pickup = place.getName().toString();
+
+                pickupLatLng = place.getLatLng();// Getting Lat and Lng of Pick up
+
+                //add pickup location
+                //PickupLocation = place.getLatLng();
 
             }
 
@@ -317,9 +321,9 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
 
                 //Get info about Selected Place
                 destination = place.getName().toString();
-                destinationLatLng = place.getLatLng();
+                destinationLatLng = place.getLatLng(); //Get Latitude and Longitude of Destination
 
-                getRouteToDestinationMarker(destinationLatLng);
+                getRouteToDestinationMarker(destinationLatLng);// add poly line from pickup to destination
 
                 //call bottom sheet drawer after two seconds
                 new Handler().postDelayed(new Runnable() {
@@ -359,10 +363,10 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
                     final RadioButton radioButton = (RadioButton) findViewById(selectId);
 
                     if (radioButton.getText() == null){
-                        return;
+                        return; //if radio button is not selected don't allow user to proceed
                     }
 
-                    requestService = radioButton.getText().toString();
+                    requestService = radioButton.getText().toString(); //getting radio button selected text
 
                     requestBol = true;
 
@@ -371,31 +375,50 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
                     DatabaseReference ref = FirebaseDatabase.getInstance().getReference("customerRequest");
                     GeoFire geoFire = new GeoFire(ref);
                     if (mLastLocation== null){
-                        Toast.makeText(CustomerMapActivity.this, "Turn on Location", Toast.LENGTH_LONG).show();
+                        Toast.makeText(CustomerMapActivity.this, "Turn on Location", Toast.LENGTH_LONG).show(); //if we can't get location we set a toast
                         endRide();
-                    }else{
-                        geoFire.setLocation(userId, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()));}
+                        return;
+                    }
+                 //   if (mPlace_Location!=null){
+                   //     geoFire.setLocation(userId, new GeoLocation(pickupLatLng.latitude,pickupLatLng.longitude)); //the new code
+                    //}
+                    else{
+                        geoFire.setLocation(userId, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                    }
 
                     //set Pick up location marker
 
                     if (mLastLocation== null){
                         Toast.makeText(CustomerMapActivity.this, "Turn on Location", Toast.LENGTH_LONG).show();
                         endRide();
-                    }else{
-                        pickupLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+                        return;
+                    }
+                   // if (mPlace_Location!=null){
+                   // pickupLocation = new LatLng(pickupLatLng.latitude,pickupLatLng.longitude); //get LatLng from Place auto fragment
 
-                        if(pickupMarker == null) {
-                            mMap.clear();
-                            pickupMarker = mMap.addMarker(new MarkerOptions().position(pickupLocation).title("Pickup Here").icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_pickup)));
-                        }
-
-                        //Add Ripple animation
-                        RequestMapRipple();
-
-                        mRequest.setText("Getting your Driver....");
+                     //   mRequest.setText("Getting your Driver...."); //if location is set change button tex
+                   // }
+                    else{
+                        pickupLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()); //if pick up has not been set in place fragment get users current location as pick up location
+                        //pickupLocation = pickupLatLng; // pickup location of place fragment
 
 
-                        getClosestDriver();}
+                        mRequest.setText("Getting your Driver...."); //change button text after setting location
+
+                    }
+
+                   // if(pickupMarker == null) {
+                  //      mMap.clear();
+                        pickupMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude())).title("Pickup Here").icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_pickup)));
+                  //  } //add new marker on user current location
+
+                    //Add Ripple animation on pick up location
+                          RequestMapRipple();
+
+
+
+
+                    getClosestDriver(); //search for driver/ refer to function
                 }
 
 
@@ -411,8 +434,12 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
 
     private void RequestMapRipple() {
         // add Map ripple animation around marker
+    //    if (mPlace_Location!=null){
+      //      mapRipple = new MapRipple(mMap, new LatLng(pickupLatLng.latitude,pickupLatLng.longitude),this); //put ripples around pick up location set in place auto fragment
+     //   }else {
+            mapRipple = new MapRipple(mMap, new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()),this); ///user current location
+     //   }
 
-        mapRipple = new MapRipple(mMap, new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()),this);
         mapRipple.withNumberOfRipples(2);
         mapRipple.withDurationBetweenTwoRipples(500);
         mapRipple.withDistance(500);
@@ -429,9 +456,9 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
             Routing routing = new Routing.Builder()
                     .travelMode(AbstractRouting.TravelMode.DRIVING)
                     .withListener(this)
-                    .alternativeRoutes(false)
-                    .waypoints(pickupLatLng, destinationLatLng)
-                    .key("AIzaSyAaxWUlhVnc2HgmvGyqk_qbFtaSJHRRlVg")
+                    .alternativeRoutes(false) //no alternative routes set
+                    .waypoints(pickupLatLng, destinationLatLng) //points for drawing map
+                    .key("AIzaSyAaxWUlhVnc2HgmvGyqk_qbFtaSJHRRlVg") //google maps Api Key
                     .build();
             routing.execute();
         }
@@ -599,8 +626,8 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists() && dataSnapshot.getChildrenCount()>0){
-                    if(dataSnapshot.child("name")!=null){
-                        mDriverName.setText(dataSnapshot.child("name").getValue().toString());
+                    if(dataSnapshot.child("first name")!=null){
+                        mDriverName.setText(dataSnapshot.child("first name").getValue().toString());
                     }
                     if(dataSnapshot.child("phone")!=null){
                         mDriverPhone.setText(dataSnapshot.child("phone").getValue().toString());
@@ -687,7 +714,15 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
         erasePolylines();
 
         //Remove Ripple Effect
-        mapRipple.stopRippleMapAnimation();
+
+        if (mapRipple == null){
+            Toast.makeText(CustomerMapActivity.this, "", Toast.LENGTH_SHORT).show();
+        }else {
+            mapRipple.stopRippleMapAnimation();
+        }
+
+
+
 
         //Change Button text back
         mRequest.setText("Take a Hyke");
@@ -760,6 +795,7 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
 
 
                     //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,17));
+
                     //mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
                     //mMap.animateCamera(CameraUpdateFactory.zoomTo(16));
                     if(!getDriversAroundStarted)
@@ -951,7 +987,7 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
 
         alertDialog.setView(layout_pwd);
 
-        //Call Button
+        //Call Button and function
 
         alertDialog.setPositiveButton("CHANGE PASSWORD", new DialogInterface.OnClickListener() {
             @Override

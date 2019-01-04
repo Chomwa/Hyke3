@@ -87,7 +87,7 @@ public class RegistrationCustomerProfile extends AppCompatActivity {
             }
         });
 
-        //create a list of items for the spinner.
+        //create a list of items for the spinner./ have not saved this information to the database
         String[] items = new String[]{"Gender","Male", "Female"};
         //create an adapter to describe how the items are displayed, adapters are used in several places in android.
         //There are multiple variations of this, but this is the basic variant.
@@ -134,6 +134,7 @@ public class RegistrationCustomerProfile extends AppCompatActivity {
             }
         });
     }
+    //if user information already exists in the database retrieve it
     private void getUserInfo(){
         mCustomerDatabase.addValueEventListener(new ValueEventListener() {
             @Override
@@ -141,11 +142,11 @@ public class RegistrationCustomerProfile extends AppCompatActivity {
                 if(dataSnapshot.exists() && dataSnapshot.getChildrenCount()>0){
                     Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
                     if(map.get("first name")!=null) {
-                        mName = map.get("name").toString();
+                        mName = map.get("first name").toString();
                         mNameField.setText(mName);
                     }
                     if(map.get("last name")!=null){
-                        mLastName = map.get("name").toString();
+                        mLastName = map.get("last name").toString();
                         mLastNameField.setText(mLastName);
                     }
                     if(map.get("Email")!=null) {
@@ -170,7 +171,7 @@ public class RegistrationCustomerProfile extends AppCompatActivity {
     }
 
 
-
+    //Saving information inputed to the customer database
     private void saveUserInformation() {
         mName = mNameField.getText().toString();
         mLastName = mLastNameField.getText().toString();
@@ -186,6 +187,8 @@ public class RegistrationCustomerProfile extends AppCompatActivity {
         mCustomerDatabase.updateChildren(userInfo);
 
 
+
+        // Saving profile image to the database
         if(resultUri != null) {
 
             StorageReference filePath = FirebaseStorage.getInstance().getReference().child("profile_images").child(userID).child("Personal Information");

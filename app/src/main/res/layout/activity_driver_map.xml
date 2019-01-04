@@ -55,8 +55,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/workingSwitch"
+                android:id="@+id/route"
                 android:layout_margin="20sp"
-                app:cardElevation="10dp">
+                app:cardElevation="10dp"
+                android:visibility="visible">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -77,7 +79,7 @@
                             android:src="@drawable/ic_pin_drop_black_24dp" />
 
                         <fragment
-                            android:id="@+id/place_autocomplete_fragment"
+                            android:id="@+id/place_location"
                             android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -88,9 +90,8 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:layout_margin="20sp"
+                        android:layout_margin="5sp"
                         android:background="@color/dividerColor2" />
-
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -115,8 +116,95 @@
                     </LinearLayout>
 
                 </LinearLayout>
+
             </android.support.v7.widget.CardView>
 
+            <Button
+                android:id="@+id/set_route"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Set Route"
+                android:layout_gravity="center"
+                android:textColor="@android:color/white"
+                android:visibility="gone"
+                android:background="#9f0e1c"/>
+
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/workingSwitch"
+                android:id="@+id/passengerDetails"
+                android:layout_margin="20sp"
+                app:cardElevation="10dp"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/userimage_icon_2"
+                        android:id="@+id/passenger_number_text" />
+
+                    <EditText
+                        android:id="@+id/passenger_number"
+                        android:layout_width="wrap_content"
+                        android:inputType="number"
+                        android:hint="Number of Passengers"
+                        android:layout_height="wrap_content"
+                        android:background="@null"/>
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_margin="1sp"
+                    android:background="@color/dividerColor2" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ZMW charge per passenger"
+                        android:layout_weight="3"
+                        android:id="@+id/passenger_charge_text" />
+
+                    <EditText
+                        android:id="@+id/passenger_charge"
+                        android:layout_width="wrap_content"
+                        android:inputType="number"
+                        android:layout_height="wrap_content"
+                        android:background="@null"/>
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <Button
+                android:id="@+id/set_passenger_details"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Done"
+                android:visibility="gone"
+                android:layout_gravity="center"
+                android:textColor="@android:color/white"
+                android:background="#9f0e1c"/>
 
         </LinearLayout>
 

@@ -89,7 +89,7 @@
                     <View
                         android:layout_width="match_parent"
                         android:layout_height="1dp"
-                        android:layout_margin="20sp"
+                        android:layout_margin="5sp"
                         android:background="@color/dividerColor2"/>
 
 
@@ -135,7 +135,7 @@
                 android:orientation="horizontal"
                 android:visibility="gone">
 
-                <ImageView
+                <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/driverProfileImage"
                     android:layout_width="100sp"
                     android:layout_height="100sp"

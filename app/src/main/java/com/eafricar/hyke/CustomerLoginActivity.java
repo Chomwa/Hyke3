@@ -66,6 +66,8 @@ public class CustomerLoginActivity extends AppCompatActivity implements View.OnC
     private TextView mText, mForgotPassword;
 
     private FirebaseAuth mAuth;
+    private FirebaseDatabase mSignInCustomerDatabase;
+    private DatabaseReference mUsers;
     private FirebaseAuth.AuthStateListener firebaseAuthListener;
 
     private LinearLayout mRegistration_Section;
@@ -98,6 +100,8 @@ public class CustomerLoginActivity extends AppCompatActivity implements View.OnC
         setContentView(R.layout.activity_customer_login);
 
         mAuth = FirebaseAuth.getInstance();
+        mSignInCustomerDatabase = FirebaseDatabase.getInstance();
+        mUsers = mSignInCustomerDatabase.getReference("Users");
 
         firebaseAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -150,25 +154,8 @@ public class CustomerLoginActivity extends AppCompatActivity implements View.OnC
         mLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String email = mEmailField.getText().toString();
-                final String password = mPassword.getText().toString();
-                if (email.isEmpty()){
-                    mEmailField.setError("Email is Required");
-                    mEmailField.requestFocus();
-                    return;
-                }if (password.isEmpty()){
-                    mPassword.setError("Password is Required");
-                    mPassword.requestFocus();
-                } else{
-                mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(CustomerLoginActivity.this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(!task.isSuccessful()){
-                            Toast.makeText(CustomerLoginActivity.this, "sign in error", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-                }
+
+                SignInRegisteredUser();
 
             }
         });
@@ -268,6 +255,44 @@ public class CustomerLoginActivity extends AppCompatActivity implements View.OnC
                 .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, signInOptions)
                 .build();
+    }
+
+    private void SignInRegisteredUser() {
+
+        final String email = mEmailField.getText().toString();
+        final String password = mPassword.getText().toString();
+        //set errors
+        if (email.isEmpty()){
+            mEmailField.setError("Email is Required");
+            mEmailField.requestFocus();
+            return;
+        }if (password.isEmpty()) {
+            mPassword.setError("Password is Required");
+            mPassword.requestFocus();
+        }if ((mPassword.getText().toString().length()<6)){
+            mPassword.setError("Password should not be less than 6 characters");
+            mPassword.requestFocus();
+        } else{
+            mAuth.signInWithEmailAndPassword(email, password)
+                    .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                        @Override
+                        public void onSuccess(AuthResult authResult) {
+                            Toast.makeText(CustomerLoginActivity.this, "Login Successful!", Toast.LENGTH_SHORT)
+                                    .show();
+                        }
+                    })
+
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(CustomerLoginActivity.this, "Failed: " +e.getMessage(), Toast.LENGTH_SHORT)
+                                    .show();
+
+                        }
+                    });
+        }
+
+
     }
 
     //forgot password function
@@ -456,7 +481,7 @@ public class CustomerLoginActivity extends AppCompatActivity implements View.OnC
     private void saveUserInformation() {
         userID = mAuth.getCurrentUser().getUid();
 
-        mCustomerDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(userID);
+        mCustomerDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(userID).child("Personal Information");
 
         mName = mFirstNameField.getText().toString();
         mLastName = mLastNameField.getText().toString();
@@ -474,7 +499,7 @@ public class CustomerLoginActivity extends AppCompatActivity implements View.OnC
 
         if (resultUri != null) {
 
-            StorageReference filePath = FirebaseStorage.getInstance().getReference().child("profile_images").child(userID);
+            StorageReference filePath = FirebaseStorage.getInstance().getReference().child("profile_images").child(userID).child("Personal Information");
             Bitmap bitmap = null;
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(getApplication().getContentResolver(), resultUri);

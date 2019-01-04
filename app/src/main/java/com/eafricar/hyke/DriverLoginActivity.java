@@ -142,25 +142,8 @@ public class DriverLoginActivity extends AppCompatActivity implements View.OnCli
         mLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final String email = mEmailField.getText().toString();
-                final String password = mPassword.getText().toString();
-                if (email.isEmpty()){
-                    mEmailField.setError("Email is Required");
-                    mEmailField.requestFocus();
-                    return;
-                }if (password.isEmpty()){
-                    mPassword.setError("Password is Required");
-                    mPassword.requestFocus();
-                } else{
-                mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(DriverLoginActivity.this, new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(!task.isSuccessful()){
-                            Toast.makeText(DriverLoginActivity.this, "sign in error", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-                }
+
+                SignInRegisteredUser();
 
             }
         });
@@ -261,6 +244,42 @@ public class DriverLoginActivity extends AppCompatActivity implements View.OnCli
                 .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, signInOptions)
                 .build();
+    }
+
+    private void SignInRegisteredUser() {
+
+        final String email = mEmailField.getText().toString();
+        final String password = mPassword.getText().toString();
+        //set errors
+        if (email.isEmpty()){
+            mEmailField.setError("Email is Required");
+            mEmailField.requestFocus();
+            return;
+        }if (password.isEmpty()) {
+            mPassword.setError("Password is Required");
+            mPassword.requestFocus();
+        }if ((mPassword.getText().toString().length()<6)){
+            mPassword.setError("Password should not be less than 6 characters");
+            mPassword.requestFocus();
+        } else{
+            mAuth.signInWithEmailAndPassword(email, password)
+                    .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
+                        @Override
+                        public void onSuccess(AuthResult authResult) {
+                            Toast.makeText(DriverLoginActivity.this, "Login Successful!", Toast.LENGTH_SHORT)
+                                    .show();
+                        }
+                    })
+
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(DriverLoginActivity.this, "Failed: " +e.getMessage(), Toast.LENGTH_SHORT)
+                                    .show();
+
+                        }
+                    });
+        }
     }
 
 

@@ -46,7 +46,7 @@ public class CustomerRegistration extends AppCompatActivity {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 //take user to phone number authentication
                 if(user!=null){
-                    Intent intent = new Intent(CustomerRegistration.this, PhoneNumberVerification.class);
+                    Intent intent = new Intent(CustomerRegistration.this, CustomerMapActivity.class);
                     startActivity(intent);
                     finish();
                     return;
@@ -58,7 +58,7 @@ public class CustomerRegistration extends AppCompatActivity {
         mPassword = (EditText) findViewById(R.id.password);
 
         mRegistration = (Button) findViewById(R.id.signup);
-        mLogin = (Button) findViewById(R.id.login_page);
+    //    mLogin = (Button) findViewById(R.id.login_page);
 
         mRegistration.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,7 +68,7 @@ public class CustomerRegistration extends AppCompatActivity {
             }
         });
 
-        mLogin.setOnClickListener(new View.OnClickListener() {
+/*        mLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //don't need to create a new intent instead finish customer login here
@@ -77,7 +77,7 @@ public class CustomerRegistration extends AppCompatActivity {
                 finish();
                 return;
             }
-        });
+        }); */
     }
 
     private void RegisterNewCustomerUser() {

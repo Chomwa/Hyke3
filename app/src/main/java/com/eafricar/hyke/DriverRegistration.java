@@ -45,7 +45,7 @@ public class DriverRegistration extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if(user!=null){
-                    Intent intent = new Intent(DriverRegistration.this, PhoneNumberVerification.class);
+                    Intent intent = new Intent(DriverRegistration.this, DriverLicenseDetails.class);
                     startActivity(intent);
                     finish();
                     return;
@@ -57,7 +57,7 @@ public class DriverRegistration extends AppCompatActivity {
         mPassword = (EditText) findViewById(R.id.password);
 
         mRegistration = (Button) findViewById(R.id.signup);
-        mLogin = (Button) findViewById(R.id.login_page);
+       // mLogin = (Button) findViewById(R.id.login_page);
 
 
         mRegistration.setOnClickListener(new View.OnClickListener() {
@@ -70,7 +70,7 @@ public class DriverRegistration extends AppCompatActivity {
             }
         });
 
-        mLogin.setOnClickListener(new View.OnClickListener() {
+/*        mLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(DriverRegistration.this, CustomerLoginActivity.class);
@@ -78,7 +78,7 @@ public class DriverRegistration extends AppCompatActivity {
                 finish();
                 return;
             }
-        });
+        }); */
     }
 
     private void RegisterNewDriverUser() {

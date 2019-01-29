@@ -6,4 +6,7 @@
 
     <color name="dividerColor">#1F000000</color>
     <color name="dividerColor2">#9f0e1c</color>
+
+    <color name="duskYellow">#998912</color>
+    <color name="lightGrey">#acabac</color>
 </resources>

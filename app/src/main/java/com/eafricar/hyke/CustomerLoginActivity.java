@@ -340,12 +340,12 @@ public class CustomerLoginActivity extends AppCompatActivity /*implements View.O
                 });
             }
         });
-        alertDialog.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
+           alertDialog.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
                 dialogInterface.dismiss();
             }
-        });
+        }).show();
 
     }
 

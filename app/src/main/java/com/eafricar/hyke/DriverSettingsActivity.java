@@ -40,7 +40,7 @@ import java.util.Map;
 
 public class DriverSettingsActivity extends AppCompatActivity {
 
-    private EditText mNameField, mPhoneField, mCarField;
+    private EditText mNameField, mLastNameField, mPhoneField, mCarField;
 
     private Button mBack, mConfirm;
 
@@ -51,6 +51,7 @@ public class DriverSettingsActivity extends AppCompatActivity {
 
     private String userID;
     private String mName;
+    private String mLastName;
     private String mPhone;
     private String mCar;
     private String mService;
@@ -68,19 +69,21 @@ public class DriverSettingsActivity extends AppCompatActivity {
 
 
         mNameField = (EditText) findViewById(R.id.name);
+        mLastNameField = (EditText) findViewById(R.id.lastname);
         mPhoneField = (EditText) findViewById(R.id.phone);
         mCarField = (EditText) findViewById(R.id.car);
 
         mProfileImage = (ImageView) findViewById(R.id.profileImage);
 
         mRadioGroup = (RadioGroup) findViewById(R.id.radioGroup);
+        mRadioGroup.check(R.id.HykeShared);
 
         mBack = (Button) findViewById(R.id.back);
         mConfirm = (Button) findViewById(R.id.confirm);
 
         mAuth = FirebaseAuth.getInstance();
         userID = mAuth.getCurrentUser().getUid();
-        mDriverDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(userID).child("Personal Information");
+        mDriverDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(userID);
 
         getUserInfo();
 
@@ -118,6 +121,10 @@ public class DriverSettingsActivity extends AppCompatActivity {
                         mName = map.get("first name").toString();
                         mNameField.setText(mName);
                     }
+                    if(map.get("last name")!=null){
+                        mLastName = map.get("last name").toString();
+                        mLastNameField.setText(mLastName);
+                    }
                     if(map.get("phone")!=null){
                         mPhone = map.get("phone").toString();
                         mPhoneField.setText(mPhone);
@@ -129,13 +136,13 @@ public class DriverSettingsActivity extends AppCompatActivity {
                     if(map.get("service")!=null){
                         mService = map.get("service").toString();
                         switch (mService){
-                            case"Hyke Shared":
+                            case"HyKeShared":
                                 mRadioGroup.check(R.id.HykeShared);
                                 break;
-                            case"Hyke Personal":
+                            case"HyKePersonal":
                                 mRadioGroup.check(R.id.HykePersonal);
                                 break;
-                            case"Hyke Taxi":
+                            case"HyKeTaxi":
                                 mRadioGroup.check(R.id.HykeTaxi);
                                 break;
                         }
@@ -157,6 +164,7 @@ public class DriverSettingsActivity extends AppCompatActivity {
 
     private void saveUserInformation() {
         mName = mNameField.getText().toString();
+        mLastName = mLastNameField.getText().toString();
         mPhone = mPhoneField.getText().toString();
         mCar = mCarField.getText().toString();
 
@@ -172,6 +180,7 @@ public class DriverSettingsActivity extends AppCompatActivity {
 
         Map userInfo = new HashMap();
         userInfo.put("first name", mName);
+        userInfo.put("last name", mLastName);
         userInfo.put("phone", mPhone);
         userInfo.put("car", mCar);
         userInfo.put("service", mService);
@@ -179,7 +188,7 @@ public class DriverSettingsActivity extends AppCompatActivity {
 
         if(resultUri != null) {
 
-            StorageReference filePath = FirebaseStorage.getInstance().getReference().child("profile_images").child(userID).child("Personal Information");
+            StorageReference filePath = FirebaseStorage.getInstance().getReference().child("profile_images").child(userID);
             Bitmap bitmap = null;
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(getApplication().getContentResolver(), resultUri);

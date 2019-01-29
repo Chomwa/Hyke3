@@ -78,6 +78,8 @@ public class DriverRegistration extends AppCompatActivity {
         passwordIds = addViewIds(R.id.enterYourPassword, R.id.password, R.id.confirm_password);
         bioIds = addViewIds(R.id.first_name, R.id.last_name, R.id.whatAreYourFullnames);
         mEmailField = findViewById(R.id.email);
+        user = new User();
+        getUserEmail();
 
     }
 
@@ -86,8 +88,6 @@ public class DriverRegistration extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(firebaseAuthListener);
-        user = new User();
-        getUserEmail();
     }
 
     @Override
@@ -305,7 +305,7 @@ public class DriverRegistration extends AppCompatActivity {
                                                 "Registration Successful!", Toast.LENGTH_SHORT)
                                                 .show();
                                         Intent intent = new Intent(DriverRegistration.
-                                                this, CustomerLoginActivity.class);
+                                                this, DriverRegistration.class);
                                         startActivity(intent);
                                         finish();
                                     }
@@ -323,6 +323,9 @@ public class DriverRegistration extends AppCompatActivity {
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(DriverRegistration.this,
+                                e.getMessage(), Toast.LENGTH_SHORT)
+                                .show();
 
                     }
                 });

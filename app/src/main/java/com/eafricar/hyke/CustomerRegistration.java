@@ -318,6 +318,9 @@ public class CustomerRegistration extends AppCompatActivity{
                 .addOnFailureListener(new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(CustomerRegistration.this,
+                                e.getMessage(), Toast.LENGTH_SHORT)
+                                .show();
 
                     }
                 });

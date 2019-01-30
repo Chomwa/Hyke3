@@ -37,7 +37,6 @@ public class MyFirebaseMessaging extends FirebaseMessagingService{
 
             Log.d("HyKe",remoteMessage.getNotification().getBody());
             //we are sending a firebase message that contains the customers Latlng, so we convert message to Latlng
-            try {
 
                 LatLng customer_location = new Gson().fromJson(remoteMessage.getNotification().getBody(),LatLng.class);
 
@@ -49,11 +48,6 @@ public class MyFirebaseMessaging extends FirebaseMessagingService{
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
                 startActivity(intent);
-
-            }catch (IllegalStateException | JsonSyntaxException exception)
-            {
-
-            }
 
         }
 

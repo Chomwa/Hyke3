@@ -171,7 +171,7 @@ public class DriverSettingsActivity extends AppCompatActivity {
         mService = radioButton.getText().toString();
 
         Map userInfo = new HashMap();
-        userInfo.put("name", mName);
+        userInfo.put("first name", mName);
         userInfo.put("phone", mPhone);
         userInfo.put("car", mCar);
         userInfo.put("service", mService);

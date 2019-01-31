@@ -1,86 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
+    android:layout_width="fill_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@drawable/hyke_background_1"
-    tools:context=".DriverRegistration">
+    tools:context=".DriverRegistration"
+    android:fillViewport="false">
 
-    <ImageView
-        android:id="@+id/imageView6"
-        android:layout_width="match_parent"
-        android:layout_height="121dp"
-        app:srcCompat="@drawable/hyke_logo" />
+    <!-- Inserts the registration layout -->
+    <include layout="@layout/registration_layout"/>
 
-    <EditText
-        android:id="@+id/email"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="10dp"
-        android:background="@drawable/edit_text_bottom_border"
-        android:ems="10"
-        android:hint="Email"
-        android:inputType="textEmailAddress"
-        android:padding="10dp"
-        android:textAlignment="textStart"
-        android:textColorHint="#cccccc" />
-
-    <EditText
-        android:id="@+id/password"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="5dp"
-        android:background="@drawable/edit_text_bottom_border"
-        android:ems="10"
-        android:hint="Password"
-        android:inputType="textPassword"
-        android:padding="10dp"
-        android:textAlignment="viewStart"
-        android:textColorHint="#cccccc" />
-
-    <Button
-        android:id="@+id/signup"
-        style="@style/button_style"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="20dp"
-        android:text="Sign Up"
-        android:textAllCaps="false"
-        android:textColor="#FFFF" />
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#ffffff"
-            android:textStyle="italic"
-            android:text="Do you already have an account?"
-            android:textAllCaps="false"/>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="#ffffff"
-            style="@style/button_style2"
-            android:text="Log In"
-            android:textAllCaps="false"
-            android:textStyle="bold"
-            android:id="@+id/login_page"/>
-
-    </LinearLayout>
-
-</LinearLayout>
+</ScrollView>

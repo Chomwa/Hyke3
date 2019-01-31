@@ -29,6 +29,8 @@
             android:layout_marginRight="5dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/edit_text_bottom_border"
+            android:drawableLeft="@drawable/ic_email_white_24dp"
+            android:drawablePadding="2sp"
             android:ems="10"
             android:hint="Email"
             android:inputType="textEmailAddress"
@@ -46,6 +48,8 @@
             android:layout_marginRight="5dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/edit_text_bottom_border"
+            android:drawableLeft="@drawable/ic_lock_white_24dp"
+            android:drawablePadding="2sp"
             android:ems="10"
             android:hint="Password"
             android:inputType="textPassword"
@@ -67,7 +71,7 @@
             android:textAllCaps="false"
             android:id="@+id/login"/>
 
-        <TextView
+  <!--      <TextView
             android:id="@+id/textview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -76,9 +80,9 @@
             android:text="or connect with"
             android:textAlignment="center"
             android:textColor="#ffffff"
-            android:textStyle="italic" />
+            android:textStyle="italic" /> -->
 
-        <LinearLayout
+ <!--       <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -103,9 +107,9 @@
                 android:text="Sign In using your Phone number"
                 android:textAllCaps="false"
                 android:textColor="#fff" />
-        </LinearLayout>
+        </LinearLayout> -->
 
-        <LinearLayout
+  <!--  <LinearLayout
             android:id="@+id/prof_section"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -217,7 +221,7 @@
 
             </LinearLayout>
 
-        </LinearLayout>
+        </LinearLayout> -->
 
         <LinearLayout
             android:id="@+id/registration_section"
@@ -241,44 +245,6 @@
                 android:textColor="#ffffff"
                 android:textStyle="italic|bold" />
 
-            <TextView
-                android:id="@+id/registration_text_view2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="3dp"
-                android:text="In that case,you are missing out on:"
-                android:textAllCaps="false"
-                android:textColor="#ffffff"
-                android:textStyle="italic" />
-
-            <TextView
-                android:id="@+id/registration_text_view3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="3dp"
-                android:text="Cost Sharing with multiple  passengers and Low Rates"
-                android:textColor="#ffffff"
-                android:textStyle="normal" />
-
-            <TextView
-                android:id="@+id/registration_text_view4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:text="A ride focused on your safety"
-                android:textColor="#ffffff"
-                android:textStyle="normal" />
-
-            <TextView
-                android:id="@+id/registration_text_view5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:text="Making friends and Connections"
-                android:textColor="#ffffff"
-                android:textStyle="normal" />
 
             <Button
                 android:id="@+id/create_account"

@@ -56,13 +56,23 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/buttons"
+                android:id="@+id/location_section"
                 android:layout_margin="20sp"
-                app:cardElevation="10dp">
+                app:cardElevation="10dp"
+                android:visibility="gone">
 
                 <LinearLayout
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:src="@drawable/ic_cancel_maroon_24dp"
+                        android:layout_gravity="right"
+                        android:layout_margin="1dp"
+                        android:id="@+id/cancel"/>
 
                     <LinearLayout
                         android:weightSum="6"
@@ -72,8 +82,10 @@
 
                         <ImageView
                             android:layout_width="0dp"
-                            android:layout_gravity="center_vertical"
-                            android:src="@drawable/ic_pin_drop_black_24dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/newpickupmarker2"
+                            android:layout_marginLeft="15dp"
+                            android:textColor="#9f0e1c"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"/>
 
@@ -101,8 +113,10 @@
 
                         <ImageView
                             android:layout_width="0dp"
-                            android:layout_gravity="center_vertical"
-                            android:src="@drawable/ic_map_black_24dp"
+                            android:layout_gravity="center"
+                            android:src="@drawable/destinationmarker2"
+                            android:layout_marginLeft="15dp"
+                            android:textColor="#9f0e1c"
                             android:layout_height="wrap_content"
                             android:layout_weight="1"/>
 
@@ -116,6 +130,58 @@
                     </LinearLayout>
 
                 </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/buttons"
+                android:id="@+id/location_info_display_section"
+                android:layout_margin="20sp"
+                app:cardElevation="10dp"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:background="@drawable/customer_driver_info_section_background"
+                    android:weightSum="10">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="4"
+                        android:id="@+id/pickup_info_text"
+                        android:text=""
+                        android:layout_margin="5dp"
+                        android:layout_gravity="center"/>
+
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:src="@drawable/ic_arrow_forward_maroon_24dp"/>
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="4"
+                        android:id="@+id/destination_info_text"
+                        android:text=""
+                        android:layout_margin="5dp"
+                        android:layout_gravity="center"/>
+
+                    <ImageView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:src="@drawable/ic_edit_maroon_24dp"
+                        android:id="@+id/location_info_edit"
+                        android:layout_marginRight="2dp"/>
+
+                </LinearLayout>
+
             </android.support.v7.widget.CardView>
         </RelativeLayout>
 
@@ -131,16 +197,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
-                android:background="@android:color/white"
+                android:background="@drawable/customer_driver_info_section_background"
+                android:padding="3dp"
                 android:orientation="horizontal"
                 android:visibility="gone">
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/driverProfileImage"
-                    android:layout_width="100sp"
-                    android:layout_height="100sp"
+                    android:layout_width="200sp"
+                    android:layout_height="200sp"
                     android:padding="20sp"
-                    android:src="@mipmap/ic_default_user" />
+                    android:src="@mipmap/ic_default_user"
+                    android:layout_gravity="center"/>
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -152,6 +220,8 @@
                         android:id="@+id/driverName"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:textSize="24sp"
                         android:paddingBottom="10sp"
                         android:paddingTop="20sp" />
 
@@ -159,6 +229,7 @@
                         android:id="@+id/driverPhone"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textStyle="italic"
                         android:paddingBottom="10sp"
                         android:paddingTop="20sp" />
 
@@ -166,26 +237,127 @@
                         android:id="@+id/driverCar"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:textStyle="normal"
                         android:paddingBottom="10sp"
                         android:paddingTop="20sp" />
 
                     <RatingBar
                         android:id="@+id/ratingBar"
+                        android:theme="@style/RatingBar"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:numStars="5"
                         android:stepSize="0.1" />
                 </LinearLayout>
+
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@null"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:background="@android:color/white"
+                android:id="@+id/set_destination_section">
 
-                <RadioGroup
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Hi"
+                        android:layout_marginLeft="15dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="2dp"
+                        android:textSize="15sp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:layout_marginLeft="5dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginBottom="2dp"
+                        android:textSize="15sp"
+                        android:id="@+id/set_destination_section_name_text"/>
+
+                </LinearLayout>
+
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Where are you going?"
+                    android:layout_marginLeft="15dp"
+                    android:layout_marginBottom="5dp"
+                    android:textStyle="bold"
+                    android:textSize="20sp" />
+                <Button
+                    android:id="@+id/set_destination_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:layout_marginBottom="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:elevation="2dp"
+                    android:background="@drawable/button_background3"
+                    android:text="Set Destination"
+                    android:textColor="#fff"
+                    android:textAllCaps="false"
+                    android:textSize="20sp"/>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/white"
+                android:id="@+id/ride_request_section"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="2dp"
+                    android:layout_gravity="center">
+
+                    <ImageView
+                        android:layout_width="75dp"
+                        android:layout_height="75dp"
+                        android:layout_gravity="center"
+                        android:id="@+id/hyke_personal_pic"
+                        android:src="@drawable/hykepersonallogobw"
+                        android:layout_marginRight="3dp"/>
+
+                    <ImageView
+                        android:layout_width="75dp"
+                        android:layout_height="75dp"
+                        android:layout_gravity="center"
+                        android:id="@+id/hyke_shared_pic"
+                        android:src="@drawable/hykesharedlogbw"
+                        android:layout_marginRight="3dp"
+                        android:layout_marginLeft="3dp"/>
+
+                    <ImageView
+                        android:layout_width="75dp"
+                        android:layout_height="75dp"
+                        android:layout_gravity="center"
+                        android:id="@+id/hyke_taxi_pic"
+                        android:src="@drawable/hyketaxilogobw"
+                        android:layout_marginLeft="3dp"/>
+
+
+                </LinearLayout>
+
+           <!--     <RadioGroup
                     android:id="@+id/radioGroup"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -195,23 +367,20 @@
                         android:id="@+id/HykeShared"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="HyKe Shared"
-                        android:textColor="#fff"/>
+                        android:text="HyKeShared"/>
 
                     <RadioButton
                         android:id="@+id/HykePersonal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="HyKe Personal"
-                        android:textColor="#fff"/>
+                        android:text="HyKePersonal" />
 
                     <RadioButton
                         android:id="@+id/HykeTaxi"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="HyKe Taxi"
-                        android:textColor="#fff"/>
-                </RadioGroup>
+                        android:text="HyKeTaxi" />
+                </RadioGroup>  -->
 
             <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
@@ -224,14 +393,15 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <ImageView
+       <!--             <ImageView
                         android:id="@+id/img_Expandable"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="right"
                         android:layout_marginRight="10dp"
                         android:layout_marginBottom="2dp"
-                        android:src="@drawable/ic_keyboard_arrow_up_maroon_24dp"/>
+                        android:src="@drawable/ic_keyboard_arrow_up_maroon_24dp"/> -->
+
 
                     <Button
                         android:id="@+id/request"
@@ -241,9 +411,12 @@
                         android:layout_marginBottom="10dp"
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
-                        android:background="#9f0e1c"
-                        android:text="Take a HyKe"
-                        android:textColor="#fff" />
+                        android:elevation="2dp"
+                        android:background="@drawable/button_background3"
+                        android:text="Request a HyKe Ride"
+                        android:textColor="#fff"
+                        android:textAllCaps="false"
+                        android:textSize="20sp"/>
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 

@@ -24,20 +24,41 @@
             android:layout_gravity="center"
             android:layout_marginTop="10dp"/>
 
-        <EditText
-            android:id="@+id/name"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="center"
-            android:layout_marginBottom="20sp"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/edittext_background2"
-            android:ems="10"
-            android:hint="Name"
-            android:textAlignment="center"
-            android:textSize="20sp"
-            android:textStyle="normal" />
+            android:orientation="horizontal">
+            <EditText
+                android:id="@+id/name"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edittext_background2"
+                android:hint="First Name"
+                android:textAlignment="center"
+                android:layout_gravity="center"
+                android:layout_marginBottom="20sp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="2dp"
+                android:ems="10"
+                android:textSize="20sp"
+                android:textStyle="normal"/>
+            <EditText
+                android:id="@+id/lastname"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edittext_background2"
+                android:hint="Last Name"
+                android:textAlignment="center"
+                android:layout_gravity="center"
+                android:layout_marginBottom="20sp"
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="2dp"
+                android:ems="10"
+                android:textSize="20sp"
+                android:textStyle="normal" />
+        </LinearLayout>
 
         <EditText
             android:id="@+id/phone"
@@ -78,19 +99,19 @@
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Hyke Shared"
+                android:text="HyKeShared"
                 android:id="@+id/HykeShared"/>
             <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="HyKe Personal"
+                android:text="HyKePersonal"
                 android:id="@+id/HykePersonal"/>
 
             <RadioButton
                 android:id="@+id/HykeTaxi"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Hyke Taxi" />
+                android:text="HyKeTaxi" />
         </RadioGroup>
 
         <Button

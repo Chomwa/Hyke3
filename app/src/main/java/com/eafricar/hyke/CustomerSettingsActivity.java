@@ -72,7 +72,7 @@ public class CustomerSettingsActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
         userID = mAuth.getCurrentUser().getUid();
-        mCustomerDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(userID).child("Personal Information");
+        mCustomerDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(userID);
 
         getUserInfo();
 
@@ -152,7 +152,7 @@ public class CustomerSettingsActivity extends AppCompatActivity {
 
         if(resultUri != null) {
 
-            StorageReference filePath = FirebaseStorage.getInstance().getReference().child("profile_images").child(userID).child("Personal Information");
+            StorageReference filePath = FirebaseStorage.getInstance().getReference().child("profile_images").child(userID);
             Bitmap bitmap = null;
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(getApplication().getContentResolver(), resultUri);

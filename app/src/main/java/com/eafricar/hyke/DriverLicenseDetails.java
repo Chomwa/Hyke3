@@ -121,7 +121,7 @@ public class DriverLicenseDetails extends AppCompatActivity {
                 c.set(Calendar.YEAR, year);
                 c.set(Calendar.MONTH, monthOfYear);
                 c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                updateLabel();
+                updateLabel2();
             }
         };
 
@@ -150,7 +150,6 @@ public class DriverLicenseDetails extends AppCompatActivity {
                         .show();
             }
         });
-
 
         mNext.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -226,6 +225,13 @@ public class DriverLicenseDetails extends AppCompatActivity {
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
 
         mDriverDateOfBirth.setText(sdf.format(c.getTime()));
+    }
+
+    private void updateLabel2() {
+        String myFormat = "dd/MM/yy"; //In which you need put here
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+        mDriverExpiryDate.setText(sdf.format(c.getTime()));
     }
 
     private void saveUserInformation() {

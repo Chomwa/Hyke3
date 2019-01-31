@@ -58,7 +58,7 @@ import dmax.dialog.SpotsDialog;
 
 //import dmax.dialog.SpotsDialog;
 
-public class CustomerLoginActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener {
+public class CustomerLoginActivity extends AppCompatActivity /*implements View.OnClickListener , GoogleApiClient.OnConnectionFailedListener */{
 
     private EditText mEmailField, mPassword;
     private Button mLogin, mCreateAccount, mPhoneRegistration;
@@ -73,12 +73,12 @@ public class CustomerLoginActivity extends AppCompatActivity implements View.OnC
     private LinearLayout mRegistration_Section;
 
     //Google Sign in Method variables
-    private LinearLayout mProf_Section;
+  /*  private LinearLayout mProf_Section;
     private Button mNext, mSignOut;
     private SignInButton mSignIn;
     private EditText mFirstNameField, mLastNameField, mEmailProfSectionField, mPhoneField;
     private ImageView mProfilePic;
-    private GoogleApiClient googleApiClient;
+    private GoogleApiClient googleApiClient; */
 
     private static final String TAG = "Customer login";
     private static final int REQ_CODE = 9001;
@@ -124,9 +124,9 @@ public class CustomerLoginActivity extends AppCompatActivity implements View.OnC
         mLogin = (Button) findViewById(R.id.login);
         mCreateAccount = (Button) findViewById(R.id.create_account);
 
-        mPhoneRegistration = (Button) findViewById(R.id.phonenumberregistration);
+     //   mPhoneRegistration = (Button) findViewById(R.id.phonenumberregistration);
 
-        mText = (TextView) findViewById(R.id.textview);
+   //     mText = (TextView) findViewById(R.id.textview);
         mForgotPassword = (TextView) findViewById(R.id.text_forgot_password);
 
         //calling Dialog
@@ -160,7 +160,7 @@ public class CustomerLoginActivity extends AppCompatActivity implements View.OnC
             }
         });
 
-        mPhoneRegistration.setOnClickListener(new View.OnClickListener() {
+  /*      mPhoneRegistration.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(CustomerLoginActivity.this, PhoneNumberVerification.class);
@@ -168,9 +168,9 @@ public class CustomerLoginActivity extends AppCompatActivity implements View.OnC
                 finish();
                 return;
             }
-        });
+        }); */
 
-        mRegistration_Section = (LinearLayout) findViewById(R.id.registration_section);
+   /*     mRegistration_Section = (LinearLayout) findViewById(R.id.registration_section);
 
         //Calling Google Sign in method Variables.
         mProf_Section = (LinearLayout) findViewById(R.id.prof_section);
@@ -243,9 +243,9 @@ public class CustomerLoginActivity extends AppCompatActivity implements View.OnC
         });
 
 
-        mProf_Section.setVisibility(View.GONE);
+        mProf_Section.setVisibility(View.GONE); */
 
-        GoogleSignInOptions signInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+    /*    GoogleSignInOptions signInOptions = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestId()
                 .requestProfile()
@@ -254,7 +254,7 @@ public class CustomerLoginActivity extends AppCompatActivity implements View.OnC
         googleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, signInOptions)
-                .build();
+                .build(); */
     }
 
     private void SignInRegisteredUser() {
@@ -361,7 +361,7 @@ public class CustomerLoginActivity extends AppCompatActivity implements View.OnC
         mAuth.removeAuthStateListener(firebaseAuthListener);
     }
 
-    private void SignIn(){
+   /* private void SignIn(){
 
         Intent intent = Auth.GoogleSignInApi.getSignInIntent (googleApiClient);
         startActivityForResult(intent, REQ_CODE);
@@ -555,5 +555,5 @@ public class CustomerLoginActivity extends AppCompatActivity implements View.OnC
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Toast.makeText(CustomerLoginActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
 
-    }
+    } */
 }

@@ -45,6 +45,7 @@ public class CustomerCall extends AppCompatActivity {
     private IFCMservice mFCMService;
 
     private String customerId;
+    private String driverId;
 
     private static final String TAG = "Call activity";
 
@@ -113,7 +114,9 @@ public class CustomerCall extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot zoneSnapshot: dataSnapshot.getChildren()) {
-                    Log.i(TAG, zoneSnapshot.child("customerRequest").child("status").getValue(String.class));
+                    if (zoneSnapshot.child("customerRequest").child("customerRideId").getValue().equals(customerId)){
+                        driverId = zoneSnapshot.getKey();
+                    }
                 }
             }
 
@@ -137,6 +140,7 @@ public class CustomerCall extends AppCompatActivity {
 
                         if (response.body().success==1)
                         {
+                            FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverId).child("customerRequest").child("status").setValue("accepted");
                             Toast.makeText(CustomerCall.this, "Request Accepted", Toast.LENGTH_SHORT)
                                     .show();
 
@@ -166,6 +170,7 @@ public class CustomerCall extends AppCompatActivity {
 
                         if (response.body().success==1)
                         {
+                            FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverId).child("customerRequest").child("status").setValue("declined");
                             Toast.makeText(CustomerCall.this, "Request Declined", Toast.LENGTH_SHORT)
                                     .show();
 

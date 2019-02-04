@@ -17,6 +17,11 @@ import com.eafricar.hyke.Model.Sender;
 import com.eafricar.hyke.Model.Token;
 import com.eafricar.hyke.Remote.IFCMservice;
 import com.eafricar.hyke.Remote.IGoogleAPI;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -40,6 +45,8 @@ public class CustomerCall extends AppCompatActivity {
     private IFCMservice mFCMService;
 
     private String customerId;
+
+    private static final String TAG = "Call activity";
 
 
     @Override
@@ -68,7 +75,9 @@ public class CustomerCall extends AppCompatActivity {
 
             customerId = getIntent().getStringExtra("customer");
             getDirection(lat, lng);
+            Log.i("TAG", customerId);
         }
+        Log.i("TAG", customerId);
 
 
         //Request event
@@ -82,6 +91,7 @@ public class CustomerCall extends AppCompatActivity {
                 {
                     cancelBooking(customerId);
                 }
+
             }
         });
 
@@ -92,12 +102,26 @@ public class CustomerCall extends AppCompatActivity {
 
                 if (!TextUtils.isEmpty(customerId))
                 {
+                    Log.i("TAG", customerId);
                     acceptBooking(customerId);
                 }
 
             }
         });
+        Query mDriverRatingDb = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers");
+        mDriverRatingDb.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot zoneSnapshot: dataSnapshot.getChildren()) {
+                    Log.i(TAG, zoneSnapshot.child("customerRequest").child("status").getValue(String.class));
+                }
+            }
 
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.w(TAG, "onCancelled", databaseError.toException());
+            }
+        });
     }
 
     private void acceptBooking(String customerId) {

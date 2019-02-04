@@ -269,6 +269,8 @@ public class DriverLoginActivity extends AppCompatActivity /*implements View.OnC
                         public void onSuccess(AuthResult authResult) {
                             Toast.makeText(DriverLoginActivity.this, "Login Successful!", Toast.LENGTH_SHORT)
                                     .show();
+                            Intent intent = new Intent(DriverLoginActivity.this, DriverMapActivity.class);
+                            startActivity(intent);
                         }
                     })
 

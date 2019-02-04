@@ -48,6 +48,7 @@ import com.directions.route.RouteException;
 import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
 import com.eafricar.hyke.Common.Common;
+import com.eafricar.hyke.Common.FirebaseSanitizer;
 import com.eafricar.hyke.Model.Token;
 import com.eafricar.hyke.Remote.IFCMservice;
 import com.firebase.geofire.GeoFire;
@@ -130,7 +131,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     private DatabaseReference mDriverDatabase;
     private String userID;
 
-    private String mNavigationHeaderImageUrl, mName;
+    private String mNavigationHeaderImageUrl, mName, driverId;
 
     //tool bar variables
     private Toolbar mToolbar;
@@ -205,14 +206,14 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 if(dataSnapshot.exists() && dataSnapshot.getChildrenCount()>0){
                     Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
 
-                    if(map.get("profileImageUrl")!=null){
-                        mNavigationHeaderImageUrl = map.get("profileImageUrl").toString();
-                        Glide.with(getApplication()).load(mNavigationHeaderImageUrl).into(NavigationHeaderImage); //calling user profile picture into navigation header profile picture
-                    }
-                    if(map.get("profileImageUrl")!=null){
-                        mNavigationHeaderImageUrl = map.get("profileImageUrl").toString();
-                        Glide.with(getApplication()).load(mNavigationHeaderImageUrl).into(mToggleImage); // calling user profile picture into Toggle profile picture
-                    }
+//                    if(map.get("profileImageUrl")!=null){
+////                       mNavigationHeaderImageUrl = map.get("profileImageUrl").toString();
+//                        Glide.with(getApplication()).load(mNavigationHeaderImageUrl).into(NavigationHeaderImage); //calling user profile picture into navigation header profile picture
+//                    }
+//                    if(map.get("profileImageUrl")!=null){
+//                        mNavigationHeaderImageUrl = map.get("profileImageUrl").toString();
+//                        Glide.with(getApplication()).load(mNavigationHeaderImageUrl).into(mToggleImage); // calling user profile picture into Toggle profile picture
+//                    }
 
                 }
             }
@@ -420,15 +421,15 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
             }
         });  */
-
-
       updateFirebaseToken();
-        getAssignedCustomer();// Call customer when working switch is turned on/ refer to function
+      // Call customer when working switch is turned on/ refer to function
+      getAssignedCustomer();
+      checkRequestStatus();
     }
 
     private void updateFirebaseToken() {
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
         DatabaseReference tokens = database.getReference(Common.token_table);
 
         Token token = new Token(FirebaseInstanceId.getInstance().getToken());
@@ -437,7 +438,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     }
 
     private void getAssignedCustomer(){
-        String driverId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        driverId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference assignedCustomerRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverId).child("customerRequest").child("customerRideId");
         assignedCustomerRef.addValueEventListener(new ValueEventListener() {
             @Override
@@ -446,8 +447,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                     status = 1;
                     customerId = dataSnapshot.getValue().toString();
                     getAssignedCustomerPickupLocation();
-                    getAssignedCustomerDestination();
-                    getAssignedCustomerInfo();
+
                 }else{
                     endRide();
                 }
@@ -458,6 +458,29 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
             }
         });
     }
+
+    private void checkRequestStatus() {
+        DatabaseReference status = FirebaseDatabase.getInstance().getReference().child("Users")
+                .child("Drivers").child(driverId).child("customerRequest").child("status");
+        status.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.d("TAG", dataSnapshot.toString());
+                System.out.println(dataSnapshot);
+                if (dataSnapshot.exists() && dataSnapshot.getValue().toString().equals("accepted")){
+                    getAssignedCustomerDestination();
+                    getAssignedCustomerInfo();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+
 
     Marker pickupMarker;
     private DatabaseReference assignedCustomerPickupLocationRef;
@@ -692,6 +715,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                     String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
                     DatabaseReference refAvailable = FirebaseDatabase.getInstance().getReference("driversAvailable");
                     DatabaseReference refWorking = FirebaseDatabase.getInstance().getReference("driversWorking");
+
                     GeoFire geoFireAvailable = new GeoFire(refAvailable);
                     GeoFire geoFireWorking = new GeoFire(refWorking);
 
@@ -894,6 +918,23 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawerLayout); //calling the drawer layout
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        sanitizeRequest();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        sanitizeRequest();
+    }
+
+    public void sanitizeRequest() {
+        FirebaseSanitizer sanitizer = new FirebaseSanitizer();
+        sanitizer.removeCustomerRequest(driverId);
     }
 
 }

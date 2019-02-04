@@ -43,6 +43,7 @@ import com.directions.route.RouteException;
 import com.directions.route.Routing;
 import com.directions.route.RoutingListener;
 import com.eafricar.hyke.Common.Common;
+import com.eafricar.hyke.Common.FirebaseSanitizer;
 import com.eafricar.hyke.Model.FCMResponse;
 import com.eafricar.hyke.Model.Notification;
 import com.eafricar.hyke.Model.Sender;
@@ -160,6 +161,8 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
 
     //Send Notification
     private IFCMservice mService;
+    private static final String TAG = "Customer activity";
+
 
 
 
@@ -720,7 +723,7 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
                                     driverFound = true;
                                     driverFoundID = dataSnapshot.getKey();
 
-                                    if (driverFound = true) {
+                                    if (driverFound) {
                                          Toast.makeText(CustomerMapActivity.this, "Driver found", Toast.LENGTH_LONG).show();
 
                                          //send Notification
@@ -736,10 +739,9 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
                                     map.put("destination", destination);
                                     map.put("destinationLat", destinationLatLng.latitude);
                                     map.put("destinationLng", destinationLatLng.longitude);
+                                    map.put("status","pending");
                                     driverRef.updateChildren(map);
-
-                                    getDriverLocation();
-                                    getDriverInfo();
+                                    checkRequestStatus(driverFoundID);
                                     getHasRideEnded();
                                     mRequest.setText("Looking for Driver Location....");
 //                                    mRadioGroup.setVisibility(View.GONE);
@@ -782,6 +784,28 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
 
             @Override
             public void onGeoQueryError(DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void checkRequestStatus(String driverFoundID){
+        DatabaseReference status = FirebaseDatabase.getInstance().getReference().child("Users")
+                .child("Drivers").child(driverFoundID).child("customerRequest").child("status");
+        status.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String status = dataSnapshot.getValue().toString();
+                if (status.equals("accepted")){
+                    getDriverLocation();
+                    getDriverInfo();
+                }else if (status.equals("declined")) {
+                    getClosestDriver();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
             }
         });
@@ -1102,7 +1126,7 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
 
                     LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
 
-                 /*   if (number_calls++ ==1){
+                 /*   if (number_calls++ == 1){
 
                         mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
                         mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
@@ -1568,6 +1592,23 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
         });
     } */
 
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        sanitizeRequest();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        sanitizeRequest();
+    }
+
+    public void sanitizeRequest() {
+        FirebaseSanitizer sanitizer = new FirebaseSanitizer();
+        sanitizer.removeCustomerRequest(driverFoundID);
+    }
 
 }
 

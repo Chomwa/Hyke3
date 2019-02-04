@@ -79,7 +79,8 @@
             </intent-filter>
         </service>
 
-        <activity android:name=".CustomerCall"></activity>
+        <activity android:name=".CustomerCall" />
+        <activity android:name=".ContactUsActivity"></activity>
     </application>
 
 </manifest>

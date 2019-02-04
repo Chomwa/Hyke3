@@ -219,10 +219,10 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
                     mNavigationHeaderImageUrl = map.get("profileImageUrl").toString();
                     Glide.with(getApplication()).load(mNavigationHeaderImageUrl).into(NavigationHeaderImage);// putting profile picture in header image view
                 }
-                    if(map.get("profileImageUrl")!=null){
+       /*             if(map.get("profileImageUrl")!=null){
                         mNavigationHeaderImageUrl = map.get("profileImageUrl").toString();
                         Glide.with(getApplication()).load(mNavigationHeaderImageUrl).into(mToggleImage); // putting profile picture in tool bar toggle image
-                    }
+                    } */
               }
             }
 
@@ -236,17 +236,17 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists() && dataSnapshot.getChildrenCount()>0){
-                    if(dataSnapshot.child("first name")!=null){
-                        mNavigationHeaderTextFirstName.setText(dataSnapshot.child("first name").getValue().toString()); //navigation user first name
+                    if(dataSnapshot.child("firstName")!=null){
+                        mNavigationHeaderTextFirstName.setText(dataSnapshot.child("firstName").getValue().toString()); //navigation user first name
                     }
-                    if(dataSnapshot.child("first name")!=null){
-                        mSetDestinationName.setText(dataSnapshot.child("first name").getValue().toString() + ","); //navigation user first name
+                    if(dataSnapshot.child("firstName")!=null){
+                        mSetDestinationName.setText(dataSnapshot.child("firstName").getValue().toString() + ","); //Set first name on greeting in set destination section
                     }
-                    if(dataSnapshot.child("last name")!=null){
-                        mNavigationHeaderTextLastName.setText(dataSnapshot.child("last name").getValue().toString()); //navigation user last name
+                    if(dataSnapshot.child("lastName")!=null){
+                        mNavigationHeaderTextLastName.setText(dataSnapshot.child("lastName").getValue().toString()); //navigation user last name
                     }
-                    if(dataSnapshot.child("phone")!=null){
-                        mNavigationHeaderTextPhoneNumber.setText(dataSnapshot.child("phone").getValue().toString()); //navigation user phone number
+                    if(dataSnapshot.child("phoneNumber")!=null){
+                        mNavigationHeaderTextPhoneNumber.setText(dataSnapshot.child("phoneNumber").getValue().toString()); //navigation user phone number
                     }
                 }
             }
@@ -356,7 +356,7 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
 
 
                 destinationMarker = mMap.addMarker(new MarkerOptions().position(place.getLatLng())
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.destinationmarker2)));
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
 
                 //animate Camera Zoom
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(),17.0f));
@@ -928,11 +928,11 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists() && dataSnapshot.getChildrenCount()>0){
-                    if(dataSnapshot.child("first name")!=null){
-                        mDriverName.setText(dataSnapshot.child("first name").getValue().toString());
+                    if(dataSnapshot.child("firstName")!=null){
+                        mDriverName.setText(dataSnapshot.child("firstName").getValue().toString());
                     }
-                    if(dataSnapshot.child("phone")!=null){
-                        mDriverPhone.setText(dataSnapshot.child("phone").getValue().toString());
+                    if(dataSnapshot.child("phoneNumber")!=null){
+                        mDriverPhone.setText(dataSnapshot.child("phoneNumber").getValue().toString());
                     }
                     if(dataSnapshot.child("car")!=null){
                         mDriverCar.setText(dataSnapshot.child("car").getValue().toString());

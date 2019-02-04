@@ -117,16 +117,16 @@ public class DriverSettingsActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists() && dataSnapshot.getChildrenCount()>0){
                     Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
-                    if(map.get("first name")!=null){
-                        mName = map.get("first name").toString();
+                    if(map.get("firstName")!=null){
+                        mName = map.get("firstName").toString();
                         mNameField.setText(mName);
                     }
-                    if(map.get("last name")!=null){
-                        mLastName = map.get("last name").toString();
+                    if(map.get("lastName")!=null){
+                        mLastName = map.get("lastName").toString();
                         mLastNameField.setText(mLastName);
                     }
-                    if(map.get("phone")!=null){
-                        mPhone = map.get("phone").toString();
+                    if(map.get("phoneNumber")!=null){
+                        mPhone = map.get("phoneNumber").toString();
                         mPhoneField.setText(mPhone);
                     }
                     if(map.get("car")!=null){
@@ -179,9 +179,9 @@ public class DriverSettingsActivity extends AppCompatActivity {
         mService = radioButton.getText().toString();
 
         Map userInfo = new HashMap();
-        userInfo.put("first name", mName);
-        userInfo.put("last name", mLastName);
-        userInfo.put("phone", mPhone);
+        userInfo.put("firstName", mName);
+        userInfo.put("lastName", mLastName);
+        userInfo.put("phoneNumber", mPhone);
         userInfo.put("car", mCar);
         userInfo.put("service", mService);
         mDriverDatabase.updateChildren(userInfo);

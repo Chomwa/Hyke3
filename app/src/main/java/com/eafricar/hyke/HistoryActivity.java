@@ -125,11 +125,19 @@ public class HistoryActivity extends AppCompatActivity {
                     }
 
                     if(dataSnapshot.child("customerPaid").getValue() != null && dataSnapshot.child("driverPaidOut").getValue() == null){
-                        if(dataSnapshot.child("distance").getValue() != null){
-                            ridePrice = Double.valueOf(dataSnapshot.child("price").getValue().toString());
-                            Balance += ridePrice;
-                            mBalance.setText("Balance: " + String.valueOf(Balance) + " $");
-                        }
+
+
+                            if(dataSnapshot.child("distance").getValue() != null){
+                                if(dataSnapshot.child("price").getValue()== null){
+                                    ridePrice = 0.0;
+                                }else{
+                                    ridePrice = Double.valueOf(dataSnapshot.child("price").getValue().toString());
+                                }
+                                Balance += ridePrice;
+                                mBalance.setText("Balance: " + String.valueOf(Balance) + " ZMW");
+                            }
+
+
                     }
 
 

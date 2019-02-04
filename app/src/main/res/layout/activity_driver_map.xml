@@ -35,13 +35,13 @@
                 android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
                 app:title="@null">
 
-                <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+                <ImageView xmlns:app="http://schemas.android.com/apk/res-auto"
                     android:id="@+id/toolbarprofileImage"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
                     android:layout_gravity="left"
                     android:padding="3dp"
-                    android:src="@mipmap/ic_default_user" />
+                    android:src="@drawable/maroon_menu_3" />
             </android.support.v7.widget.Toolbar>
 
             <Switch
@@ -52,7 +52,7 @@
                 android:layout_margin="10sp"
                 android:text="Go Online" />
 
-            <android.support.v7.widget.CardView
+      <!--      <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/workingSwitch"
@@ -118,7 +118,7 @@
 
                 </LinearLayout>
 
-            </android.support.v7.widget.CardView>
+            </android.support.v7.widget.CardView>   -->
 
             <Button
                 android:id="@+id/set_route"

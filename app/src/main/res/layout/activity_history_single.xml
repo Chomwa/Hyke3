@@ -24,6 +24,41 @@
             android:layout_height="wrap_content"
             android:layout_margin="20sp"
             android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Your Ride Charge is "
+                    android:layout_marginBottom="3dp"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:id="@+id/ridePriceChargetxt"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textSize="18sp"
+                    android:text=""
+                    android:layout_marginBottom="3dp"
+                    android:layout_marginLeft="2dp"
+                    android:textStyle="bold"
+                    android:id="@+id/ridePricetxt"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Pending"
+                    android:textColor="@color/dividerColor2"
+                    android:layout_marginBottom="3dp"
+                    android:layout_marginLeft="10dp"
+                    android:textStyle="italic"
+                    android:id="@+id/ridePriceStatus"/>
+
+            </LinearLayout>
+
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -74,20 +109,71 @@
                     android:id="@+id/userPhone"/>
             </LinearLayout>
         </LinearLayout>
-        <RatingBar
-            android:layout_width="wrap_content"
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/ratingBar"
-            android:layout_gravity="center"
-            android:numStars="5"
-            android:stepSize="1"
-            android:theme="@style/RatingBar"
-            android:visibility="gone"/>
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:text="How was your last ride with this Driver?"
+                android:layout_margin="10dp"
+                android:layout_gravity="center"
+                android:visibility="gone"
+                android:id="@+id/rating_text"/>
+
+            <RatingBar
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/ratingBar"
+                android:layout_gravity="center"
+                android:numStars="5"
+                android:stepSize="1"
+                android:theme="@style/RatingBar"
+                android:visibility="gone"/>
+
+        </LinearLayout>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/cash_pay"
+            android:text="Pay with Cash"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            android:textColor="#fff"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="5dp"
+            android:elevation="2dp"
+            android:background="@drawable/button_background3"
+            android:visibility="gone"
+            android:enabled="false"/>
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/mobile_money_pay"
+            android:text="Pay with Mobile Money"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            android:textColor="#fff"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="5dp"
+            android:elevation="2dp"
+            android:background="@drawable/button_background3"
+            android:visibility="gone"
+            android:enabled="false"/>
+
         <Button
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/pay"
-            android:text="Pay Using PayPal"
+            android:text="Pay Using VISA/PayPal"
             android:textAllCaps="false"
             android:textSize="18sp"
             android:textColor="#fff"

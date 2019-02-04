@@ -209,10 +209,10 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                         mNavigationHeaderImageUrl = map.get("profileImageUrl").toString();
                         Glide.with(getApplication()).load(mNavigationHeaderImageUrl).into(NavigationHeaderImage); //calling user profile picture into navigation header profile picture
                     }
-                    if(map.get("profileImageUrl")!=null){
+             /*       if(map.get("profileImageUrl")!=null){
                         mNavigationHeaderImageUrl = map.get("profileImageUrl").toString();
                         Glide.with(getApplication()).load(mNavigationHeaderImageUrl).into(mToggleImage); // calling user profile picture into Toggle profile picture
-                    }
+                    } */
 
                 }
             }
@@ -227,13 +227,13 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists() && dataSnapshot.getChildrenCount()>0){
-                    if(dataSnapshot.child("first name")!=null){
+                    if(dataSnapshot.child("firstName")!=null){
            //             mNavigationHeaderTextFirstName.setText(dataSnapshot.child("first name").getValue().toString()); //navigation user first name
                     }
-                    if(dataSnapshot.child("last name")!=null){
+                    if(dataSnapshot.child("lastName")!=null){
              //           mNavigationHeaderTextLastName.setText(dataSnapshot.child("last name").getValue().toString()); //navigation user last name
                     }
-                    if(dataSnapshot.child("phone")!=null){
+                    if(dataSnapshot.child("phoneNumber")!=null){
                //         mNavigationHeaderTextPhoneNumber.setText(dataSnapshot.child("phone").getValue().toString()); //navigation user phone number
                     }
                 }
@@ -565,11 +565,11 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists() && dataSnapshot.getChildrenCount()>0){
                     Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
-                    if(map.get("first name")!=null){
-                        mCustomerName.setText(map.get("first name").toString());
+                    if(map.get("firstName")!=null){
+                        mCustomerName.setText(map.get("firstName").toString());
                     }
-                    if(map.get("phone")!=null){
-                        mCustomerPhone.setText(map.get("phone").toString());
+                    if(map.get("phoneNumber")!=null){
+                        mCustomerPhone.setText(map.get("phoneNumber").toString());
                     }
                     if(map.get("profileImageUrl")!=null){
                         Glide.with(getApplication()).load(map.get("profileImageUrl").toString()).into(mCustomerProfileImage);
@@ -680,7 +680,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 if(getApplicationContext()!=null){
 
                     if(!customerId.equals("") && mLastLocation!=null && location != null){
-                        rideDistance += mLastLocation.distanceTo(location)/1000;
+                        rideDistance += mLastLocation.distanceTo(location)/1000; //getting ride distance
                     }
                     mLastLocation = location;
 

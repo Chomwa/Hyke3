@@ -1,14 +1,19 @@
 package com.eafricar.hyke.Model;
 
+import java.net.URI;
+
 public class User {
 
     private String email, password, firstname, lastname, phoneNumber;
+
+    private URI resultUri;
 
     public User() {
         this.email = null;
         this.password = null;
         this.firstname = null;
         this.lastname = null;
+
     }
 
     public User(String email, String password) {

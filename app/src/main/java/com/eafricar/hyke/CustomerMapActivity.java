@@ -1311,7 +1311,11 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
         }else if (id == R.id.change_password){
                     showDialogChangePwd();
 
-        }else if (id == R.id.logout){
+        }else if (id == R.id.contact_us){
+            Intent searchIntent = new Intent(CustomerMapActivity.this, ContactUsActivity.class);
+            startActivity(searchIntent);
+            overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
+        } else if (id == R.id.logout){
             FirebaseAuth.getInstance().signOut();
             Intent intent = new Intent(CustomerMapActivity.this, MainActivity.class);
             startActivity(intent);

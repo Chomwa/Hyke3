@@ -880,7 +880,11 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
             startActivity(searchIntent);
             overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
             //Log out function
-        }else if (id == R.id.logout){
+        }else if (id == R.id.contact_us){
+            Intent searchIntent = new Intent(DriverMapActivity.this, ContactUsActivity.class);
+            startActivity(searchIntent);
+            overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
+        } else if (id == R.id.logout){
             isLoggingOut = true;
 
             disconnectDriver(); //refer to function

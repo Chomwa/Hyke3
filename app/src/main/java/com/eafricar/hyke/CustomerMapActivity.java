@@ -742,7 +742,7 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
                                     map.put("status","pending");
                                     driverRef.updateChildren(map);
                                     checkRequestStatus(driverFoundID);
-                                    getHasRideEnded();
+
                                     mRequest.setText("Looking for Driver Location....");
 //                                    mRadioGroup.setVisibility(View.GONE);
 
@@ -795,12 +795,15 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
         status.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String status = dataSnapshot.getValue().toString();
-                if (status.equals("accepted")){
-                    getDriverLocation();
-                    getDriverInfo();
-                }else if (status.equals("declined")) {
-                    getClosestDriver();
+                if (dataSnapshot.getValue()!=null && dataSnapshot.exists()) {
+                    String status = dataSnapshot.getValue().toString();
+                    if (status.equals("accepted")) {
+                        getDriverLocation();
+                        getDriverInfo();
+                        getHasRideEnded();
+                    } else if (status.equals("declined")) {
+                        getClosestDriver();
+                    }
                 }
             }
 

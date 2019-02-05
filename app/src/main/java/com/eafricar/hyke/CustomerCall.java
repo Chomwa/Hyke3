@@ -114,7 +114,7 @@ public class CustomerCall extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot zoneSnapshot: dataSnapshot.getChildren()) {
-                    if (zoneSnapshot.child("customerRequest").child("customerRideId").getValue().equals(customerId)){
+                    if (dataSnapshot.exists() && dataSnapshot.child("customerRequest").child("customerRideId").getValue()!=null && zoneSnapshot.child("customerRequest").child("customerRideId").getValue().equals(customerId) ){
                         driverId = zoneSnapshot.getKey();
                     }
                 }

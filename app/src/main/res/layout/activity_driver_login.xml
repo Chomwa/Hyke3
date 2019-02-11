@@ -258,6 +258,30 @@
                 android:text="Create an Account"
                 android:textAllCaps="false"
                 android:textColor="#fff" />
+
+            <TextView
+                android:id="@+id/registration_text_view2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="5dp"
+                android:text="By tapping create an account, i agree to"
+                android:textAllCaps="false"
+                android:textColor="#ffffff"
+                android:textStyle="italic"
+                android:layout_gravity="center"/>
+
+            <TextView
+                android:id="@+id/registration_text_view3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="2dp"
+                android:text="HyKe's Terms and Conditions."
+                android:textAllCaps="false"
+                android:textColor="#ffffff"
+                android:textStyle="italic"
+                android:layout_gravity="center"/>
         </LinearLayout>
 
     </LinearLayout>

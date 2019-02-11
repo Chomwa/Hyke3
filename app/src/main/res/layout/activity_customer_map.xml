@@ -42,8 +42,8 @@
 
                     <ImageView xmlns:app="http://schemas.android.com/apk/res-auto"
                         android:id="@+id/toolbarprofileImage"
-                        android:layout_width="75dp"
-                        android:layout_height="75dp"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
                         android:layout_gravity="left"
                         android:padding="3dp"
                         android:src="@drawable/maroon_menu_3" />
@@ -198,8 +198,8 @@
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/driverProfileImage"
-                    android:layout_width="200sp"
-                    android:layout_height="200sp"
+                    android:layout_width="150sp"
+                    android:layout_height="150sp"
                     android:padding="20sp"
                     android:src="@mipmap/ic_default_user"
                     android:layout_gravity="center"/>

@@ -114,7 +114,7 @@ public class CustomerRegistration extends AppCompatActivity{
 
             case "Phone number":
                 userPhoneNumber = findViewById(R.id.phone);
-                autoSetUserPhoneNumber();
+           //     autoSetUserPhoneNumber();
                 if (isValidPhoneNumber()) {
                     userPhoneNumber.setText(getSanitizedPhoneNumber());
                     user.setPhoneNumber(userPhoneNumber.getText().toString());
@@ -299,10 +299,10 @@ public class CustomerRegistration extends AppCompatActivity{
                                         Toast.makeText(CustomerRegistration.this,
                                                 "Registration Successful!", Toast.LENGTH_SHORT)
                                                 .show();
-                                        Intent intent = new Intent(CustomerRegistration.
+                                     /*   Intent intent = new Intent(CustomerRegistration.
                                                 this, CustomerLoginActivity.class);
                                         startActivity(intent);
-                                        finish();
+                                        finish();*/
                                     }
                                 })
                                 .addOnFailureListener(new OnFailureListener() {

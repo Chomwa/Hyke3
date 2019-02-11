@@ -12,6 +12,7 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.NavigationView;
@@ -27,6 +28,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -227,14 +229,14 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists() && dataSnapshot.getChildrenCount()>0){
-                    if(dataSnapshot.child("firstName")!=null){
-           //             mNavigationHeaderTextFirstName.setText(dataSnapshot.child("first name").getValue().toString()); //navigation user first name
+                    if(dataSnapshot.child("firstName")!=null && dataSnapshot.exists()){
+                        mNavigationHeaderTextFirstName.setText(dataSnapshot.child("firstName").getValue().toString()); //navigation user first name
                     }
-                    if(dataSnapshot.child("lastName")!=null){
-             //           mNavigationHeaderTextLastName.setText(dataSnapshot.child("last name").getValue().toString()); //navigation user last name
+                    if(dataSnapshot.child("lastName")!=null && dataSnapshot.exists()){
+                        mNavigationHeaderTextLastName.setText(dataSnapshot.child("lastName").getValue().toString()); //navigation user last name
                     }
-                    if(dataSnapshot.child("phoneNumber")!=null){
-               //         mNavigationHeaderTextPhoneNumber.setText(dataSnapshot.child("phone").getValue().toString()); //navigation user phone number
+                    if(dataSnapshot.child("phoneNumber")!=null && dataSnapshot.exists()){
+                        mNavigationHeaderTextPhoneNumber.setText(dataSnapshot.child("phoneNumber").getValue().toString()); //navigation user phone number
                     }
                 }
             }
@@ -289,17 +291,42 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
             public void onClick(View v) {
                 switch(status){
                     case 1:
-                        status=2;
-                        erasePolylines(); //remove existing poly lines on map
-                        if(destinationLatLng.latitude!=0.0 && destinationLatLng.longitude!=0.0){
-                            getRouteToMarker(destinationLatLng); // set new poly line
-                        }
-                        mRideStatus.setText("drive completed");//Changing Button text
+                        new AlertDialog.Builder(DriverMapActivity.this)
+                                .setTitle("Begin Ride")
+                                .setMessage("Have you picked up your HyKer?")
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        status=2;
+                                        erasePolylines(); //remove existing poly lines on map
+                                        if(destinationLatLng.latitude!=0.0 && destinationLatLng.longitude!=0.0){
+                                            getRouteToMarker(destinationLatLng); // set new poly line
+                                        }
+                                        mRideStatus.setText("drive completed");//Changing Button text
+
+                                    }
+                                })
+                                .setNegativeButton("No", null)
+                                .show();
+
 
                         break;
                     case 2:
-                        recordRide(); //refer to function
-                        endRide(); //refer to function
+
+                        new AlertDialog.Builder(DriverMapActivity.this)
+                                .setTitle("Ride Ended?")
+                                .setMessage("Have you finished your Trip?")
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        recordRide(); //refer to function
+                                        endRide(); //refer to function
+
+                                    }
+                                })
+                                .setNegativeButton("No", null)
+                                .show();
+
                         break;
                 }
             }
@@ -445,10 +472,15 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 if(dataSnapshot.exists()){
                     status = 1;
                     customerId = dataSnapshot.getValue().toString();
-                    getAssignedCustomerPickupLocation();
-                    getAssignedCustomerDestination();
-                    getAssignedCustomerInfo();
+                    vibration();
+                    getRideDetails();
+
                 }else{
+                  /*  vibration();
+                    new android.support.v7.app.AlertDialog.Builder(DriverMapActivity.this)
+                            .setTitle("Ride Over!")
+                            .setPositiveButton("Done", null)
+                            .show();*/
                     endRide();
                 }
             }
@@ -457,6 +489,44 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
             public void onCancelled(DatabaseError databaseError) {
             }
         });
+    }
+
+    private void getRideDetails() {
+
+         //add vibration to act as notification
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(DriverMapActivity.this)
+                .setTitle("You have a Ride Request!!");
+
+        LayoutInflater inflater = this.getLayoutInflater();
+        View layout_driver = inflater.inflate(R.layout.driver_found, null); //add image to alert dialog from layout
+
+        alertDialog.setView(layout_driver);
+
+        alertDialog.setMessage("Do you want to get the passenger information")
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                        endRide();
+
+                        new android.support.v7.app.AlertDialog.Builder(DriverMapActivity.this)
+                                .setTitle("Ride Cancelled!")
+                                .setMessage("Your Ride has been Cancelled")
+                                .setPositiveButton("Done", null)
+                                .show();
+
+                    }
+                })
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        getAssignedCustomerPickupLocation();
+                        getAssignedCustomerDestination();
+                        getAssignedCustomerInfo();
+
+                    }
+                })
+                .show();
     }
 
     Marker pickupMarker;
@@ -502,7 +572,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                     .withListener(this)
                     .alternativeRoutes(false)
                     .waypoints(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), pickupLatLng)
-                    .key("AIzaSyAaxWUlhVnc2HgmvGyqk_qbFtaSJHRRlVg")
+                    .key("@string/google_maps_key")
                     .build();
             routing.execute();
         }
@@ -851,6 +921,21 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
     }
 
+    private Vibrator vibration() {
+
+        Vibrator v = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+
+        long[] pattern ={0,3000,3000};
+
+        v.vibrate(pattern, -1);
+        return v;
+    }
+
+    protected void onDestroy(){
+        super.onDestroy();
+        endRide();
+    }
+
     //@Override
     //public boolean onCreateOptionsMenu(Menu menu){
       //  getMenuInflater().inflate(R.menu.nav_drawer, menu);
@@ -875,7 +960,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
             intent.putExtra("customerOrDriver", "Drivers");
             startActivity(intent);
             overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left); //effect of sliding when accessing new class
-        }else if (id == R.id.settings){
+        }else if (id == R.id.profile){
             Intent searchIntent = new Intent(DriverMapActivity.this, DriverSettingsActivity.class); //intent to driver profile
             startActivity(searchIntent);
             overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
@@ -884,7 +969,13 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
             Intent searchIntent = new Intent(DriverMapActivity.this, ContactUsActivity.class);
             startActivity(searchIntent);
             overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
-        } else if (id == R.id.logout){
+        }else if (id == R.id.settings){
+            Intent searchIntent = new Intent(DriverMapActivity.this, SettingsActivity.class);
+            startActivity(searchIntent);
+            overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
+        }
+
+        else if (id == R.id.logout){
             isLoggingOut = true;
 
             disconnectDriver(); //refer to function

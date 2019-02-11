@@ -10,6 +10,7 @@ import android.location.Location;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Vibrator;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -463,7 +464,7 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
                 if (mPersonal.isPressed()){
                     mShared.setImageResource(R.drawable.hykesharedlogbw);
                     mTaxi.setImageResource(R.drawable.hyketaxilogobw);
-                    mPersonal.setImageResource(R.drawable.hykepersonallogo);
+                    mPersonal.setImageResource(R.drawable.hykepersonallogobw);
                 } else {
                     mShared.setImageResource(R.drawable.hykesharedlogbw);
                     mTaxi.setImageResource(R.drawable.hyketaxilogobw);
@@ -471,11 +472,17 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
 
                 }
 
-                mRequest.setText("Request a HyKe Personal Ride");
+            //    mRequest.setText("Request a HyKe Personal Ride");
 
 
                 //set request service string
-                requestService = ("HyKePersonal");
+          //      requestService = ("HyKePersonal");
+
+                new AlertDialog.Builder(CustomerMapActivity.this)
+                        .setTitle("Ooops!")
+                        .setMessage("HyKe Personal Service is still under the work shop. Please Choose another service")
+                        .setPositiveButton("Done", null)
+                        .show();
 
             }
         });
@@ -485,7 +492,7 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
             public void onClick(View view) {
 
                 if (mShared.isPressed()){
-                    mShared.setImageResource(R.drawable.hykesharedlog);
+                    mShared.setImageResource(R.drawable.hykesharedlogbw);
                     mTaxi.setImageResource(R.drawable.hyketaxilogobw);
                     mPersonal.setImageResource(R.drawable.hykepersonallogobw);
                 } else {
@@ -495,9 +502,15 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
 
                 }
 
-                mRequest.setText("Request a HyKe Shared Ride");
+              //  mRequest.setText("Request a HyKe Shared Ride");
 
-                requestService = ("HyKeShared");
+            //    requestService = ("HyKeShared");
+                new AlertDialog.Builder(CustomerMapActivity.this)
+                        .setTitle("Ooops!")
+                        .setMessage("HyKe Shared Service is still under the work shop. Please Choose another service")
+                        .setPositiveButton("Done", null)
+                        .show();
+
 
             }
         });
@@ -555,7 +568,23 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
     private void requestPickUpHere() {
 
         if (requestBol){
-            endRide();
+            new AlertDialog.Builder(this)
+                    .setTitle("Cancel Ride?")
+                    .setMessage("Are you sure you want to Cancel your Ride request?")
+                    .setNegativeButton("No", null)
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            endRide();
+
+                            new AlertDialog.Builder(CustomerMapActivity.this)
+                                    .setTitle("Ride Cancelled!")
+                                    .setPositiveButton("Done", null)
+                                    .show();
+                        }
+                    })
+                    .show();
+
 
 
         }else{
@@ -571,13 +600,16 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
                 switch (requestService){
                     case ("HyKeShared"):
                         if (mShared.isPressed()){
-                            requestService = ("HyKeShared");
+                            //requestService = ("HyKeShared");
+
                         }
 
                         break;
                     case ("HyKePersonal"):
                         if (mPersonal.isPressed()){
-                            requestService = ("HyKePersonal");}
+                         //   requestService = ("HyKePersonal");
+
+                        }
 
                         break;
 
@@ -626,11 +658,11 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
                 endRide();
                 return;
             }
-            // if (mPlace_Location!=null){
-            // pickupLocation = new LatLng(pickupLatLng.latitude,pickupLatLng.longitude); //get LatLng from Place auto fragment
+             if (mPlace_Location!=null){
+             pickupLocation = new LatLng(pickupLatLng.latitude,pickupLatLng.longitude); //get LatLng from Place auto fragment
 
-            //   mRequest.setText("Getting your Driver...."); //if location is set change button tex
-            // }
+            mRequest.setText("Getting your Driver...."); //if location is set change button tex
+             }
             else{
                 pickupLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()); //if pick up has not been set in place fragment get users current location as pick up location
                 //pickupLocation = pickupLatLng; // pickup location of place fragment
@@ -682,7 +714,7 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
                     .withListener(this)
                     .alternativeRoutes(false) //no alternative routes set
                     .waypoints(pickupLatLng, destinationLatLng) //points for drawing map
-                    .key("AIzaSyAaxWUlhVnc2HgmvGyqk_qbFtaSJHRRlVg") //google maps Api Key
+                    .key("@string/google_maps_key") //google maps Api Key
                     .build();
             routing.execute();
         }
@@ -724,7 +756,7 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
                                          Toast.makeText(CustomerMapActivity.this, "Driver found", Toast.LENGTH_LONG).show();
 
                                          //send Notification
-                                        sendNotificationRequestToDriver(driverFoundID);
+                                      //  sendNotificationRequestToDriver(driverFoundID);
                                     }
 
 
@@ -738,11 +770,15 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
                                     map.put("destinationLng", destinationLatLng.longitude);
                                     driverRef.updateChildren(map);
 
-                                    getDriverLocation();
-                                    getDriverInfo();
-                                    getHasRideEnded();
-                                    mRequest.setText("Looking for Driver Location....");
+                                    getInfo();
+
+
+
 //                                    mRadioGroup.setVisibility(View.GONE);
+
+                                    mShared.setVisibility(View.GONE);
+                                    mTaxi.setVisibility(View.GONE);
+                                    mPersonal.setVisibility(View.GONE);
 
 
 
@@ -785,6 +821,44 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
 
             }
         });
+    }
+
+    private void getInfo() {
+
+        vibration(); //add vibration to act as notification
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(CustomerMapActivity.this)
+                .setTitle("Driver Found!!");
+
+        LayoutInflater inflater = this.getLayoutInflater();
+        View layout_driver = inflater.inflate(R.layout.driver_found, null); //add image to alert dialog from layout
+
+        alertDialog.setView(layout_driver);
+
+        alertDialog.setMessage("Do you want to get the driver information")
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                        endRide();
+
+                        new AlertDialog.Builder(CustomerMapActivity.this)
+                                .setTitle("Ride Cancelled!")
+                                .setMessage("Your Ride has been Cancelled")
+                                .setPositiveButton("Done", null)
+                                .show();
+
+                    }
+                })
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        getDriverLocation();
+                        getDriverInfo();
+                        getHasRideEnded();
+                        mRequest.setText("Looking for Driver Location....");
+                    }
+                })
+                .show();
     }
 
 
@@ -855,6 +929,7 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
     |
     *-------------------------------------------------------------------*/
 
+    private static int number_calls;
     private void getDriverLocation(){
         driverLocationRef = FirebaseDatabase.getInstance().getReference().child("driversWorking").child(driverFoundID).child("l");
 
@@ -892,6 +967,16 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
                     if (distance<100){
                         mRequest.setText("Driver's Here");
                         mapRipple.stopRippleMapAnimation();
+
+                        if (number_calls++ ==1){
+                            vibration();
+                            new AlertDialog.Builder(CustomerMapActivity.this)
+                                    .setTitle("Your Driver has Arrived!")
+                                    .setPositiveButton("Ok", null)
+                                    .show();
+                        }
+
+
                     }else{
                         mRequest.setText("Driver Found: " + String.valueOf(distance) + " m away");
                     }
@@ -970,6 +1055,11 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
                 if(dataSnapshot.exists()){
 
                 }else{
+                    vibration();
+                    new AlertDialog.Builder(CustomerMapActivity.this)
+                            .setTitle("Your Ride Has Ended!")
+                            .setPositiveButton("Done", null)
+                            .show();
                     endRide();
                 }
             }
@@ -1092,7 +1182,7 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
     }
 
 
-    private static int number_calls;
+    //private static int number_calls;
     LocationCallback mLocationCallback = new LocationCallback(){
         @Override
         public void onLocationResult(LocationResult locationResult) {
@@ -1304,18 +1394,20 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
             intent.putExtra("customerOrDriver", "Customers");
             startActivity(intent);
             overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
-        }else if (id == R.id.settings){
+        }else if (id == R.id.profile){
             Intent searchIntent = new Intent(CustomerMapActivity.this, CustomerSettingsActivity.class);
             startActivity(searchIntent);
             overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
-        }else if (id == R.id.change_password){
-                    showDialogChangePwd();
-
         }else if (id == R.id.contact_us){
             Intent searchIntent = new Intent(CustomerMapActivity.this, ContactUsActivity.class);
             startActivity(searchIntent);
             overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
-        } else if (id == R.id.logout){
+        }else if (id == R.id.settings){
+            Intent searchIntent = new Intent(CustomerMapActivity.this, SettingsActivity.class);
+            startActivity(searchIntent);
+            overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
+        }
+        else if (id == R.id.logout){
             FirebaseAuth.getInstance().signOut();
             Intent intent = new Intent(CustomerMapActivity.this, MainActivity.class);
             startActivity(intent);
@@ -1327,107 +1419,7 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
         return true;
     }
 
-    //creating change password dialog box
-    private void showDialogChangePwd() {
 
-        //call AlertDialog
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(CustomerMapActivity.this);
-        alertDialog.setTitle("CHANGE PASSWORD");
-        alertDialog.setMessage("Please fill in all Information");
-
-        LayoutInflater inflater = this.getLayoutInflater();
-        View layout_pwd = inflater.inflate(R.layout.layout_change_pwd, null);
-
-        final MaterialEditText edtPassword = (MaterialEditText) layout_pwd.findViewById(R.id.edtPassword);
-        final MaterialEditText edtNewPassword = (MaterialEditText) layout_pwd.findViewById(R.id.edtNewPassword);
-        final MaterialEditText edtRepeatNewPassword = (MaterialEditText) layout_pwd.findViewById(R.id.edtRepeatPassword);
-
-        alertDialog.setView(layout_pwd);
-
-        //Call Button and function
-
-        alertDialog.setPositiveButton("CHANGE PASSWORD", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
-                final android.app.AlertDialog waitingDialog = new SpotsDialog(CustomerMapActivity.this);
-                waitingDialog.show();
-
-                if (edtNewPassword.getText().toString().equals(edtRepeatNewPassword.getText().toString()))
-                {
-                    String email = FirebaseAuth.getInstance().getCurrentUser().getEmail();
-
-                    //gettin auth credentials from the user for re-authentication
-
-                    AuthCredential credential = EmailAuthProvider.getCredential(email, edtPassword.getText().toString());
-                    FirebaseAuth.getInstance().getCurrentUser()
-                            .reauthenticate(credential)
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    if (task.isSuccessful()){
-                                        FirebaseAuth.getInstance().getCurrentUser()
-                                                .updatePassword(edtRepeatNewPassword.getText().toString())
-                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<Void> task) {
-                                                        if (task.isSuccessful()){
-
-                                                            //Update password information Column
-                                                            Map<String,Object> password = new HashMap<>();
-
-                                                            password.put("password", edtRepeatNewPassword.getText().toString());
-
-                                                            DatabaseReference customerReference = FirebaseDatabase.getInstance().getReference().child("Users").child("Customers").child(userID);
-                                                            customerReference.updateChildren(password)
-                                                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                                        @Override
-                                                                        public void onComplete(@NonNull Task<Void> task) {
-                                                                            if (task.isSuccessful())
-                                                                                Toast.makeText(CustomerMapActivity.this, "Password was changed Successfully", Toast.LENGTH_SHORT).show();
-                                                                            else
-                                                                                Toast.makeText(CustomerMapActivity.this, "Password was changed but not updated to Customer Information", Toast.LENGTH_SHORT).show();
-
-                                                                            waitingDialog.dismiss();
-
-                                                                        }
-                                                                    });
-
-
-
-                                                        }else {
-                                                            Toast.makeText(CustomerMapActivity.this, "Password could not be changed", Toast.LENGTH_SHORT).show();
-                                                        }
-                                                    }
-                                                });
-
-                                    }else {
-                                        waitingDialog.dismiss();
-                                        Toast.makeText(CustomerMapActivity.this, "Wrong Old Password", Toast.LENGTH_SHORT).show();
-
-                                    }
-                                }
-                            });
-
-                }else{
-                    waitingDialog.dismiss();
-                    Toast.makeText(CustomerMapActivity.this, "Password does not Match", Toast.LENGTH_SHORT).show();
-                }
-
-
-            }
-        });
-        alertDialog.setNegativeButton("CANCEL", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                //remove dialogue
-                dialogInterface.dismiss();
-            }
-        });
-
-        //show dialog
-        alertDialog.show();
-    }
 
     //polylines on google maps
     private List<Polyline> polylines;
@@ -1488,6 +1480,20 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
         polylines.clear();
     }
 
+    private Vibrator vibration() {
+
+        Vibrator v = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+
+        long[] pattern ={0,3000,3000};
+
+        v.vibrate(pattern, -1);
+        return v;
+    }
+
+    protected void onDestroy(){
+        super.onDestroy();
+        endRide();
+    }
 
 
     //Getting the driver closest to the customer

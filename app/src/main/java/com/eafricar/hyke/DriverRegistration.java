@@ -306,10 +306,10 @@ public class DriverRegistration extends AppCompatActivity {
                                         Toast.makeText(DriverRegistration.this,
                                                 "Registration Successful!", Toast.LENGTH_SHORT)
                                                 .show();
-                                        Intent intent = new Intent(DriverRegistration.
+                                      /*  Intent intent = new Intent(DriverRegistration.
                                                 this, DriverRegistration.class);
                                         startActivity(intent);
-                                        finish();
+                                        finish();*/
                                     }
                                 })
                                 .addOnFailureListener(new OnFailureListener() {

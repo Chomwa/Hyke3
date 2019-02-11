@@ -37,7 +37,8 @@ public class DriverLicenseDetails extends AppCompatActivity {
     private ImageView mDriverLicenseImage;
 
     private EditText mDriversFirstName, mDriversMiddleName, mDriversLastName,
-            mDriversLicenseNumber, mDriverIdNumber, mDriverGender,
+            mDriversLicenseNumber,mDriversLicenseNumber2,mDriversLicenseNumber3,
+            mDriverIdNumber,mDriverIdNumber2,mDriverIdNumber3, mDriverGender,
             mDriverDateOfBirth, mDriverPlaceofIssue, mDriverExpiryDate;
 
     private Button mBack, mNext;
@@ -50,7 +51,11 @@ public class DriverLicenseDetails extends AppCompatActivity {
     private String mLastName;
     private String mMiddleName;
     private String mLicense;
+    private String mLicense2;
+    private String mLicense3;
     private String mNRC;
+    private String mNRC2;
+    private String mNRC3;
     private String mGender;
     private String mDOB;
     private String mPOI;
@@ -79,7 +84,11 @@ public class DriverLicenseDetails extends AppCompatActivity {
         mDriversMiddleName = (EditText) findViewById(R.id.driver_license_middlename);
         mDriversLastName = (EditText) findViewById(R.id.driver_license_lastname);
         mDriversLicenseNumber = (EditText) findViewById(R.id.driver_license_number);
+        mDriversLicenseNumber2 = (EditText) findViewById(R.id.driver_license_number2);
+        mDriversLicenseNumber3 = (EditText) findViewById(R.id.driver_license_number3);
         mDriverIdNumber = (EditText) findViewById(R.id.driver_id_number);
+        mDriverIdNumber2 = (EditText) findViewById(R.id.driver_id_number2);
+        mDriverIdNumber3 = (EditText) findViewById(R.id.driver_id_number3);
         mDriverGender = (EditText) findViewById(R.id.driver_gender);
         mDriverDateOfBirth = (EditText) findViewById(R.id.driver_birth_day);
         mDriverPlaceofIssue = (EditText) findViewById(R.id.license_place_of_issue);
@@ -239,7 +248,11 @@ public class DriverLicenseDetails extends AppCompatActivity {
         mLastName = mDriversLastName.getText().toString();
         mMiddleName = mDriversMiddleName.getText().toString();
         mLicense = mDriversLicenseNumber.getText().toString();
+        mLicense2 = mDriversLicenseNumber2.getText().toString();
+        mLicense3 = mDriversLicenseNumber3.getText().toString();
         mNRC = mDriverIdNumber.getText().toString();
+        mNRC2 = mDriverIdNumber2.getText().toString();
+        mNRC3 = mDriverIdNumber3.getText().toString();
         mDOB = mDriverDateOfBirth.getText().toString();
         mGender = mDriverGender.getText().toString();
         mPOI = mDriverPlaceofIssue.getText().toString();
@@ -251,7 +264,11 @@ public class DriverLicenseDetails extends AppCompatActivity {
         userInfo.put("last name", mLastName);
         userInfo.put("middle name", mMiddleName);
         userInfo.put("license", mLicense);
+        userInfo.put("license2", mLicense2);
+        userInfo.put("license3", mLicense3);
         userInfo.put("id Number", mNRC);
+        userInfo.put("id Number", mNRC2);
+        userInfo.put("id Number", mNRC3);
         userInfo.put("Date of Birth", mDOB);
         userInfo.put("Gender", mGender);
         userInfo.put("Place of Issue", mPOI);

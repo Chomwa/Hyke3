@@ -79,8 +79,8 @@ public class HistoryActivity extends AppCompatActivity {
 
         if(customerOrDriver.equals("Drivers")){
             mBalance.setVisibility(View.VISIBLE);
-            mPayout.setVisibility(View.VISIBLE);
-            mPayoutEmail.setVisibility(View.VISIBLE);
+            mPayout.setVisibility(View.GONE);
+            mPayoutEmail.setVisibility(View.GONE);
         }
 
         mPayout.setOnClickListener(new View.OnClickListener() {

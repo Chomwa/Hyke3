@@ -171,7 +171,7 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
                         if (child.getKey().equals("distance")){
                             distance = child.getValue().toString();
                             rideDistance.setText(distance.substring(0, Math.min(distance.length(), 5)) + " km");
-                            ridePrice = Double.valueOf(distance) * 5;
+                            ridePrice = Double.valueOf(distance) * 6.5;
                             ridePriceTotal= String.valueOf(ridePrice);
                             mRidePriceTxt.setText("ZMW" + ridePriceTotal.substring(0,Math.min(ridePriceTotal.length(),3)));
 
@@ -201,8 +201,8 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
     private void displayCustomerRelatedObjects() {
         mRatingBar.setVisibility(View.VISIBLE);
 
-        if (customerPaid = true){
-            mCashPay.setVisibility(View.GONE);
+        if (customerPaid ){
+            mCashPay.setVisibility(View.VISIBLE);
             mMobileMoneyPay.setVisibility(View.GONE);
             mPayPalPay.setVisibility(View.GONE);
         }else{
@@ -367,6 +367,7 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
         Routing routing = new Routing.Builder()
                 .travelMode(AbstractRouting.TravelMode.DRIVING)
                 .withListener(this)
+                .key("@string/google_maps_key")
                 .alternativeRoutes(false)
                 .waypoints(pickupLatLng, destinationLatLng)
                 .build();

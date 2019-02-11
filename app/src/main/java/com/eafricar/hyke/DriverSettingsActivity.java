@@ -76,7 +76,7 @@ public class DriverSettingsActivity extends AppCompatActivity {
         mProfileImage = (ImageView) findViewById(R.id.profileImage);
 
         mRadioGroup = (RadioGroup) findViewById(R.id.radioGroup);
-        mRadioGroup.check(R.id.HykeShared);
+        mRadioGroup.check(R.id.HykeTaxi);
 
         mBack = (Button) findViewById(R.id.back);
         mConfirm = (Button) findViewById(R.id.confirm);

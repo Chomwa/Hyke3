@@ -92,10 +92,12 @@
 
 
                             <fragment
-                                android:id="@+id/place_location"
-                                android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+                                android:id="@+id/pickup_autocomplete_fragment"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content" />
+                                android:layout_height="wrap_content"
+                                android:name=
+                                    "com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+                                />
 
                         </LinearLayout>
 
@@ -113,10 +115,12 @@
 
 
                             <fragment
-                                android:id="@+id/place_destination"
-                                android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+                                android:id="@+id/destination_autocomplete_fragment"
                                 android:layout_width="match_parent"
-                                android:layout_height="wrap_content" />
+                                android:layout_height="wrap_content"
+                                android:name=
+                                    "com.google.android.libraries.places.widget.AutocompleteSupportFragment"
+                                />
 
                         </LinearLayout>
 

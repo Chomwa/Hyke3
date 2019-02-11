@@ -100,8 +100,8 @@ public class DriverLoginActivity extends AppCompatActivity /*implements View.OnC
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             if (dataSnapshot.exists()) {
-                                Intent intent = new Intent(DriverLoginActivity.this, DriverMapActivity.class);
-                                startActivity(intent);
+//                                Intent intent = new Intent(DriverLoginActivity.this, DriverMapActivity.class);
+//                                startActivity(intent);
                                 finish();
                                 return;
                             } else {

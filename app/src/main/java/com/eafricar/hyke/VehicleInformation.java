@@ -92,8 +92,8 @@ public class VehicleInformation extends AppCompatActivity {
                     return;
                 }else {
                     saveUserInformation();
-                    Intent intent = new Intent(VehicleInformation.this, DriverMapActivity.class);
-                    startActivity(intent);
+//                    Intent intent = new Intent(VehicleInformation.this, DriverMapActivity.class);
+//                    startActivity(intent);
                     finish();
                     return;
                 }

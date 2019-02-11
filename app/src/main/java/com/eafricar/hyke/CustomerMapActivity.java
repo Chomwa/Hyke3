@@ -33,9 +33,7 @@ import android.widget.RadioGroup;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import android.support.v7.widget.Toolbar;
-
 import com.arsy.maps_library.MapRipple;
 import com.bumptech.glide.Glide;
 import com.directions.route.AbstractRouting;
@@ -59,10 +57,11 @@ import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.places.AutocompleteFilter;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
-import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+import com.google.android.libraries.places.api.Places;
+//import com.google.android.gms.location.places.AutocompleteFilter;
+//import com.google.android.gms.location.places.Place;
+//import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+//import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -77,6 +76,15 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.libraries.places.api.model.AutocompletePrediction;
+import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
+import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.RectangularBounds;
+import com.google.android.libraries.places.api.model.TypeFilter;
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
+import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
@@ -91,6 +99,7 @@ import com.google.maps.android.SphericalUtil;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -149,8 +158,8 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
 
     //place auto complete fragment
     private CardView mSetLocation, mLocationInfoSection;
-    private PlaceAutocompleteFragment mPlace_Location, mPlace_Destination;
-    private AutocompleteFilter mTypeFilter;
+    private AutocompleteSupportFragment mPlace_Location, mPlace_Destination;
+//    private AutocompleteFilter mTypeFilter;
 
 
     //Map Ripple Animation
@@ -161,6 +170,9 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
 
     //Send Notification
     private IFCMservice mService;
+
+    private AutocompleteSessionToken token;
+    private  PlacesClient placesClient;
 
 
 
@@ -194,7 +206,15 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
             }
         });
 
+        if (!Places.isInitialized()) {
+            Places.initialize(getApplicationContext(), "AIzaSyATcBLlgkEkeF24o9NBR32YwGzbUvpKVcI");
+        }
 
+
+        token = AutocompleteSessionToken.newInstance();
+
+
+        placesClient = Places.createClient(this);
 
         //Calling Navigation Drawer View
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -294,14 +314,19 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
         mSetLocation = (CardView) findViewById(R.id.location_section);
         mLocationInfoSection = (CardView) findViewById(R.id.location_info_display_section);
 
-        mPlace_Location = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_location);
-        mPlace_Destination = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_destination);
+        mPlace_Location = (AutocompleteSupportFragment)
+                getSupportFragmentManager().findFragmentById(R.id.pickup_autocomplete_fragment);
+
+        mPlace_Destination = (AutocompleteSupportFragment)
+                getSupportFragmentManager().findFragmentById(R.id.destination_autocomplete_fragment);
 
         //filter to restrict google places api to city
-        mTypeFilter = new AutocompleteFilter.Builder()
-                        .setTypeFilter(AutocompleteFilter.TYPE_FILTER_ADDRESS)
-                        .setTypeFilter(3)
-                        .build();
+//        mTypeFilter = new AutocompleteFilter.Builder()
+//                        .setTypeFilter(AutocompleteFilter.TYPE_FILTER_ADDRESS)
+//                        .setTypeFilter(3)
+//                        .build();
+        mPlace_Location.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
+        mPlace_Destination.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
 
         mCancel = (ImageView) findViewById(R.id.cancel);
         mEditInfo = (ImageView) findViewById(R.id.location_info_edit);
@@ -312,7 +337,6 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
         mSetDestinationName = (TextView) findViewById(R.id.set_destination_section_name_text);
 
    //     mPlace_Location.setText("Current Location");
-
 
         mPlace_Location.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
@@ -338,14 +362,10 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
                 //PickupLocation = place.getLatLng();
 
                 mPickUpText.setText(mPickUpName);
-
-
-
             }
 
             @Override
             public void onError(Status status) {
-
             }
         });
 
@@ -375,7 +395,7 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
                     @Override
                     public void run() {
                         //call imgExpandable
-                 //       imgExpandable.performClick();
+                        //       imgExpandable.performClick();
 
                         mSetLocation.setVisibility(View.GONE);
                         mRideRequestSection.setVisibility(View.VISIBLE);
@@ -384,15 +404,93 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
 
                     }
                 },3000); //time in milli seconds
-
-
             }
 
             @Override
             public void onError(Status status) {
-
             }
         });
+
+
+//        mPlace_Location.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+//            @Override
+//            public void onPlaceSelected(Place place) {
+//                //remove any old markers
+//                mMap.clear();
+//
+//                //add new pickup marker when destination is set
+//
+//
+//                pickupMarker = mMap.addMarker(new MarkerOptions().position(place.getLatLng()).title("Pickup Here")
+//                        .title("Pickup Here").icon(BitmapDescriptorFactory.fromResource(R.drawable.newpickupmarker2)));
+//
+//                //animate Camera Zoom
+//                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(),17.0f));
+//
+//                //getting info about Selected Place
+//                mPickUpName = place.getName().toString();
+//
+//                pickupLatLng = place.getLatLng();// Getting Lat and Lng of Pick up
+//
+//                //add pickup location
+//                //PickupLocation = place.getLatLng();
+//
+//                mPickUpText.setText(mPickUpName);
+//
+//
+//
+//            }
+//
+//            @Override
+//            public void onError(Status status) {
+//
+//            }
+//        });
+
+//        mPlace_Destination.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+//            @Override
+//            public void onPlaceSelected(Place place) {
+//
+//                //new destination marker
+//
+//
+//                destinationMarker = mMap.addMarker(new MarkerOptions().position(place.getLatLng())
+//                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED)));
+//
+//                //animate Camera Zoom
+//                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(),17.0f));
+//
+//                //Get info about Selected Place
+//                destination = place.getName().toString();
+//                destinationLatLng = place.getLatLng(); //Get Latitude and Longitude of Destination
+//
+//                getRouteToDestinationMarker(destinationLatLng);// add poly line from pickup to destination
+//
+//                mDestinationText.setText(destination);
+//
+//                //call functions after three seconds
+//                new Handler().postDelayed(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        //call imgExpandable
+//                 //       imgExpandable.performClick();
+//
+//                        mSetLocation.setVisibility(View.GONE);
+//                        mRideRequestSection.setVisibility(View.VISIBLE);
+//                        mLocationInfoSection.setVisibility(View.VISIBLE);
+//                        mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(pickupLatLng,17.0f));
+//
+//                    }
+//                },3000); //time in milli seconds
+//
+//
+//            }
+//
+//            @Override
+//            public void onError(Status status) {
+//
+//            }
+//        });
 
 
         //Set destination button
@@ -1218,21 +1316,24 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
 
             }
 
-            //Restrict service
-            LatLng center = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-            LatLng northSide = SphericalUtil.computeOffset(center, 100000, 0);
-            LatLng southSide = SphericalUtil.computeOffset(center, 100000, 180);
-
-            LatLngBounds bounds = LatLngBounds.builder()
-                    .include(northSide)
-                    .include(southSide)
+            // Create a RectangularBounds object.
+            RectangularBounds bounds = RectangularBounds.newInstance(
+                    new LatLng(-33.880490, 151.184363),
+                    new LatLng(-33.858754, 151.229596));
+// Use the builder to create a FindAutocompletePredictionsRequest.
+            FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder()
+// Call either setLocationBias() OR setLocationRestriction().
+                    .setLocationBias(bounds)
+                    //.setLocationRestriction(bounds)
+                    .setCountry("zm")
+                    .setTypeFilter(TypeFilter.ADDRESS)
+                    .setSessionToken(token)
                     .build();
 
-            mPlace_Location.setBoundsBias(bounds);
-            mPlace_Location.setFilter(mTypeFilter);
 
-            mPlace_Destination.setBoundsBias(bounds);
-            mPlace_Destination.setFilter(mTypeFilter);
+
+//            mPlace_Destination.setBoundsBias(bounds);
+//            mPlace_Destination.setFilter(mTypeFilter);
 
         }
     };
@@ -1423,7 +1524,7 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
 
     //polylines on google maps
     private List<Polyline> polylines;
-    private static final int[] COLORS = new int[]{R.color.wallet_holo_blue_light};
+//    private static final int[] COLORS = new int[]{R.color.wallet_holo_blue_light};
     @Override
     public void onRoutingFailure(RouteException e) {
 
@@ -1454,10 +1555,10 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
         for (int i = 0; i <route.size(); i++) {
 
             //In case of more than 5 alternative routes
-            int colorIndex = i % COLORS.length;
+//            int colorIndex = i % COLORS.length;
 
             PolylineOptions polyOptions = new PolylineOptions();
-            polyOptions.color(getResources().getColor(COLORS[colorIndex]));
+//            polyOptions.color(getResources().getColor(COLORS[colorIndex]));
             polyOptions.width(10 + i * 3);
             polyOptions.addAll(route.get(i).getPoints());
             Polyline polyline = mMap.addPolyline(polyOptions);

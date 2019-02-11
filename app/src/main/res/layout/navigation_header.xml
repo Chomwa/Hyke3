@@ -36,8 +36,9 @@
             android:id="@+id/navigationtextLastName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Name"
             android:layout_marginLeft="1dp"
+            android:paddingLeft="5dp"
+            android:text="Name"
             android:textColor="@color/common_google_signin_btn_text_dark_default"
             android:textStyle="italic|bold" />
 

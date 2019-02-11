@@ -172,19 +172,19 @@ public class CustomerSettingsActivity extends AppCompatActivity {
                     return;
                 }
             });
-            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
-
-                    Map newImage = new HashMap();
-                    newImage.put("profileImageUrl", downloadUrl.toString());
-                    mCustomerDatabase.updateChildren(newImage);
-
-                    finish();
-                    return;
-                }
-            });
+//            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//                @Override
+//                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
+//
+//                    Map newImage = new HashMap();
+//                    newImage.put("profileImageUrl", downloadUrl.toString());
+//                    mCustomerDatabase.updateChildren(newImage);
+//
+//                    finish();
+//                    return;
+//                }
+//            });
         }else{
             finish();
         }

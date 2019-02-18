@@ -63,9 +63,11 @@ import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.places.Place;
+//import com.google.android.gms.location.places.Place;
+//import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+//import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+//import com.google.android.gms.location.places.ui.PlaceAutocomplete;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
-import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -274,11 +276,13 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                     connectDriver(); //refer to function
                     Snackbar.make(mDriverLayout, "You're now Online", Snackbar.LENGTH_SHORT)
                             .show();
+                    mWorkingSwitch.setText("Stop Working");
                 }else{
                     disconnectDriver(); //refer to function
 
                     Snackbar.make(mDriverLayout, "You're now Offline", Snackbar.LENGTH_SHORT)
                             .show();
+                    mWorkingSwitch.setText("Start Working");
                 }
             }
         });
@@ -572,7 +576,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                     .withListener(this)
                     .alternativeRoutes(false)
                     .waypoints(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), pickupLatLng)
-                    .key("@string/google_maps_key")
+                    .key("AIzaSyAaxWUlhVnc2HgmvGyqk_qbFtaSJHRRlVg")
                     .build();
             routing.execute();
         }
@@ -657,6 +661,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     private void endRide(){
         mRideStatus.setText("picked customer");
         erasePolylines();
+
 
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
         DatabaseReference driverRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(userId).child("customerRequest");
@@ -836,11 +841,15 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         if(mFusedLocationClient != null){
             mFusedLocationClient.removeLocationUpdates(mLocationCallback);
         }
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("driversAvailable");
+        if (FirebaseAuth.getInstance().getCurrentUser()!=null ){
+            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("driversAvailable");
 
-        GeoFire geoFire = new GeoFire(ref);
-        geoFire.removeLocation(userId);
+            GeoFire geoFire = new GeoFire(ref);
+            geoFire.removeLocation(userId);
+
+        }
+
     }
 
 
@@ -849,7 +858,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
     //creating poly lines
     private List<Polyline> polylines;
-    private static final int[] COLORS = new int[]{R.color.wallet_holo_blue_light};// only set up one color in list
+    private static final int[] COLORS = new int[]{R.color.dividerColor2};// only set up one color in list
     @Override
     public void onRoutingFailure(RouteException e) {
         if(e != null) {
@@ -933,7 +942,31 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
     protected void onDestroy(){
         super.onDestroy();
-        endRide();
+        disconnectDriver();
+        RemoveListeners();
+    }
+
+    private void RemoveListeners(){
+
+        if (FirebaseAuth.getInstance().getCurrentUser()!=null ){
+            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            DatabaseReference driverRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(userId).child("customerRequest");
+            driverRef.removeValue();
+        }
+
+
+        DatabaseReference ref = FirebaseDatabase.getInstance().getReference("customerRequest");
+        GeoFire geoFire = new GeoFire(ref);
+        geoFire.removeLocation(customerId);
+        customerId="";
+        rideDistance = 0;
+
+        if(pickupMarker != null){
+            pickupMarker.remove();
+        }
+        if (assignedCustomerPickupLocationRefListener != null){
+            assignedCustomerPickupLocationRef.removeEventListener(assignedCustomerPickupLocationRefListener);
+        }
     }
 
     //@Override

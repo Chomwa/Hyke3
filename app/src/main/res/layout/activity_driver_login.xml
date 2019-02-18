@@ -71,6 +71,14 @@
             android:textAllCaps="false"
             android:id="@+id/login"/>
 
+        <ProgressBar
+            android:id="@+id/pBar"
+            style="@android:style/Widget.ProgressBar.Large"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:visibility="gone"/>
+
   <!--      <TextView
             android:id="@+id/textview"
             android:layout_width="match_parent"

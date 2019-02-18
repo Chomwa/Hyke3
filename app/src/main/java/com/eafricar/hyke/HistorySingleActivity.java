@@ -367,7 +367,7 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
         Routing routing = new Routing.Builder()
                 .travelMode(AbstractRouting.TravelMode.DRIVING)
                 .withListener(this)
-                .key("@string/google_maps_key")
+                .key("@AIzaSyAaxWUlhVnc2HgmvGyqk_qbFtaSJHRRlVg")
                 .alternativeRoutes(false)
                 .waypoints(pickupLatLng, destinationLatLng)
                 .build();

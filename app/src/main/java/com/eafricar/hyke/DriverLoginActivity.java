@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -82,11 +83,15 @@ public class DriverLoginActivity extends AppCompatActivity /*implements View.OnC
 
     private Uri resultUri;
 
+    private ProgressBar pgsBar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driver_login);
+
+        pgsBar = findViewById(R.id.pBar);
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -96,6 +101,10 @@ public class DriverLoginActivity extends AppCompatActivity /*implements View.OnC
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if(user!=null){
                     DatabaseReference assignedCustomerRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(user.getUid());
+
+                    pgsBar.setVisibility(View.VISIBLE);
+                    displayLoginInput("hide");
+
                     assignedCustomerRef.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -105,6 +114,8 @@ public class DriverLoginActivity extends AppCompatActivity /*implements View.OnC
                                 finish();
                                 return;
                             } else {
+                                displayLoginInput("show");
+                                pgsBar.setVisibility(View.GONE);
                                 Toast.makeText(DriverLoginActivity.this, "You are not yet a registered driver. Kindly register as a driver.", Toast.LENGTH_LONG).show();
                             }
                         }
@@ -122,6 +133,8 @@ public class DriverLoginActivity extends AppCompatActivity /*implements View.OnC
 
         mLogin = (Button) findViewById(R.id.login);
         mCreateAccount = (Button) findViewById(R.id.create_account);
+
+        mRegistration_Section = (LinearLayout) findViewById(R.id.registration_section);
 
      //   mPhoneRegistration = (Button) findViewById(R.id.phonenumberregistration);
 
@@ -247,6 +260,24 @@ public class DriverLoginActivity extends AppCompatActivity /*implements View.OnC
                 .build();  */
     }
 
+    private void displayLoginInput(String display) {
+
+        switch (display) {
+            case "show":
+                mEmailField.setVisibility(View.VISIBLE);
+                mPassword.setVisibility(View.VISIBLE);
+                mLogin.setVisibility(View.VISIBLE);
+                mRegistration_Section.setVisibility(View.VISIBLE);
+                break;
+            case "hide":
+                mEmailField.setVisibility(View.GONE);
+                mPassword.setVisibility(View.GONE);
+                mLogin.setVisibility(View.GONE);
+                mRegistration_Section.setVisibility(View.GONE);
+                break;
+        }
+    }
+
     private void SignInRegisteredUser() {
 
         final String email = mEmailField.getText().toString();
@@ -263,6 +294,10 @@ public class DriverLoginActivity extends AppCompatActivity /*implements View.OnC
             mPassword.setError("Password should not be less than 6 characters");
             mPassword.requestFocus();
         } else{
+
+            pgsBar.setVisibility(View.VISIBLE);
+            displayLoginInput("hide");
+
             mAuth.signInWithEmailAndPassword(email, password)
                     .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                         @Override
@@ -277,6 +312,8 @@ public class DriverLoginActivity extends AppCompatActivity /*implements View.OnC
                         public void onFailure(@NonNull Exception e) {
                             Toast.makeText(DriverLoginActivity.this, "Failed: " +e.getMessage(), Toast.LENGTH_SHORT)
                                     .show();
+                            pgsBar.setVisibility(View.GONE);
+                            displayLoginInput("show");
 
                         }
                     });

@@ -53,12 +53,18 @@ import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.GeoQuery;
 import com.firebase.geofire.GeoQueryEventListener;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+//import com.google.android.gms.location.places.AutocompleteFilter;
+//import com.google.android.gms.location.places.Place;
+//import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+//import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+
 import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
@@ -91,6 +97,7 @@ import com.google.maps.android.SphericalUtil;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -150,8 +157,8 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
     //place auto complete fragment
     private CardView mSetLocation, mLocationInfoSection;
     private PlaceAutocompleteFragment mPlace_Location, mPlace_Destination;
-    private AutocompleteFilter mTypeFilter;
 
+    private AutocompleteFilter mTypeFilter;
 
     //Map Ripple Animation
     private MapRipple mapRipple;
@@ -162,6 +169,7 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
     //Send Notification
     private IFCMservice mService;
 
+    private static final String TAG = "CustomerMapActivity";
 
 
     @Override
@@ -297,6 +305,8 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
         mPlace_Location = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_location);
         mPlace_Destination = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_destination);
 
+
+
         //filter to restrict google places api to city
         mTypeFilter = new AutocompleteFilter.Builder()
                         .setTypeFilter(AutocompleteFilter.TYPE_FILTER_ADDRESS)
@@ -314,17 +324,18 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
    //     mPlace_Location.setText("Current Location");
 
 
+
         mPlace_Location.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
                 //remove any old markers
                 mMap.clear();
 
-                //add new pickup marker when destination is set
 
+                //add new pickup marker when destination is
 
                 pickupMarker = mMap.addMarker(new MarkerOptions().position(place.getLatLng()).title("Pickup Here")
-                        .title("Pickup Here").icon(BitmapDescriptorFactory.fromResource(R.drawable.newpickupmarker2)));
+                        .title("Pickup Here").icon(BitmapDescriptorFactory.fromResource((R.mipmap.ic_pickup))));
 
                 //animate Camera Zoom
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(place.getLatLng(),17.0f));
@@ -332,13 +343,13 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
                 //getting info about Selected Place
                 mPickUpName = place.getName().toString();
 
+
                 pickupLatLng = place.getLatLng();// Getting Lat and Lng of Pick up
 
                 //add pickup location
                 //PickupLocation = place.getLatLng();
 
                 mPickUpText.setText(mPickUpName);
-
 
 
             }
@@ -545,7 +556,129 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
             @Override
             public void onClick(View v) {
 
-                requestPickUpHere();
+                if (requestBol){
+                    new AlertDialog.Builder(CustomerMapActivity.this)
+                            .setTitle("Cancel Ride?")
+                            .setMessage("Are you sure you want to Cancel your Ride request?")
+                            .setNegativeButton("No", null)
+                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    endRide();
+
+                                    new AlertDialog.Builder(CustomerMapActivity.this)
+                                            .setTitle("Ride Cancelled!")
+                                            .setPositiveButton("Done", null)
+                                            .show();
+                                }
+                            })
+                            .show();
+
+
+
+                }else{
+
+                    if (requestService == null){
+                        Toast.makeText(CustomerMapActivity.this, "Choose a Service", Toast.LENGTH_SHORT).show();
+                        return;
+
+
+                    }
+                    else{
+
+                        switch (requestService){
+                            case ("HyKeShared"):
+                                if (mShared.isPressed()){
+                                    //requestService = ("HyKeShared");
+
+                                }
+
+                                break;
+                            case ("HyKePersonal"):
+                                if (mPersonal.isPressed()){
+                                    //   requestService = ("HyKePersonal");
+
+                                }
+
+                                break;
+
+                            case ("HyKeTaxi"):
+                                if (mTaxi.isPressed()){
+                                    requestService = ("HyKeTaxi");
+                                }
+
+                                break;
+
+                        }
+
+                    }
+                    /*int selectId = mRadioGroup.getCheckedRadioButtonId();
+
+                    final RadioButton radioButton = (RadioButton) findViewById(selectId);
+
+                    if (radioButton.getText() == null){
+                        return; //if radio button is not selected don't allow user to proceed
+                    }
+
+                    requestService = radioButton.getText().toString(); //getting radio button selected text*/
+
+                    requestBol = true;
+
+                    String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference("customerRequest");
+                    GeoFire geoFire = new GeoFire(ref);
+                    if (mLastLocation== null) {
+                        Toast.makeText(CustomerMapActivity.this, "Turn on Location", Toast.LENGTH_LONG).show(); //if we can't get location we set a toast
+                         endRide();
+                        return;
+
+                    }  if (mPlace_Location!=null){
+                        geoFire.setLocation(userId, new GeoLocation(pickupLatLng.latitude,pickupLatLng.longitude)); //the new code
+
+                    }
+                    else{
+                        geoFire.setLocation(userId, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
+                    }
+
+                    //set Pick up location marker
+
+                    if (mLastLocation== null){
+                        Toast.makeText(CustomerMapActivity.this, "Turn on Location", Toast.LENGTH_LONG).show();
+                        endRide();
+                        return;
+                    }
+                    if (mPlace_Location!=null){
+                        pickupLocation = new LatLng(pickupLatLng.latitude,pickupLatLng.longitude); //get LatLng from Place auto fragment
+
+                        mRequest.setText("Getting your Driver...."); //if location is set change button tex
+                    }
+                    else{
+                        pickupLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()); //if pick up has not been set in place fragment get users current location as pick up location
+                        //pickupLocation = pickupLatLng; // pickup location of place fragment
+
+
+                        mRequest.setText("Getting your Driver...."); //change button text after setting location
+
+                    }
+
+                    if(pickupMarker == null) {
+                        mMap.clear();
+
+                        pickupMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude())).title("Pickup Here").icon(BitmapDescriptorFactory.fromResource(R.drawable.newpickupmarker2)));
+                    } //add new marker on user current location
+
+                    //Add Ripple animation on pick up location
+              //      RequestMapRipple();
+
+
+
+                    mShared.setEnabled(false);
+                    mPersonal.setEnabled(false);
+                    mTaxi.setEnabled(false);
+
+                    getClosestDriver(); //search for driver/ refer to function
+                }
 
 
             }
@@ -565,128 +698,6 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
                 .setValue(token);
     }
 
-    private void requestPickUpHere() {
-
-        if (requestBol){
-            new AlertDialog.Builder(this)
-                    .setTitle("Cancel Ride?")
-                    .setMessage("Are you sure you want to Cancel your Ride request?")
-                    .setNegativeButton("No", null)
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            endRide();
-
-                            new AlertDialog.Builder(CustomerMapActivity.this)
-                                    .setTitle("Ride Cancelled!")
-                                    .setPositiveButton("Done", null)
-                                    .show();
-                        }
-                    })
-                    .show();
-
-
-
-        }else{
-
-            if (requestService == null){
-                Toast.makeText(CustomerMapActivity.this, "Choose a Service", Toast.LENGTH_SHORT).show();
-                return;
-
-
-            }
-            else{
-
-                switch (requestService){
-                    case ("HyKeShared"):
-                        if (mShared.isPressed()){
-                            //requestService = ("HyKeShared");
-
-                        }
-
-                        break;
-                    case ("HyKePersonal"):
-                        if (mPersonal.isPressed()){
-                         //   requestService = ("HyKePersonal");
-
-                        }
-
-                        break;
-
-                    case ("HyKeTaxi"):
-                        if (mTaxi.isPressed()){
-                            requestService = ("HyKeTaxi");
-                        }
-
-                        break;
-
-                }
-
-            }
-                    /*int selectId = mRadioGroup.getCheckedRadioButtonId();
-
-                    final RadioButton radioButton = (RadioButton) findViewById(selectId);
-
-                    if (radioButton.getText() == null){
-                        return; //if radio button is not selected don't allow user to proceed
-                    }
-
-                    requestService = radioButton.getText().toString(); //getting radio button selected text*/
-
-            requestBol = true;
-
-            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("customerRequest");
-            GeoFire geoFire = new GeoFire(ref);
-            if (mLastLocation== null){
-                Toast.makeText(CustomerMapActivity.this, "Turn on Location", Toast.LENGTH_LONG).show(); //if we can't get location we set a toast
-                // endRide();
-                return;
-            }
-            //   if (mPlace_Location!=null){
-            //     geoFire.setLocation(userId, new GeoLocation(pickupLatLng.latitude,pickupLatLng.longitude)); //the new code
-            //}
-            else{
-                geoFire.setLocation(userId, new GeoLocation(mLastLocation.getLatitude(), mLastLocation.getLongitude()));
-            }
-
-            //set Pick up location marker
-
-            if (mLastLocation== null){
-                Toast.makeText(CustomerMapActivity.this, "Turn on Location", Toast.LENGTH_LONG).show();
-                endRide();
-                return;
-            }
-             if (mPlace_Location!=null){
-             pickupLocation = new LatLng(pickupLatLng.latitude,pickupLatLng.longitude); //get LatLng from Place auto fragment
-
-            mRequest.setText("Getting your Driver...."); //if location is set change button tex
-             }
-            else{
-                pickupLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()); //if pick up has not been set in place fragment get users current location as pick up location
-                //pickupLocation = pickupLatLng; // pickup location of place fragment
-
-
-                mRequest.setText("Getting your Driver...."); //change button text after setting location
-
-            }
-
-            if(pickupMarker == null) {
-                mMap.clear();
-
-                pickupMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude())).title("Pickup Here").icon(BitmapDescriptorFactory.fromResource(R.drawable.newpickupmarker2)));
-            } //add new marker on user current location
-
-            //Add Ripple animation on pick up location
-            RequestMapRipple();
-
-
-
-
-            getClosestDriver(); //search for driver/ refer to function
-        }
-    }
 
     private void RequestMapRipple() {
         // add Map ripple animation around marker
@@ -714,7 +725,7 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
                     .withListener(this)
                     .alternativeRoutes(false) //no alternative routes set
                     .waypoints(pickupLatLng, destinationLatLng) //points for drawing map
-                    .key("@string/google_maps_key") //google maps Api Key
+                    .key("AIzaSyAaxWUlhVnc2HgmvGyqk_qbFtaSJHRRlVg") //google maps Api Key
                     .build();
             routing.execute();
         }
@@ -1131,6 +1142,13 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
         mLocationInfoSection.setVisibility(View.GONE);
         mRideRequestSection.setVisibility(View.GONE);
         mSetDestinationSection.setVisibility(View.VISIBLE);
+        mShared.setVisibility(View.VISIBLE);
+        mTaxi.setVisibility(View.VISIBLE);
+        mPersonal.setVisibility(View.VISIBLE);
+
+        mShared.setEnabled(true);
+        mPersonal.setEnabled(true);
+        mTaxi.setEnabled(true);
     }
 
     /*-------------------------------------------- Map specific functions -----
@@ -1423,7 +1441,7 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
 
     //polylines on google maps
     private List<Polyline> polylines;
-    private static final int[] COLORS = new int[]{R.color.wallet_holo_blue_light};
+    private static final int[] COLORS = new int[]{R.color.dividerColor2};
     @Override
     public void onRoutingFailure(RouteException e) {
 
@@ -1480,6 +1498,8 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
         polylines.clear();
     }
 
+
+
     private Vibrator vibration() {
 
         Vibrator v = (Vibrator) getSystemService(VIBRATOR_SERVICE);
@@ -1492,7 +1512,49 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
 
     protected void onDestroy(){
         super.onDestroy();
-        endRide();
+        RemoveListeners();
+    }
+
+    private void RemoveListeners() {
+
+        if (geoQuery != null){
+            geoQuery.removeAllListeners();}
+        if (driverLocationRef != null && driveHasEndedRef != null){
+            driverLocationRef.removeEventListener(driverLocationRefListener);
+            driveHasEndedRef.removeEventListener(driveHasEndedRefListener);}
+
+        if (driverFoundID != null){
+            DatabaseReference driverRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverFoundID).child("customerRequest");
+            driverRef.removeValue();
+            driverFoundID = null;
+
+        }
+        driverFound = false;
+        radius = 1;
+
+
+        if (FirebaseAuth.getInstance().getCurrentUser() != null){
+
+            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference("customerRequest");
+            GeoFire geoFire = new GeoFire(ref);
+            geoFire.removeLocation(userId);
+        }
+
+
+        if(pickupMarker != null){
+            pickupMarker.remove();
+        }
+        if (mDriverMarker != null){
+            mDriverMarker.remove();
+        }
+        if (destinationMarker != null){
+            destinationMarker.remove();
+        }
+
+        //remove polyline marks
+        erasePolylines();
     }
 
 

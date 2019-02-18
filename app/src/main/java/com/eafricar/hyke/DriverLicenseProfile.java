@@ -13,16 +13,20 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -35,7 +39,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class DriverLicenseDetails extends AppCompatActivity {
+
+public class DriverLicenseProfile extends AppCompatActivity {
 
     private ImageView mDriverLicenseImage;
 
@@ -44,7 +49,9 @@ public class DriverLicenseDetails extends AppCompatActivity {
             mDriverIdNumber,mDriverIdNumber2,mDriverIdNumber3, mDriverGender,
             mDriverDateOfBirth, mDriverPlaceofIssue, mDriverExpiryDate;
 
-    private Button mBack, mNext;
+    private Button  mConfirm;
+
+    private ImageButton mBack;
 
     private FirebaseAuth mAuth;
     private DatabaseReference mDriverDatabase;
@@ -75,7 +82,7 @@ public class DriverLicenseDetails extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_driver_license_details);
+        setContentView(R.layout.activity_driver_license_profile);
 
         mAuth = FirebaseAuth.getInstance();
         userID = mAuth.getCurrentUser().getUid();
@@ -97,8 +104,8 @@ public class DriverLicenseDetails extends AppCompatActivity {
         mDriverPlaceofIssue = (EditText) findViewById(R.id.license_place_of_issue);
         mDriverExpiryDate = (EditText) findViewById(R.id.license_expiry_date);
 
-        mBack = (Button) findViewById(R.id.back);
-        mNext = (Button) findViewById(R.id.next_page);
+        mBack = (ImageButton) findViewById(R.id.back);
+        mConfirm = (Button) findViewById(R.id.next_page);
 
         mDriverLicenseImage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -143,7 +150,7 @@ public class DriverLicenseDetails extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                new DatePickerDialog(DriverLicenseDetails.this, date,
+                new DatePickerDialog(DriverLicenseProfile.this, date,
                         c.get(Calendar.YEAR),
                         c.get(Calendar.MONTH),
                         c.get(Calendar.DAY_OF_MONTH))
@@ -155,7 +162,7 @@ public class DriverLicenseDetails extends AppCompatActivity {
         mDriverExpiryDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new DatePickerDialog(DriverLicenseDetails.this, date2,
+                new DatePickerDialog(DriverLicenseProfile.this, date2,
                         c.get(Calendar.YEAR),
                         c.get(Calendar.MONTH),
                         c.get(Calendar.DAY_OF_MONTH))
@@ -163,7 +170,7 @@ public class DriverLicenseDetails extends AppCompatActivity {
             }
         });
 
-        mNext.setOnClickListener(new View.OnClickListener() {
+        mConfirm.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 final String name = mDriversFirstName.getText().toString();
@@ -216,8 +223,7 @@ public class DriverLicenseDetails extends AppCompatActivity {
                     return;
                 } else {
                     saveUserInformation();
-                    Intent intent = new Intent(DriverLicenseDetails.this, VehicleInformation.class);
-                    startActivity(intent);
+                    finish();
                     return;
                 }
             }
@@ -230,7 +236,11 @@ public class DriverLicenseDetails extends AppCompatActivity {
                 return;
             }
         });
+
+        getUserInfo();
     }
+
+
 
     private void updateLabel() {
         String myFormat = "dd/MM/yy"; //In which you need put here
@@ -244,6 +254,87 @@ public class DriverLicenseDetails extends AppCompatActivity {
         SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
 
         mDriverExpiryDate.setText(sdf.format(c.getTime()));
+    }
+
+    private void getUserInfo() {
+
+        mDriverDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists() && dataSnapshot.getChildrenCount()>0){
+                    Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+                    if(map.get("first name")!=null){
+                        mName = map.get("first name").toString();
+                        mDriversFirstName.setText(mName);
+
+                    }
+                    if(map.get("last name")!=null){
+                        mLastName = map.get("last name").toString();
+                        mDriversLastName.setText(mLastName);
+
+                    }
+                    if(map.get("middle name")!=null){
+                        mMiddleName = map.get("middle name").toString();
+                        mDriversMiddleName.setText(mMiddleName);
+
+                    }
+                    if(map.get("license")!=null) {
+                        mLicense = map.get("license").toString();
+                        mDriversLicenseNumber.setText(mLicense);
+
+                    }
+                    if(map.get("license2")!=null) {
+                        mLicense2 = map.get("license2").toString();
+                        mDriversLicenseNumber2.setText(mLicense2);
+
+                    }
+                    if(map.get("license3")!=null) {
+                        mLicense3 = map.get("license3").toString();
+                        mDriversLicenseNumber3.setText(mLicense3);
+
+                    }
+                    if(map.get("id Number")!=null){
+                        mNRC = map.get("id Number").toString();
+                        mDriverIdNumber.setText(mNRC);
+
+                    }
+                    if(map.get("id Number2")!=null){
+                        mNRC2 = map.get("id Number2").toString();
+                        mDriverIdNumber2.setText(mNRC2);
+
+                    }
+                    if(map.get("id Number3")!=null){
+                        mNRC3 = map.get("id Number3").toString();
+                        mDriverIdNumber3.setText(mNRC3);
+
+                    }
+                    if(map.get("Date of Birth")!=null){
+                        mDOB = map.get("Date of Birth").toString();
+                        mDriverDateOfBirth.setText(mDOB);
+                    }
+                    if(map.get("Gender")!=null){
+                        mGender = map.get("Gender").toString();
+                        mDriverGender.setText(mGender);
+                    }
+                    if(map.get("Place of Issue")!=null){
+                        mPOI = map.get("Place of Issue").toString();
+                        mDriverPlaceofIssue.setText(mPOI);
+                    }
+                    if(map.get("Expiry Date")!=null){
+                        mED = map.get("Expiry Date").toString();
+                        mDriverExpiryDate.setText(mED);
+                    }
+                    if(map.get("driverLicenseImageUrl")!=null){
+                        mProfileImageUrl = map.get("driverLicenseImageUrl").toString();
+                        Glide.with(getApplication()).load(mProfileImageUrl).into(mDriverLicenseImage);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
     }
 
     private void saveUserInformation() {
@@ -270,8 +361,8 @@ public class DriverLicenseDetails extends AppCompatActivity {
         userInfo.put("license2", mLicense2);
         userInfo.put("license3", mLicense3);
         userInfo.put("id Number", mNRC);
-        userInfo.put("id Number", mNRC2);
-        userInfo.put("id Number", mNRC3);
+        userInfo.put("id Number2", mNRC2);
+        userInfo.put("id Number3", mNRC3);
         userInfo.put("Date of Birth", mDOB);
         userInfo.put("Gender", mGender);
         userInfo.put("Place of Issue", mPOI);

@@ -50,7 +50,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
                 android:layout_margin="10sp"
-                android:text="Go Online"
+                android:text="Start Working"
                 android:textColor="#ffffff"/>
 
       <!--      <android.support.v7.widget.CardView

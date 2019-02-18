@@ -212,6 +212,25 @@ android:orientation="vertical">
             android:ems="10"
             android:textSize="20sp"
             android:textStyle="normal" />
+
+        <ProgressBar
+            android:id="@+id/pBar"
+            style="@android:style/Widget.ProgressBar.Large"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:visibility="gone"/>
+
+        <TextView
+            android:id="@+id/pleaseWait"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Please Wait..."
+            android:textColor="#000000"
+            android:visibility="gone"
+            android:layout_gravity="center"
+            android:layout_marginRight="5dp"
+            android:textSize="17sp"/>
     </LinearLayout>
 </LinearLayout>
 
@@ -223,7 +242,7 @@ android:orientation="vertical">
     android:layout_marginLeft="5dp"
     android:layout_marginRight="5dp"
     android:layout_marginTop="20dp"
-    android:background="#9f0e1c"
+    android:background="@drawable/button_background3"
     android:onClick="onClickRegNext"
     android:text="Next"
     android:textAllCaps="false"

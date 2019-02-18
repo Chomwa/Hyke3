@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -92,12 +93,16 @@ public class CustomerLoginActivity extends AppCompatActivity /*implements View.O
 
     private Uri resultUri;
 
+    private ProgressBar pgsBar;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_customer_login);
+
+        pgsBar = findViewById(R.id.pBar);
 
         mAuth = FirebaseAuth.getInstance();
         mSignInCustomerDatabase = FirebaseDatabase.getInstance();
@@ -128,6 +133,8 @@ public class CustomerLoginActivity extends AppCompatActivity /*implements View.O
 
    //     mText = (TextView) findViewById(R.id.textview);
         mForgotPassword = (TextView) findViewById(R.id.text_forgot_password);
+
+        mRegistration_Section = (LinearLayout) findViewById(R.id.registration_section);
 
         //calling Dialog
 
@@ -257,6 +264,24 @@ public class CustomerLoginActivity extends AppCompatActivity /*implements View.O
                 .build(); */
     }
 
+    private void displayLoginInput(String display) {
+
+        switch (display) {
+            case "show":
+                mEmailField.setVisibility(View.VISIBLE);
+                mPassword.setVisibility(View.VISIBLE);
+                mLogin.setVisibility(View.VISIBLE);
+                mRegistration_Section.setVisibility(View.VISIBLE);
+                break;
+            case "hide":
+                mEmailField.setVisibility(View.GONE);
+                mPassword.setVisibility(View.GONE);
+                mLogin.setVisibility(View.GONE);
+                mRegistration_Section.setVisibility(View.GONE);
+                break;
+        }
+    }
+
     private void SignInRegisteredUser() {
 
         final String email = mEmailField.getText().toString();
@@ -273,6 +298,8 @@ public class CustomerLoginActivity extends AppCompatActivity /*implements View.O
             mPassword.setError("Password should not be less than 6 characters");
             mPassword.requestFocus();
         } else{
+            displayLoginInput("hide");
+            pgsBar.setVisibility(View.VISIBLE);
             mAuth.signInWithEmailAndPassword(email, password)
                     .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                         @Override
@@ -285,8 +312,10 @@ public class CustomerLoginActivity extends AppCompatActivity /*implements View.O
                     .addOnFailureListener(new OnFailureListener() {
                         @Override
                         public void onFailure(@NonNull Exception e) {
+                            pgsBar.setVisibility(View.GONE);
                             Toast.makeText(CustomerLoginActivity.this, "Failed: " +e.getMessage(), Toast.LENGTH_SHORT)
                                     .show();
+                            displayLoginInput("show");
 
                         }
                     });

@@ -12,8 +12,11 @@ import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.eafricar.hyke.Model.User;
@@ -51,11 +54,23 @@ public class DriverRegistration extends AppCompatActivity {
     private static final int PERMISSION_REQUEST_CODE = 1;
     private User user;
 
+    private ProgressBar pgsBar;
+
+    private Button mNext;
+    private TextView mPleaseWait;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driver_registration);
+
+        pgsBar = findViewById(R.id.pBar);
+
+        mNext = (Button) findViewById(R.id.next);
+
+        mPleaseWait = (TextView) findViewById(R.id.pleaseWait);
 
         mAuth = FirebaseAuth.getInstance();
         mDriverDatabase = FirebaseDatabase.getInstance();
@@ -95,6 +110,12 @@ public class DriverRegistration extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         mAuth.removeAuthStateListener(firebaseAuthListener);
+    }
+
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        finish();
     }
 
     private void displayRegistrationFields(String visibility, List<Integer> viewIds) {
@@ -141,6 +162,13 @@ public class DriverRegistration extends AppCompatActivity {
                 if (!(isFieldEmpty(firstName) && isFieldEmpty(lastName))){
                     user.setFirstName(firstName.getText().toString());
                     user.setLastName(lastName.getText().toString());
+                    pgsBar.setVisibility(View.VISIBLE);
+                    displayRegistrationFields("Hide", bioIds);
+                    displayRegistrationFields("Hide", enterEmailIds);
+                    displayRegistrationFields("Hide", phoneNumberIds);
+                    displayRegistrationFields("Hide", passwordIds);
+                    mNext.setVisibility(View.GONE);
+                    mPleaseWait.setVisibility(View.VISIBLE);
                     registerUser();
                 }
                 break;
@@ -318,6 +346,15 @@ public class DriverRegistration extends AppCompatActivity {
                                         Toast.makeText(DriverRegistration.this,
                                                 "Failed: " + e.getMessage(), Toast.LENGTH_SHORT)
                                                 .show();
+
+                                        //update Interface
+                                        pgsBar.setVisibility(View.GONE);
+                                        displayRegistrationFields("Show", bioIds);
+                                        displayRegistrationFields("Hide", enterEmailIds);
+                                        displayRegistrationFields("Hide", phoneNumberIds);
+                                        displayRegistrationFields("Hide", passwordIds);
+                                        mNext.setVisibility(View.VISIBLE);
+                                        mPleaseWait.setVisibility(View.GONE);
                                     }
                                 });
                     }
@@ -328,6 +365,15 @@ public class DriverRegistration extends AppCompatActivity {
                         Toast.makeText(DriverRegistration.this,
                                 e.getMessage(), Toast.LENGTH_SHORT)
                                 .show();
+
+                        //update Interface
+                        pgsBar.setVisibility(View.GONE);
+                        displayRegistrationFields("Show", bioIds);
+                        displayRegistrationFields("Hide", enterEmailIds);
+                        displayRegistrationFields("Hide", phoneNumberIds);
+                        displayRegistrationFields("Hide", passwordIds);
+                        mNext.setVisibility(View.VISIBLE);
+                        mPleaseWait.setVisibility(View.GONE);
 
                     }
                 });

@@ -576,7 +576,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                     .withListener(this)
                     .alternativeRoutes(false)
                     .waypoints(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude()), pickupLatLng)
-                    .key("AIzaSyAaxWUlhVnc2HgmvGyqk_qbFtaSJHRRlVg")
+                    .key("AIzaSyAQd2Ng-Jd37kBuVF2bSdcDyWuRqnzW5BM")
                     .build();
             routing.execute();
         }

@@ -16,7 +16,7 @@ android {
         minSdkVersion 19
         targetSdkVersion 27
         versionCode 6
-        versionName "1.0.5"
+        versionName "1.0.6"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
     }
@@ -59,7 +59,6 @@ dependencies {
     //implementation ('com.google.android.libraries.places:places-compat:1.0.0',{
     //    exclude group: 'com.google.android.libraries.places.api.internal' , module: 'places-compat'
     // })
-
     implementation('com.github.bumptech.glide:glide:4.7.1') {
         exclude group: 'com.android.support'
     }

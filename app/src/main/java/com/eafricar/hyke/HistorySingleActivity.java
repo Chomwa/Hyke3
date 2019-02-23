@@ -266,6 +266,7 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
                         mPayPalPay.setEnabled(false);
                         mCashPay.setEnabled(false);
                         mMobileMoneyPay.setEnabled(false);
+                        mCashPay.setVisibility(View.GONE);
                          //Change Ride price status text from pending to paid
 
                         mRidePriceStatusTxt.setText("Paid");
@@ -367,7 +368,7 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
         Routing routing = new Routing.Builder()
                 .travelMode(AbstractRouting.TravelMode.DRIVING)
                 .withListener(this)
-                .key("@AIzaSyAaxWUlhVnc2HgmvGyqk_qbFtaSJHRRlVg")
+                .key("AIzaSyAQd2Ng-Jd37kBuVF2bSdcDyWuRqnzW5BM")
                 .alternativeRoutes(false)
                 .waypoints(pickupLatLng, destinationLatLng)
                 .build();
@@ -423,7 +424,7 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
 
         mMap.animateCamera(cameraUpdate);
-
+        
         mMap.addMarker(new MarkerOptions().position(pickupLatLng).title("pickup location").icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_pickup)));
         mMap.addMarker(new MarkerOptions().position(destinationLatLng).title("destination"));
 

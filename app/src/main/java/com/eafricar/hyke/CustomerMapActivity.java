@@ -725,7 +725,7 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
                     .withListener(this)
                     .alternativeRoutes(false) //no alternative routes set
                     .waypoints(pickupLatLng, destinationLatLng) //points for drawing map
-                    .key("AIzaSyAaxWUlhVnc2HgmvGyqk_qbFtaSJHRRlVg") //google maps Api Key
+                    .key("AIzaSyAQd2Ng-Jd37kBuVF2bSdcDyWuRqnzW5BM") //use google maps server Key once restrictions are in place
                     .build();
             routing.execute();
         }

@@ -838,38 +838,68 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
 
         vibration(); //add vibration to act as notification
         AlertDialog.Builder alertDialog = new AlertDialog.Builder(CustomerMapActivity.this)
-                .setTitle("Driver Found!!");
+                ;
 
         LayoutInflater inflater = this.getLayoutInflater();
         View layout_driver = inflater.inflate(R.layout.driver_found, null); //add image to alert dialog from layout
+        final Button acceptRequest = layout_driver.findViewById(R.id.acceptRequest);
+        final Button declineRequest = layout_driver.findViewById(R.id.declineRequest);
 
         alertDialog.setView(layout_driver);
 
-        alertDialog.setMessage("Do you want to get the driver information")
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+        final AlertDialog alert = alertDialog.setMessage("Do you want to get the driver information").show();
 
-                        endRide();
+        acceptRequest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getDriverLocation();
+                getDriverInfo();
+                getHasRideEnded();
+                mRequest.setText("Looking for Driver Location....");
+                alert.dismiss();
 
-                        new AlertDialog.Builder(CustomerMapActivity.this)
-                                .setTitle("Ride Cancelled!")
-                                .setMessage("Your Ride has been Cancelled")
-                                .setPositiveButton("Done", null)
-                                .show();
+            }
+        });
+        declineRequest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
 
-                    }
-                })
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        getDriverLocation();
-                        getDriverInfo();
-                        getHasRideEnded();
-                        mRequest.setText("Looking for Driver Location....");
-                    }
-                })
-                .show();
+                endRide();
+
+                new AlertDialog.Builder(CustomerMapActivity.this)
+                        .setTitle("Ride Cancelled!")
+                        .setMessage("Your Ride has been Cancelled")
+                        .setPositiveButton("Done", null)
+                        .show();
+                alert.dismiss();
+
+            }
+        });
+
+//                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialogInterface, int i) {
+//
+//                        endRide();
+//
+//                        new AlertDialog.Builder(CustomerMapActivity.this)
+//                                .setTitle("Ride Cancelled!")
+//                                .setMessage("Your Ride has been Cancelled")
+//                                .setPositiveButton("Done", null)
+//                                .show();
+//
+//                    }
+//                })
+//                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialogInterface, int i) {
+//                        getDriverLocation();
+//                        getDriverInfo();
+//                        getHasRideEnded();
+//                        mRequest.setText("Looking for Driver Location....");
+//                    }
+//                })
+//                .show();
     }
 
 
@@ -1030,8 +1060,8 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
                     if(dataSnapshot.child("phoneNumber")!=null){
                         mDriverPhone.setText(dataSnapshot.child("phoneNumber").getValue().toString());
                     }
-                    if(dataSnapshot.child("car")!=null){
-                        mDriverCar.setText(dataSnapshot.child("car").getValue().toString());
+                    if(dataSnapshot.child("VehicleInformation")!=null){
+                        mDriverCar.setText(dataSnapshot.child("VehicleInformation").child("Car Make").getValue().toString());
                     }
                     if(dataSnapshot.child("profileImageUrl").getValue()!=null){
                         Glide.with(getApplication()).load(dataSnapshot.child("profileImageUrl").getValue().toString()).into(mDriverProfileImage);
@@ -1230,8 +1260,8 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
 
                     //mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
                     //mMap.animateCamera(CameraUpdateFactory.zoomTo(16));
-                    if(!getDriversAroundStarted)
-                         getDriversAround();
+                    if(!getDriversAroundStarted){}
+//                         getDriversAround();
                 }
 
             }

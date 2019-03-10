@@ -268,12 +268,14 @@ public class DriverLoginActivity extends AppCompatActivity /*implements View.OnC
                 mPassword.setVisibility(View.VISIBLE);
                 mLogin.setVisibility(View.VISIBLE);
                 mRegistration_Section.setVisibility(View.VISIBLE);
+                mCreateAccount.setVisibility(View.VISIBLE);
                 break;
             case "hide":
                 mEmailField.setVisibility(View.GONE);
                 mPassword.setVisibility(View.GONE);
                 mLogin.setVisibility(View.GONE);
                 mRegistration_Section.setVisibility(View.GONE);
+                mCreateAccount.setVisibility(View.GONE);
                 break;
         }
     }

@@ -325,6 +325,7 @@ public class DriverRegistration extends AppCompatActivity {
                 .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                     @Override
                     public void onSuccess(AuthResult authResult) {
+                        user.setService("HyKeTaxi");
                         mUsers.child("Drivers")
                                 .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                 .setValue(user)

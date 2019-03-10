@@ -4,7 +4,12 @@ import java.net.URI;
 
 public class User {
 
-    private String email, password, firstname, lastname, phoneNumber;
+    private String email;
+    private String password;
+    private String firstname;
+    private String lastname;
+    private String phoneNumber;
+    private String service;
 
     private URI resultUri;
 
@@ -52,5 +57,13 @@ public class User {
     public String getPhoneNumber() { return phoneNumber; }
 
     public String toString() {return firstname + " " + lastname;}
+
+    public String getService() {
+        return service;
+    }
+
+    public void setService(String service) {
+        this.service = service;
+    }
 }
 

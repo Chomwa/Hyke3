@@ -35,8 +35,8 @@ import java.util.List;
 
 public class CustomerRegistration extends AppCompatActivity{
     private EditText mEmailField, mPassword, confirmPassword, userPhoneNumber, firstName, lastName;
-    private List<String> steps = new ArrayList<>(Arrays.asList("Email", "Phone number", "Password", "Bio"));
-    private List<Integer> enterEmailIds, phoneNumberIds, passwordIds, bioIds;
+    private List<String> steps = new ArrayList<>(Arrays.asList("Email", "Phone number", "Password", "Bio", "UploadPicture"));
+    private List<Integer> enterEmailIds, phoneNumberIds, passwordIds, bioIds, profilePictureIds;
     private String currentStep = "Email";
     private static final String TAG = "Customer registration";
     public static final int REQUEST_CODE = 10;
@@ -152,6 +152,23 @@ public class CustomerRegistration extends AppCompatActivity{
                 break;
 
             case "Bio":
+                firstName = findViewById(R.id.first_name);
+                lastName = findViewById( R.id.last_name);
+                if (!(isFieldEmpty(firstName) && isFieldEmpty(lastName))){
+                    user.setFirstName(firstName.getText().toString());
+                    user.setLastName(lastName.getText().toString());
+                    pgsBar.setVisibility(View.VISIBLE);
+                    displayRegistrationFields("Hide", bioIds);
+                    displayRegistrationFields("Hide", enterEmailIds);
+                    displayRegistrationFields("Hide", phoneNumberIds);
+                    displayRegistrationFields("Hide", passwordIds);
+                    mNext.setVisibility(View.GONE);
+                    mPleaseWait.setVisibility(View.VISIBLE);
+                    registerUser();
+                }
+                break;
+
+            case "UploadPicture":
                 firstName = findViewById(R.id.first_name);
                 lastName = findViewById( R.id.last_name);
                 if (!(isFieldEmpty(firstName) && isFieldEmpty(lastName))){

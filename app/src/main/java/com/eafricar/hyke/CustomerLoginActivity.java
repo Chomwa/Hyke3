@@ -62,9 +62,9 @@ import dmax.dialog.SpotsDialog;
 public class CustomerLoginActivity extends AppCompatActivity /*implements View.OnClickListener , GoogleApiClient.OnConnectionFailedListener */{
 
     private EditText mEmailField, mPassword;
-    private Button mLogin, mCreateAccount, mPhoneRegistration;
+    private Button mLogin, mCreateAccount;
 
-    private TextView mText, mForgotPassword;
+    private TextView mText, mForgotPassword, tvForgotPassword;
 
     private FirebaseAuth mAuth;
     private FirebaseDatabase mSignInCustomerDatabase;
@@ -128,6 +128,7 @@ public class CustomerLoginActivity extends AppCompatActivity /*implements View.O
 
         mLogin = (Button) findViewById(R.id.login);
         mCreateAccount = (Button) findViewById(R.id.create_account);
+
 
      //   mPhoneRegistration = (Button) findViewById(R.id.phonenumberregistration);
 
@@ -272,12 +273,14 @@ public class CustomerLoginActivity extends AppCompatActivity /*implements View.O
                 mPassword.setVisibility(View.VISIBLE);
                 mLogin.setVisibility(View.VISIBLE);
                 mRegistration_Section.setVisibility(View.VISIBLE);
+                mCreateAccount.setVisibility(View.VISIBLE);
                 break;
             case "hide":
                 mEmailField.setVisibility(View.GONE);
                 mPassword.setVisibility(View.GONE);
                 mLogin.setVisibility(View.GONE);
                 mRegistration_Section.setVisibility(View.GONE);
+                mCreateAccount.setVisibility(View.GONE);
                 break;
         }
     }

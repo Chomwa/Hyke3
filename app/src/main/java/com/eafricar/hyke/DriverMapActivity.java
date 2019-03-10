@@ -454,7 +454,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
 
       updateFirebaseToken();
-        getAssignedCustomer();// Call customer when working switch is turned on/ refer to function
+      getAssignedCustomer();// Call customer when working switch is turned on/ refer to function
     }
 
     private void updateFirebaseToken() {

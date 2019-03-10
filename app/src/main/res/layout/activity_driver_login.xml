@@ -71,6 +71,19 @@
             android:textAllCaps="false"
             android:id="@+id/login"/>
 
+        <Button
+            android:id="@+id/create_account"
+            style="@style/button_style"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="5dp"
+            android:text="Create an Account"
+            android:textAllCaps="false"
+            android:textColor="#fff" />
+
         <ProgressBar
             android:id="@+id/pBar"
             style="@android:style/Widget.ProgressBar.Large"
@@ -237,8 +250,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
             android:layout_marginTop="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginBottom="2dp"
             android:background="@drawable/registration_linear_layout_background"
             android:orientation="vertical">
 
@@ -248,48 +262,34 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="10dp"
-                android:text="Don't have an account?"
                 android:textAllCaps="false"
                 android:textColor="#ffffff"
                 android:textStyle="italic|bold" />
 
 
-            <Button
-                android:id="@+id/create_account"
-                style="@style/button_style"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:layout_marginTop="20dp"
-                android:text="Create an Account"
-                android:textAllCaps="false"
-                android:textColor="#fff" />
-
             <TextView
                 android:id="@+id/registration_text_view2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:layout_marginLeft="5dp"
                 android:layout_marginTop="5dp"
                 android:text="By tapping create an account, i agree to"
                 android:textAllCaps="false"
                 android:textColor="#ffffff"
-                android:textStyle="italic"
-                android:layout_gravity="center"/>
+                android:textStyle="italic" />
 
             <TextView
                 android:id="@+id/registration_text_view3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:layout_marginLeft="8dp"
                 android:layout_marginTop="2dp"
                 android:text="HyKe's Terms and Conditions."
                 android:textAllCaps="false"
                 android:textColor="#ffffff"
-                android:textStyle="italic"
-                android:layout_gravity="center"/>
+                android:textStyle="italic" />
         </LinearLayout>
 
     </LinearLayout>

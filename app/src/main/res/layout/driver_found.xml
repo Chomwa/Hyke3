@@ -6,6 +6,18 @@
     android:orientation="vertical"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:padding="10dp"
+            android:text="We found you a Driver!!"
+            android:textStyle="italic"
+            android:textAllCaps="false"
+            android:textSize="24sp"
+            android:textAlignment="center"
+            android:textColor="@color/dividerColor2"/>
+
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/notification_map_image"
             android:layout_width="200dp"
@@ -31,7 +43,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="#009900"
-                    android:text="Accept" />
+                    android:text="Proceed" />
 
                 <Button
                     android:id="@+id/declineRequest"
@@ -39,7 +51,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:background="#9f0e1c"
-                    android:text="Decline" />
+                    android:text="Cancel" />
         </LinearLayout>
 
 </LinearLayout>

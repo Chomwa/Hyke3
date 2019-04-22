@@ -113,7 +113,6 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content">
 
-
                             <fragment
                                 android:id="@+id/place_destination"
                                 android:layout_width="match_parent"
@@ -180,6 +179,18 @@
                 </LinearLayout>
 
             </android.support.v7.widget.CardView>
+
+            <ImageView
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:src="@drawable/user_image"
+                android:layout_gravity="right"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentRight="true"
+                android:layout_margin="15dp"
+                android:visibility="gone"
+                android:id="@+id/show_driver_details" />
+
         </RelativeLayout>
 
 
@@ -187,7 +198,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:orientation="vertical">
+            android:orientation="horizontal"
+            android:id="@+id/driverDetails">
 
             <LinearLayout
                 android:id="@+id/driverInfo"
@@ -198,6 +210,28 @@
                 android:orientation="vertical"
                 android:padding="3dp"
                 android:visibility="gone">
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/cancel_image"
+                        android:layout_alignParentLeft="true"
+                        android:layout_gravity="start"
+                        android:padding="2sp"
+                        android:id="@+id/cancel_ride"/>
+
+                    <ImageView
+                        android:id="@+id/hide_driver_details"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_alignParentRight="true"
+                        android:layout_gravity="right"
+                        android:padding="2sp"
+                        android:src="@drawable/ic_keyboard_arrow_down_maroon_24dp" />
+                </RelativeLayout>
 
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/driverProfileImage"
@@ -205,6 +239,8 @@
                     android:layout_height="150sp"
                     android:layout_gravity="center"
                     android:padding="20sp"
+                    app:border_color="@color/dividerColor2"
+                    app:border_width="2dp"
                     android:src="@mipmap/ic_default_user" />
 
                 <TextView
@@ -213,46 +249,112 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:paddingTop="20sp"
-                    android:paddingBottom="10sp"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
+                    android:paddingBottom="5sp"
+                    android:textSize="30sp"
+                    android:textStyle="italic"
+                    android:layout_gravity="center"
+                    android:textColor="@color/dividerColor2"/>
 
                 <TextView
                     android:id="@+id/driverPhone"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingTop="20sp"
-                    android:paddingBottom="10sp"
-                    android:textStyle="italic" />
+                    android:paddingTop="5sp"
+                    android:paddingBottom="3sp"
+                    android:textStyle="italic"
+                    android:layout_gravity="center"/>
 
                 <TextView
                     android:id="@+id/driverCar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:paddingTop="20sp"
+                    android:paddingTop="2sp"
                     android:paddingBottom="10sp"
-                    android:textStyle="normal" />
+                    android:textStyle="normal"
+                    android:layout_gravity="center"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:orientation="horizontal">
 
-                    <TextView
-                        android:id="@+id/driverDistance"
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1" />
+                        android:orientation="vertical"
+                        android:layout_weight="1">
 
-                    <RatingBar
+                        <TextView
+                            android:id="@+id/driverDistance"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text=""
+                            android:textColor="@color/dividerColor2"
+                            android:padding="3dp"
+                            android:textSize="24sp"
+                            android:layout_gravity="center"/>
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="Distance"
+                            android:textStyle="normal" />
+
+                    </LinearLayout>
+
+
+     <!--               <RatingBar
                         android:id="@+id/ratingBar"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:numStars="5"
                         android:padding="5dp"
                         android:stepSize="0.1"
-                        android:theme="@style/RatingBar" />
+                        android:theme="@style/RatingBar" /> -->
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_weight="1">
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:layout_gravity="center">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/ratingText"
+                                android:layout_gravity="center"
+                                android:text="0"
+                                android:textColor="@color/dividerColor2"
+                                android:padding="3dp"
+                                android:textSize="24sp"/>
+
+                            <ImageView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/ic_star_maroon_24dp"
+                                android:padding="3dp"/>
+
+                        </LinearLayout>
+
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:text="Rating"
+                            android:textStyle="normal" />
+
+                    </LinearLayout>
+
+
                 </LinearLayout>
 
                 <LinearLayout
@@ -398,7 +500,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
-                    android:visibility="gone"
+                    android:visibility="visible"
                     app:cardElevation="10dp">
 
                     <LinearLayout
@@ -436,6 +538,8 @@
 
 
             </LinearLayout>
+
+
         </LinearLayout>
     </FrameLayout>
 

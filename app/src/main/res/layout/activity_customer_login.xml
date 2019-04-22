@@ -69,7 +69,7 @@
 
         <Button
             android:id="@+id/login"
-            style="@style/button_style"
+            style="@style/button_style3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
@@ -79,7 +79,7 @@
             android:bottomRightRadius="10dp"
             android:text="Log In"
             android:textAllCaps="false"
-            android:textColor="#ffFF"
+            android:textColor="#9f0e1c"
             android:topLeftRadius="10dp"
             android:topRightRadius="10dp" />
 

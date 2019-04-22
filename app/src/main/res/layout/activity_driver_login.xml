@@ -60,14 +60,14 @@
             android:textStyle="normal" />
 
         <Button
-            style="@style/button_style"
+            style="@style/button_style3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:text="Log In"
-            android:textColor="#fff"
+            android:textColor="#9f0e1c"
             android:textAllCaps="false"
             android:id="@+id/login"/>
 

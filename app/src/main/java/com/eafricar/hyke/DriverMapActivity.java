@@ -2,6 +2,7 @@ package com.eafricar.hyke;
 
 import android.Manifest;
 import android.app.AlertDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -9,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.location.Location;
+import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
@@ -73,6 +75,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
@@ -106,13 +109,13 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     private FusedLocationProviderClient mFusedLocationClient;
 
 
-    private Button  mRideStatus,  mSetRoute, mDone;
+    private Button  mRideStatus, mCancelRideButton, mSetRoute, mDone;
 
     private Switch mWorkingSwitch;
 
     private int status = 0;
 
-    private String customerId = "", destination;
+    private String customerId = "", destination, pickup;
     private LatLng destinationLatLng, pickupLatLng, driverDestinationLatLng, driverStartLatLng;
     private float rideDistance;
 
@@ -125,11 +128,11 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     //Assigned Customer information section
     private LinearLayout mCustomerInfo;
 
-    private ImageView mCustomerProfileImage;
+    private ImageView mCustomerProfileImage, mShowDriverDetails, mHideDriverDetails, mCancelRide;
 
     private TextView mCustomerName, mCustomerPhone, mCustomerDestination,
             mNavigationHeaderTextFirstName,mNavigationHeaderTextLastName,
-            mNavigationHeaderTextPhoneNumber;
+            mNavigationHeaderTextPhoneNumber, mDriverRating;
 
     private DatabaseReference mDriverDatabase;
     private String userID;
@@ -198,6 +201,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         mNavigationHeaderTextFirstName = (TextView) header.findViewById(R.id.navigationtextFirstName); //First name of User
         mNavigationHeaderTextLastName = (TextView) header.findViewById(R.id.navigationtextLastName); //Last Name of User
         mNavigationHeaderTextPhoneNumber = (TextView) header.findViewById(R.id.navigationtextPhoneNumber); //Phone Number of User
+        mDriverRating = (TextView) header.findViewById(R.id.rating_number);
 
         //Database reference in relation to navigation header image
         userID = FirebaseAuth.getInstance().getCurrentUser().getUid();
@@ -217,6 +221,18 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                         mNavigationHeaderImageUrl = map.get("profileImageUrl").toString();
                         Glide.with(getApplication()).load(mNavigationHeaderImageUrl).into(mToggleImage); // calling user profile picture into Toggle profile picture
                     } */
+                    int ratingSum = 0;
+                    float ratingsTotal = 0;
+                    float ratingsAvg = 0;
+                    for (DataSnapshot child : dataSnapshot.child("rating").getChildren()){
+                        ratingSum = ratingSum + Integer.valueOf(child.getValue().toString());
+                        ratingsTotal++;
+                    }
+                    if(ratingsTotal!= 0){
+                        ratingsAvg = ratingSum/ratingsTotal;
+                    final String ratingTxt = String.valueOf(ratingsAvg);
+                        mDriverRating.setText(""+ratingTxt.substring(0,Math.min(ratingTxt.length(),3)));
+                    }
 
                 }
             }
@@ -263,6 +279,9 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         mCustomerInfo = (LinearLayout) findViewById(R.id.customerInfo);// Customer info Linear layout which is currently hidden
 
         mCustomerProfileImage = (ImageView) findViewById(R.id.customerProfileImage);
+        mHideDriverDetails = (ImageView) findViewById(R.id.hide_driver_details);
+        mShowDriverDetails = (ImageView) findViewById(R.id.show_driver_details);
+        mCancelRide = (ImageView) findViewById(R.id.cancel_ride);
 
         mCustomerName = (TextView) findViewById(R.id.customerName);
         mCustomerPhone = (TextView) findViewById(R.id.customerPhone);
@@ -287,8 +306,53 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
             }
         });
 
+        mHideDriverDetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //hide driver info section and ride request section
+                mCustomerInfo.setVisibility(View.GONE);
+                mShowDriverDetails.setVisibility(View.VISIBLE);
+
+            }
+        });
+
+        mShowDriverDetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //show driver info section and ride request section
+                mCustomerInfo.setVisibility(View.VISIBLE);
+                mShowDriverDetails.setVisibility(View.GONE);
+
+            }
+        });
+
+        mCancelRide.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                new android.support.v7.app.AlertDialog.Builder(DriverMapActivity.this)
+                        .setTitle("Cancel Ride?")
+                        .setMessage("Are you sure you want to Cancel your Ride request?")
+                        .setNegativeButton("No", null)
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                endRide();
+
+                                new android.support.v7.app.AlertDialog.Builder(DriverMapActivity.this)
+                                        .setTitle("Ride Cancelled!")
+                                        .setPositiveButton("Done", null)
+                                        .show();
+                            }
+                        })
+                        .show();
+
+            }
+        });
+
 
         mRideStatus = (Button) findViewById(R.id.rideStatus); //calling before and After customer is to be picked up
+        mCancelRideButton = (Button) findViewById(R.id.cancel_ride_button);
 
         mRideStatus.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -333,6 +397,30 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
                         break;
                 }
+            }
+        });
+
+        mCancelRideButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                new android.support.v7.app.AlertDialog.Builder(DriverMapActivity.this)
+                        .setTitle("Cancel Ride?")
+                        .setMessage("Are you sure you want to Cancel your Ride request?")
+                        .setNegativeButton("No", null)
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                endRide();
+
+                                new android.support.v7.app.AlertDialog.Builder(DriverMapActivity.this)
+                                        .setTitle("Ride Cancelled!")
+                                        .setPositiveButton("Done", null)
+                                        .show();
+                            }
+                        })
+                        .show();
+
             }
         });
 
@@ -476,6 +564,9 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
                 if(dataSnapshot.exists()){
                     status = 1;
                     customerId = dataSnapshot.getValue().toString();
+                    //add sound to alert dialoge
+                    final MediaPlayer mp = MediaPlayer.create(DriverMapActivity.this, R.raw.slow_spring_board);
+                    mp.start();
                     vibration();
                     getRideDetails();
 
@@ -498,15 +589,84 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     private void getRideDetails() {
 
          //add vibration to act as notification
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(DriverMapActivity.this)
-                .setTitle("You have a Ride Request!!");
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(DriverMapActivity.this);
 
         LayoutInflater inflater = this.getLayoutInflater();
-        View layout_driver = inflater.inflate(R.layout.driver_found, null); //add image to alert dialog from layout
+        View layout_customer = inflater.inflate(R.layout.customer_found, null); //add image to alert dialog from layout
 
-        alertDialog.setView(layout_driver);
+        //call Variables
 
-        alertDialog.setMessage("Do you want to get the passenger information")
+        final Button acceptRequest = layout_customer.findViewById(R.id.acceptRequest);
+        final Button declineRequest = layout_customer.findViewById(R.id.declineRequest);
+        final TextView destinationText = layout_customer.findViewById(R.id.customer_destination);
+        final TextView pickupText = layout_customer.findViewById(R.id.customer_pickup);
+
+        //get customer destination and show in text
+        String driverId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        DatabaseReference assignedCustomerRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverId).child("customerRequest");
+        assignedCustomerRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                //set Text
+                Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
+                if(map.get("destination")!=null){
+                    destination = map.get("destination").toString();
+                    destinationText.setText(destination);
+                }
+                else{
+                    destinationText.setText("Destination: --");
+                }
+
+                if(map.get("pickup")!=null){
+                    pickup = map.get("pickup").toString();
+                    pickupText.setText(pickup);
+                }
+                else{
+                    pickupText.setText("Pickup: --");
+                }
+
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+        //show layout in dialog
+        alertDialog.setView(layout_customer);
+
+        final AlertDialog alert = alertDialog.show();
+
+        acceptRequest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getAssignedCustomerPickupLocation();
+                getAssignedCustomerDestination();
+                getAssignedCustomerInfo();
+                alert.dismiss();
+
+            }
+        });
+        declineRequest.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                endRide();
+
+                new android.support.v7.app.AlertDialog.Builder(DriverMapActivity.this)
+                        .setTitle("Ride Cancelled!")
+                        .setMessage("Your Ride has been Cancelled")
+                        .setPositiveButton("Done", null)
+                        .show();
+                alert.dismiss();
+
+            }
+        });
+
+
+
+       /* alertDialog.setMessage("Do you want to get the passenger information")
                 .setNegativeButton("No", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -530,7 +690,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
                     }
                 })
-                .show();
+                .show(); */
     }
 
     Marker pickupMarker;
@@ -748,6 +908,7 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
     }
 
 
+    private static int number_calls;
     LocationCallback mLocationCallback = new LocationCallback(){
         @Override
         public void onLocationResult(LocationResult locationResult) {
@@ -761,6 +922,22 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
 
 
                     LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
+
+                  //  if (number_calls++ ==1){
+
+                        //  mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                    //    mMap.animateCamera(CameraUpdateFactory.zoomTo(16));
+
+                      //  CameraPosition cameraPosition = new CameraPosition.Builder()
+                        //        .target(new LatLng(location.getLatitude(),location.getLongitude()))
+                          //      .zoom(17)
+                                //   .bearing(90)
+                                //   .tilt(40)
+                            //    .build();
+                       // mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+                   // }
+
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng)); //moving camera to location
                     mMap.animateCamera(CameraUpdateFactory.zoomTo(16));//Zooming in on google maps
 
@@ -998,10 +1175,14 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
             startActivity(searchIntent);
             overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
             //Log out function
-        }else if (id == R.id.contact_us){
+        }else if (id == R.id.contact_us) {
             Intent searchIntent = new Intent(DriverMapActivity.this, ContactUsActivity.class);
             startActivity(searchIntent);
             overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
+
+        }else if (id == R.id.invite_friends) {
+                shareDownloadUrl();
+
         }else if (id == R.id.settings){
             Intent searchIntent = new Intent(DriverMapActivity.this, SettingsActivity.class);
             startActivity(searchIntent);
@@ -1022,6 +1203,51 @@ public class DriverMapActivity extends AppCompatActivity implements OnMapReadyCa
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawerLayout); //calling the drawer layout
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void shareDownloadUrl(){
+      /*  Uri contentUri = Uri.parse("android.resource://"+getPackageName());
+
+        StringBuilder msg = new StringBuilder();
+        msg.append("Hey, HyKe is a new transport app that will get you where you want to go safely. Download it from");
+        msg.append("\n");
+        msg.append("https://play.google.com/store/apps/details?id=com.eafricar.hyke");
+
+        if (contentUri!= null){
+
+            Intent shareIntent = new Intent();
+            shareIntent.setAction(Intent.ACTION_SEND);
+      //      shareIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            shareIntent.setType("**");
+            shareIntent.putExtra(Intent.EXTRA_TEXT, msg.toString());
+            shareIntent.putExtra(Intent.EXTRA_STREAM,contentUri);
+            try{
+                startActivity(Intent.createChooser(shareIntent, "Share 'HyKe' Via"));
+            } catch(ActivityNotFoundException e){
+                Toast.makeText(getApplicationContext(), "No App Available", Toast.LENGTH_SHORT).show();
+            }
+        } */
+
+
+
+        StringBuilder msg = new StringBuilder();
+        msg.append("Hey, HyKe is a new transport app that will get you where you want to go safely. Download it from");
+        msg.append("\n");
+        msg.append("https://play.google.com/store/apps/details?id=com.eafricar.hyke"); //example :com.package.name
+
+
+        Intent shareIntent = new Intent();
+        shareIntent.setAction(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, msg.toString());
+
+        try {
+            startActivity(Intent.createChooser(shareIntent, "Share 'HyKe' via"));
+        } catch (ActivityNotFoundException e) {
+            Toast.makeText(getApplicationContext(), "No App Available", Toast.LENGTH_SHORT).show();
+        }
+
+
     }
 
 }

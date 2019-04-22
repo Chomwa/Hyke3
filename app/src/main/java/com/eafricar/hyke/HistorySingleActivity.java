@@ -398,7 +398,7 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
 
 
     private List<Polyline> polylines;
-    private static final int[] COLORS = new int[]{R.color.primary_dark_material_light};
+    private static final int[] COLORS = new int[]{R.color.dividerColor2};
     @Override
     public void onRoutingFailure(RouteException e) {
         if(e != null) {
@@ -424,7 +424,7 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngBounds(bounds, padding);
 
         mMap.animateCamera(cameraUpdate);
-        
+
         mMap.addMarker(new MarkerOptions().position(pickupLatLng).title("pickup location").icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_pickup)));
         mMap.addMarker(new MarkerOptions().position(destinationLatLng).title("destination"));
 

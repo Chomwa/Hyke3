@@ -1,12 +1,17 @@
 package com.eafricar.hyke;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Color;
 import android.location.Location;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
@@ -74,6 +79,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.MapStyleOptions;
@@ -132,18 +138,19 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
 
     private LatLng destinationLatLng, pickupLatLng;
 
-    private LinearLayout mDriverInfo, mRideRequestSection, mSetDestinationSection;
+    private LinearLayout mDriverInfo, mRideRequestSection, mSetDestinationSection, mDriverDetailsSection;
 
-    private ImageView mDriverProfileImage, NavigationHeaderImage, mCancel, mEditInfo;
+    private ImageView mDriverProfileImage, NavigationHeaderImage, mCancel,
+            mEditInfo, mShowDriverDetails, mHideDriverDetails, mCancelRide;
 
     private TextView mDriverName, mDriverPhone, mDriverCar,
             mNavigationHeaderTextFirstName,mNavigationHeaderTextLastName,
             mNavigationHeaderTextPhoneNumber, mPickUpText, mDestinationText,
-            mSetDestinationName;
+            mSetDestinationName, mRatingText, mDistanceText;
 
     private RadioGroup mRadioGroup;
 
-    private RatingBar mRatingBar;
+    //private RatingBar mRatingBar;
 
     private DatabaseReference mCustomerDatabase;
     private String userID;
@@ -171,6 +178,9 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
 
     private static final String TAG = "CustomerMapActivity";
 
+    private float rideDistance;
+    private String ridePriceTotal;
+    private Double ridePrice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -178,6 +188,7 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 
         setContentView(R.layout.activity_customer_map);
+        hideItem();
 
         mService = Common.getFCMService();
 
@@ -284,13 +295,16 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
         mDriverPhone = (TextView) findViewById(R.id.driverPhone);
         mDriverCar = (TextView) findViewById(R.id.driverCar);
 
-        mRatingBar = (RatingBar) findViewById(R.id.ratingBar);
+    //    mRatingBar = (RatingBar) findViewById(R.id.ratingBar);
+        mRatingText = (TextView) findViewById(R.id.ratingText);
+        mDistanceText = (TextView) findViewById(R.id.driverDistance);
 
         //mRadioGroup = (RadioGroup) findViewById(R.id.radioGroup);
         //mRadioGroup.check(R.id.HykeShared);
 
 
         mRideRequestSection = (LinearLayout) findViewById(R.id.ride_request_section);
+        mDriverDetailsSection = (LinearLayout) findViewById(R.id.driverDetails);
         mRequest = (Button) findViewById(R.id.request);
         mSetDestination = (Button) findViewById(R.id.set_destination_button);
 
@@ -301,6 +315,7 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
 
         mSetLocation = (CardView) findViewById(R.id.location_section);
         mLocationInfoSection = (CardView) findViewById(R.id.location_info_display_section);
+
 
         mPlace_Location = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_location);
         mPlace_Destination = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_destination);
@@ -315,6 +330,9 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
 
         mCancel = (ImageView) findViewById(R.id.cancel);
         mEditInfo = (ImageView) findViewById(R.id.location_info_edit);
+        mHideDriverDetails = (ImageView) findViewById(R.id.hide_driver_details);
+        mShowDriverDetails = (ImageView) findViewById(R.id.show_driver_details);
+        mCancelRide = (ImageView) findViewById(R.id.cancel_ride);
 
         mPickUpText = (TextView) findViewById(R.id.pickup_info_text);
         mDestinationText = (TextView) findViewById(R.id.destination_info_text);
@@ -462,6 +480,52 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
             }
         });
 
+        mHideDriverDetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //hide driver info section and ride request section
+                mDriverDetailsSection.setVisibility(View.GONE);
+                mRideRequestSection.setVisibility(View.GONE);
+                mShowDriverDetails.setVisibility(View.VISIBLE);
+
+            }
+        });
+
+        mShowDriverDetails.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //show driver info section and ride request section
+                mDriverDetailsSection.setVisibility(View.VISIBLE);
+                mRideRequestSection.setVisibility(View.VISIBLE);
+                mShowDriverDetails.setVisibility(View.GONE);
+
+            }
+        });
+
+        mCancelRide.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                new AlertDialog.Builder(CustomerMapActivity.this)
+                        .setTitle("Cancel Ride?")
+                        .setMessage("Are you sure you want to Cancel your Ride request?")
+                        .setNegativeButton("No", null)
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                endRide();
+
+                                new AlertDialog.Builder(CustomerMapActivity.this)
+                                        .setTitle("Ride Cancelled!")
+                                        .setPositiveButton("Done", null)
+                                        .show();
+                            }
+                        })
+                        .show();
+
+            }
+        });
+
         //Vehicle Type
         mShared = (ImageView) findViewById(R.id.hyke_shared_pic);
         mTaxi = (ImageView) findViewById(R.id.hyke_taxi_pic);
@@ -541,6 +605,40 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
                     mPersonal.setImageResource(R.drawable.hykepersonallogobw);
 
                 }
+
+                AlertDialog.Builder alertDialog = new AlertDialog.Builder(CustomerMapActivity.this);
+
+                LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                View layout_fare_quote = inflater.inflate(R.layout.fare_quote, null); //add image to alert dialog from layout
+                final TextView priceQuote = layout_fare_quote.findViewById(R.id.ridePrice);
+                final TextView distanceTxt = layout_fare_quote.findViewById(R.id.distanceTxt);
+                final TextView durationTxt = layout_fare_quote.findViewById(R.id.durationTxt);
+
+                //Calculate distance between two points
+                Location loc1 = new Location("");
+                loc1.setLatitude(pickupLatLng.latitude);
+                loc1.setLongitude(pickupLatLng.longitude);
+
+                Location loc2 = new Location("");
+                loc2.setLatitude(destinationLatLng.latitude);
+                loc2.setLongitude(destinationLatLng.longitude);
+
+                float distance = loc1.distanceTo(loc2)/1000;
+                distanceTxt.setText(""+String.valueOf(distance).substring(0,Math.min(String.valueOf(distance).length(),5)) + "Km" ); //set distance text
+
+                // calculate approx. fare
+                ridePrice = Double.valueOf(distance) * 6.5;
+                ridePriceTotal= String.valueOf(ridePrice);
+                priceQuote.setText("" + ridePriceTotal.substring(0,Math.min(ridePriceTotal.length(),4))); //set Price quote text
+
+                //calculate time
+                int speed = 30;
+                float time = (distance/speed)*60;
+                durationTxt.setText(""+ String.valueOf(time).substring(0,Math.min(String.valueOf(distance).length(),3)) + "min"); //set duration text
+
+                alertDialog.setView(layout_fare_quote);
+
+                final AlertDialog alert = alertDialog.show();
 
                 mRequest.setText("Request a HyKe Taxi Ride");
                 requestService = ("HyKeTaxi");
@@ -688,6 +786,7 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
 
     }
 
+
     private void updateFirebaseToken() {
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -777,6 +876,7 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
                                     HashMap map = new HashMap();
                                     map.put("customerRideId", customerId);
                                     map.put("destination", destination);
+                                    map.put("pickup", mPickUpName);
                                     map.put("destinationLat", destinationLatLng.latitude);
                                     map.put("destinationLng", destinationLatLng.longitude);
                                     driverRef.updateChildren(map);
@@ -836,9 +936,12 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
 
     private void getInfo() {
 
+        //add sound to alert dialoge
+        final MediaPlayer mp = MediaPlayer.create(CustomerMapActivity.this, R.raw.slow_spring_board);
+        mp.start();
+
         vibration(); //add vibration to act as notification
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(CustomerMapActivity.this)
-                ;
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(CustomerMapActivity.this);
 
         LayoutInflater inflater = this.getLayoutInflater();
         View layout_driver = inflater.inflate(R.layout.driver_found, null); //add image to alert dialog from layout
@@ -847,7 +950,7 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
 
         alertDialog.setView(layout_driver);
 
-        final AlertDialog alert = alertDialog.setMessage("Do you want to get the driver information").show();
+        final AlertDialog alert = alertDialog.show();
 
         acceptRequest.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -855,7 +958,8 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
                 getDriverLocation();
                 getDriverInfo();
                 getHasRideEnded();
-                mRequest.setText("Looking for Driver Location....");
+                mRequest.setText("Cancel");
+                mRequest.setVisibility(View.VISIBLE);
                 alert.dismiss();
 
             }
@@ -981,7 +1085,8 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
                     List<Object> map = (List<Object>) dataSnapshot.getValue();
                     double locationLat = 0;
                     double locationLng = 0;
-                    mRequest.setText("Driver Found: " );
+                    mRequest.setText("Cancel" );
+
 
                     if(map.get(0) != null){
                         locationLat = Double.parseDouble(map.get(0).toString());
@@ -1006,8 +1111,10 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
                     float distance = loc1.distanceTo(loc2);
 
                     if (distance<100){
-                        mRequest.setText("Driver's Here");
-                        mapRipple.stopRippleMapAnimation();
+                     //   mRequest.setText("Driver's Here");
+                        mRequest.setText("Cancel");
+                        mDistanceText.setText("Driver's Here");
+                      //  mapRipple.stopRippleMapAnimation();
 
                         if (number_calls++ ==1){
                             vibration();
@@ -1019,7 +1126,9 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
 
 
                     }else{
-                        mRequest.setText("Driver Found: " + String.valueOf(distance) + " m away");
+                      //  mRequest.setText("Driver Found: " + String.valueOf(distance) + " m away");
+                        mRequest.setText("Cancel");
+                        mDistanceText.setText(""+String.valueOf(distance).substring(0,Math.min(String.valueOf(distance).length(),5)) + "m" );
                     }
 
                     mDriverMarker = mMap.addMarker(new MarkerOptions().position(driverLatLng).title("your driver").icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_car)));
@@ -1076,7 +1185,9 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
                     }
                     if(ratingsTotal!= 0){
                         ratingsAvg = ratingSum/ratingsTotal;
-                        mRatingBar.setRating(ratingsAvg);
+                        //mRatingBar.setRating(ratingsAvg);
+                        final String ratingTxt = String.valueOf(ratingsAvg);
+                        mRatingText.setText(""+ratingTxt.substring(0,Math.min(ratingTxt.length(),3)));
                     }
                 }
             }
@@ -1097,11 +1208,44 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
 
                 }else{
                     vibration();
-                    new AlertDialog.Builder(CustomerMapActivity.this)
+
+                    AlertDialog.Builder alertDialog = new AlertDialog.Builder(CustomerMapActivity.this);
+
+                    LayoutInflater inflater = (LayoutInflater) getApplicationContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                    View layout_pay = inflater.inflate(R.layout.customer_pay_dialogue, null); //add image to alert dialog from layout
+                    final Button payButton = layout_pay.findViewById(R.id.pay);
+                    final TextView RidePriceTxt = layout_pay.findViewById(R.id.ridePrice);
+
+                    ridePrice = Double.valueOf(rideDistance) * 6.5;
+                    ridePriceTotal= String.valueOf(ridePrice);
+                    if (ridePrice < 1){
+                        RidePriceTxt.setText("0");
+                    }else {
+                        RidePriceTxt.setText("" + ridePriceTotal.substring(0,Math.min(ridePriceTotal.length(),3)));
+                    }
+
+                    alertDialog.setView(layout_pay);
+
+                    final AlertDialog alert = alertDialog.show();
+
+                    payButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            Intent intent = new Intent(CustomerMapActivity.this, HistoryActivity.class);
+                            intent.putExtra("customerOrDriver", "Customers");
+                            startActivity(intent);
+                            alert.dismiss();
+
+                        }
+                    });
+
+               /*     new AlertDialog.Builder(CustomerMapActivity.this)
                             .setTitle("Your Ride Has Ended!")
                             .setPositiveButton("Done", null)
-                            .show();
+                            .show(); */
                     endRide();
+
                 }
             }
 
@@ -1118,6 +1262,9 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
         if (driverLocationRef != null && driveHasEndedRef != null){
         driverLocationRef.removeEventListener(driverLocationRefListener);
         driveHasEndedRef.removeEventListener(driveHasEndedRefListener);}
+
+        rideDistance = 0;
+        mShowDriverDetails.setVisibility(View.GONE);
 
         if (driverFoundID != null){
             DatabaseReference driverRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(driverFoundID).child("customerRequest");
@@ -1153,8 +1300,6 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
         }else {
             mapRipple.stopRippleMapAnimation();
         }
-
-
 
 
         //Change Button text back
@@ -1227,6 +1372,8 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
         mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper());
         mMap.setMyLocationEnabled(true);
 
+
+
     }
 
 
@@ -1236,24 +1383,31 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
         public void onLocationResult(LocationResult locationResult) {
             for(Location location : locationResult.getLocations()){
                 if(getApplicationContext()!=null){
+
+                    if(driverFoundID != null && !driverFoundID.equals("") && mLastLocation!=null && location != null){
+                        rideDistance += mLastLocation.distanceTo(location)/1000; //getting ride distance
+                    }
+
                     mLastLocation = location;
 
                     LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
 
-                 /*   if (number_calls++ ==1){
+                    if (number_calls++ ==1){
 
-                        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-                        mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
-                    } */
+                      //  mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                        mMap.animateCamera(CameraUpdateFactory.zoomTo(16));
+
+                        CameraPosition cameraPosition = new CameraPosition.Builder()
+                                .target(new LatLng(location.getLatitude(),location.getLongitude()))
+                                .zoom(17)
+                             //   .bearing(90)
+                             //   .tilt(40)
+                                .build();
+                        mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+                    }
 
 
-
-                  /*  if (mLastLocation!=null){
-                        if(pickupMarker != null){
-                            pickupMarker.remove();
-                        }
-                        pickupMarker = mMap.addMarker(new MarkerOptions().position(new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude())).title("Pickup Here").icon(BitmapDescriptorFactory.fromResource(R.drawable.newpickupmarker2)));
-                    } */
 
 
                     //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,17));
@@ -1336,7 +1490,6 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
 
 
 
-
     boolean getDriversAroundStarted = false;
     List<Marker> markers = new ArrayList<Marker>();
     private void getDriversAround(){
@@ -1402,6 +1555,7 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
+
             new AlertDialog.Builder(this)
                     .setTitle("Really Exit?")
                     .setMessage("Are you sure you want to exit?")
@@ -1450,7 +1604,10 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
             Intent searchIntent = new Intent(CustomerMapActivity.this, ContactUsActivity.class);
             startActivity(searchIntent);
             overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
-        }else if (id == R.id.settings){
+        }else if (id == R.id.invite_friends){
+            shareDownloadUrl();
+
+        } else if (id == R.id.settings){
             Intent searchIntent = new Intent(CustomerMapActivity.this, SettingsActivity.class);
             startActivity(searchIntent);
             overridePendingTransition(R.anim.pull_in_right, R.anim.push_out_left);
@@ -1467,6 +1624,36 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
         return true;
     }
 
+    //hide rating on navigation drawer
+    private void hideItem() {
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        //calling Navigation Header
+        View header = navigationView.getHeaderView(0);
+        header.findViewById(R.id.rating_section).setVisibility(View.GONE);
+    }
+
+    private void shareDownloadUrl(){
+
+        StringBuilder msg = new StringBuilder();
+        msg.append("Hey, HyKe is a new transport app that will get you where you want to go safely. Download it from");
+        msg.append("\n");
+        msg.append("https://play.google.com/store/apps/details?id=com.eafricar.hyke"); //example :com.package.name
+
+
+            Intent shareIntent = new Intent();
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, msg.toString());
+
+            try {
+                startActivity(Intent.createChooser(shareIntent, "Share 'HyKe' via"));
+            } catch (ActivityNotFoundException e) {
+                Toast.makeText(getApplicationContext(), "No App Available", Toast.LENGTH_SHORT).show();
+            }
+
+
+    }
 
 
     //polylines on google maps
@@ -1527,7 +1714,6 @@ public class CustomerMapActivity extends AppCompatActivity implements OnMapReady
         }
         polylines.clear();
     }
-
 
 
     private Vibrator vibration() {

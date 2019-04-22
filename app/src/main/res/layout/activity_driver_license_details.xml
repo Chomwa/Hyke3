@@ -41,7 +41,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="13sp"
-                android:text="*Put Image of Drivers License"
+                android:text="*Tap to Put Image of Drivers License"
                 android:textColor="#9f0e1c"
                 android:textStyle="normal"
                 android:textAllCaps="false"
@@ -347,7 +347,7 @@
                 android:text="Back"
                 android:layout_gravity="center"
                 android:layout_centerHorizontal="true"
-                android:background="#9f0e1c"
+                android:background="@drawable/button_background3"
                 android:textColor="#fff"/>
             <Button
                 android:layout_weight="1"
@@ -358,7 +358,7 @@
                 android:text="Next"
                 android:layout_gravity="center"
                 android:layout_centerHorizontal="true"
-                android:background="#9f0e1c"
+                android:background="@drawable/button_background3"
                 android:textColor="#fff"/>
         </LinearLayout>
 

@@ -15,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,7 +52,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DriverLoginActivity extends AppCompatActivity implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener  {
+public class DriverLoginActivity extends AppCompatActivity /*implements View.OnClickListener, GoogleApiClient.OnConnectionFailedListener */ {
     private EditText mEmailField, mPassword;
     private Button mLogin, mCreateAccount, mPhoneRegistration;
 
@@ -63,12 +64,12 @@ public class DriverLoginActivity extends AppCompatActivity implements View.OnCli
     private LinearLayout mRegistration_Section;
 
     //Google Sign in Method variables
-    private LinearLayout mProf_Section;
+ /*   private LinearLayout mProf_Section;
     private Button mNext, mSignOut;
     private SignInButton mSignIn;
     private EditText mFirstNameField, mLastNameField, mEmailProfSectionField, mPhoneField;
     private ImageView mProfilePic;
-    private GoogleApiClient googleApiClient;
+    private GoogleApiClient googleApiClient; */
 
     private static final String TAG = "Driver login";
     private static final int REQ_CODE = 9001;
@@ -82,11 +83,15 @@ public class DriverLoginActivity extends AppCompatActivity implements View.OnCli
 
     private Uri resultUri;
 
+    private ProgressBar pgsBar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_driver_login);
+
+        pgsBar = findViewById(R.id.pBar);
 
         mAuth = FirebaseAuth.getInstance();
 
@@ -95,7 +100,11 @@ public class DriverLoginActivity extends AppCompatActivity implements View.OnCli
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                 if(user!=null){
-                    DatabaseReference assignedCustomerRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(user.getUid()).child("Personal Information");
+                    DatabaseReference assignedCustomerRef = FirebaseDatabase.getInstance().getReference().child("Users").child("Drivers").child(user.getUid());
+
+                    pgsBar.setVisibility(View.VISIBLE);
+                    displayLoginInput("hide");
+
                     assignedCustomerRef.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
@@ -105,6 +114,8 @@ public class DriverLoginActivity extends AppCompatActivity implements View.OnCli
                                 finish();
                                 return;
                             } else {
+                                displayLoginInput("show");
+                                pgsBar.setVisibility(View.GONE);
                                 Toast.makeText(DriverLoginActivity.this, "You are not yet a registered driver. Kindly register as a driver.", Toast.LENGTH_LONG).show();
                             }
                         }
@@ -123,9 +134,11 @@ public class DriverLoginActivity extends AppCompatActivity implements View.OnCli
         mLogin = (Button) findViewById(R.id.login);
         mCreateAccount = (Button) findViewById(R.id.create_account);
 
-        mPhoneRegistration = (Button) findViewById(R.id.phonenumberregistration);
+        mRegistration_Section = (LinearLayout) findViewById(R.id.registration_section);
 
-        mText = (TextView) findViewById(R.id.textview);
+     //   mPhoneRegistration = (Button) findViewById(R.id.phonenumberregistration);
+
+       // mText = (TextView) findViewById(R.id.textview);
 
         mCreateAccount.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -148,7 +161,7 @@ public class DriverLoginActivity extends AppCompatActivity implements View.OnCli
             }
         });
 
-        mPhoneRegistration.setOnClickListener(new View.OnClickListener() {
+     /*   mPhoneRegistration.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(DriverLoginActivity.this, DriverPhoneNumberVerification.class);
@@ -156,9 +169,10 @@ public class DriverLoginActivity extends AppCompatActivity implements View.OnCli
                 finish();
                 return;
             }
-        });
+        }); */
 
-        mRegistration_Section = (LinearLayout) findViewById(R.id.registration_section);
+
+  /*      mRegistration_Section = (LinearLayout) findViewById(R.id.registration_section);
 
         //Calling Google Sign in method Variables.
         mProf_Section = (LinearLayout) findViewById(R.id.prof_section);
@@ -243,7 +257,27 @@ public class DriverLoginActivity extends AppCompatActivity implements View.OnCli
         googleApiClient = new GoogleApiClient.Builder(this)
                 .enableAutoManage(this, this)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, signInOptions)
-                .build();
+                .build();  */
+    }
+
+    private void displayLoginInput(String display) {
+
+        switch (display) {
+            case "show":
+                mEmailField.setVisibility(View.VISIBLE);
+                mPassword.setVisibility(View.VISIBLE);
+                mLogin.setVisibility(View.VISIBLE);
+                mRegistration_Section.setVisibility(View.VISIBLE);
+                mCreateAccount.setVisibility(View.VISIBLE);
+                break;
+            case "hide":
+                mEmailField.setVisibility(View.GONE);
+                mPassword.setVisibility(View.GONE);
+                mLogin.setVisibility(View.GONE);
+                mRegistration_Section.setVisibility(View.GONE);
+                mCreateAccount.setVisibility(View.GONE);
+                break;
+        }
     }
 
     private void SignInRegisteredUser() {
@@ -262,6 +296,10 @@ public class DriverLoginActivity extends AppCompatActivity implements View.OnCli
             mPassword.setError("Password should not be less than 6 characters");
             mPassword.requestFocus();
         } else{
+
+            pgsBar.setVisibility(View.VISIBLE);
+            displayLoginInput("hide");
+
             mAuth.signInWithEmailAndPassword(email, password)
                     .addOnSuccessListener(new OnSuccessListener<AuthResult>() {
                         @Override
@@ -276,6 +314,8 @@ public class DriverLoginActivity extends AppCompatActivity implements View.OnCli
                         public void onFailure(@NonNull Exception e) {
                             Toast.makeText(DriverLoginActivity.this, "Failed: " +e.getMessage(), Toast.LENGTH_SHORT)
                                     .show();
+                            pgsBar.setVisibility(View.GONE);
+                            displayLoginInput("show");
 
                         }
                     });
@@ -293,7 +333,7 @@ public class DriverLoginActivity extends AppCompatActivity implements View.OnCli
         super.onStop();
         mAuth.removeAuthStateListener(firebaseAuthListener);
     }
-    private void SignIn(){
+/*    private void SignIn(){
 
         Intent intent = Auth.GoogleSignInApi.getSignInIntent (googleApiClient);
         startActivityForResult(intent, REQ_CODE);
@@ -485,5 +525,5 @@ public class DriverLoginActivity extends AppCompatActivity implements View.OnCli
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         Toast.makeText(DriverLoginActivity.this, "Something went wrong", Toast.LENGTH_SHORT).show();
 
-    }
+    } */
 }

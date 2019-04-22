@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import com.eafricar.hyke.R;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -36,6 +37,7 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryViewHolders> {
 
     @Override
     public void onBindViewHolder(HistoryViewHolders holder, final int position) {
+        Collections.reverse(this.itemList);
         holder.rideId.setText(itemList.get(position).getRideId());
         if(itemList.get(position).getTime()!=null){
             holder.time.setText(itemList.get(position).getTime());

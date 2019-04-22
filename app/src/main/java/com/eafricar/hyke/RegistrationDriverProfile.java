@@ -223,7 +223,7 @@ public class RegistrationDriverProfile extends AppCompatActivity {
                     return;
                 }
             });
-            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+         /*   uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                     Uri downloadUrl = taskSnapshot.getDownloadUrl();
@@ -235,7 +235,7 @@ public class RegistrationDriverProfile extends AppCompatActivity {
                     finish();
                     return;
                 }
-            });
+            });  */
         }else{
             finish();
         }

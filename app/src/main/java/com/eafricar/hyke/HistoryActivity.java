@@ -9,6 +9,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -19,6 +20,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.eafricar.hyke.historyRecyclerView.HistoryAdapter;
 import com.eafricar.hyke.historyRecyclerView.HistoryObject;
@@ -79,8 +81,8 @@ public class HistoryActivity extends AppCompatActivity {
 
         if(customerOrDriver.equals("Drivers")){
             mBalance.setVisibility(View.VISIBLE);
-            mPayout.setVisibility(View.VISIBLE);
-            mPayoutEmail.setVisibility(View.VISIBLE);
+            mPayout.setVisibility(View.GONE);
+            mPayoutEmail.setVisibility(View.GONE);
         }
 
         mPayout.setOnClickListener(new View.OnClickListener() {
@@ -92,7 +94,7 @@ public class HistoryActivity extends AppCompatActivity {
     }
 
     private void getUserHistoryIds() {
-        DatabaseReference userHistoryDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(customerOrDriver).child(userId).child("history");
+        Query userHistoryDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(customerOrDriver).child(userId).child("history").orderByChild("timestamp");
         userHistoryDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -125,11 +127,19 @@ public class HistoryActivity extends AppCompatActivity {
                     }
 
                     if(dataSnapshot.child("customerPaid").getValue() != null && dataSnapshot.child("driverPaidOut").getValue() == null){
-                        if(dataSnapshot.child("distance").getValue() != null){
-                            ridePrice = Double.valueOf(dataSnapshot.child("price").getValue().toString());
-                            Balance += ridePrice;
-                            mBalance.setText("Balance: " + String.valueOf(Balance) + " $");
-                        }
+
+
+                            if(dataSnapshot.child("distance").getValue() != null){
+                                if(dataSnapshot.child("price").getValue()== null){
+                                    ridePrice = 0.0;
+                                }else{
+                                    ridePrice = Double.valueOf(dataSnapshot.child("price").getValue().toString());
+                                }
+                                Balance += ridePrice;
+                                mBalance.setText("Balance: " + String.valueOf(Balance) + " ZMW");
+                            }
+
+
                     }
 
 
@@ -152,6 +162,7 @@ public class HistoryActivity extends AppCompatActivity {
     }
 
     private ArrayList resultsHistory = new ArrayList<HistoryObject>();
+
     private ArrayList<HistoryObject> getDataSetHistory() {
         return resultsHistory;
     }

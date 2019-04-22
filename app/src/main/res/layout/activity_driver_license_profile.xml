@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent"
+    tools:context=".DriverLicenseProfile"
+    android:orientation="vertical"
+    android:fillViewport="false">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="10dp">
+
+            <ImageButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/back"
+                android:layout_gravity="left"
+                android:layout_margin="5dp"
+                android:textColor="#fff"
+                android:background="@null"
+                android:src="@drawable/ic_arrow_back_maroon_24dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Driver License Details"
+                android:textColor="#9f0e1c"
+                android:textAllCaps="false"
+                android:textStyle="bold"
+                android:textSize="30sp"/>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="13sp"
+                android:text="*Put Image of Drivers License"
+                android:textColor="#9f0e1c"
+                android:textStyle="normal"
+                android:textAllCaps="false"
+                android:layout_marginTop="15dp"
+                android:layout_gravity="center"/>
+
+            <ImageView
+                android:layout_width="250dp"
+                android:layout_height="150dp"
+                android:id="@+id/drivers_license_image"
+                android:layout_marginBottom="20sp"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
+                android:src = "@drawable/driver_license_place_holder"/>
+
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:layout_marginLeft="15dp"
+            android:textSize="13sp"
+            android:text="*Enter details as they appear on Drivers License"
+            android:textColor="#9f0e1c"
+            android:textStyle="normal"
+            android:textAllCaps="false"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/driver_license_names"
+            android:layout_marginRight="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="10dp">
+            <EditText
+                android:id="@+id/driver_license_first_name"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint="First Name"
+                android:layout_gravity="center"
+                android:textAlignment="center"
+                android:layout_marginRight="3dp"
+                android:ems="10"
+                android:textSize="20sp"
+                android:textStyle="normal"
+                android:background="@drawable/edittext_background2"/>
+            <EditText
+                android:id="@+id/driver_license_middlename"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint="Middle Name"
+                android:textAlignment="center"
+                android:layout_gravity="center"
+                android:layout_marginLeft="4dp"
+                android:ems="10"
+                android:textSize="20sp"
+                android:textStyle="normal"
+                android:background="@drawable/edittext_background2"/>
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/driver_license_lastname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Last Name"
+            android:layout_gravity="center"
+            android:textAlignment="center"
+            android:layout_marginRight="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="10dp"
+            android:ems="10"
+            android:textSize="20sp"
+            android:textStyle="normal"
+            android:background="@drawable/edittext_background2"/>
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/license"
+            android:layout_marginRight="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="10dp">
+
+            <EditText
+                android:id="@+id/driver_license_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="License Number"
+                android:inputType="number"
+                android:maxLength="6"
+                android:layout_gravity="center"
+                android:textAlignment="center"
+                android:ems="10"
+                android:textSize="20sp"
+                android:textStyle="normal"
+                android:background="@drawable/edittext_background2"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="/"
+                android:textColor="#9f0e1c"
+                android:textSize="40sp"
+                android:layout_gravity="bottom" />
+
+            <EditText
+                android:id="@+id/driver_license_number2"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:maxLength="1"
+                android:layout_gravity="center"
+                android:ems="10"
+                android:textSize="20sp"
+                android:textStyle="normal"
+                android:background="@drawable/edittext_background2"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="/"
+                android:textColor="#9f0e1c"
+                android:textSize="40sp"
+                android:layout_gravity="bottom"/>
+
+            <EditText
+                android:id="@+id/driver_license_number3"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:maxLength="1"
+                android:layout_gravity="center"
+                android:ems="10"
+                android:textSize="20sp"
+                android:textStyle="normal"
+                android:background="@drawable/edittext_background2"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/nrc"
+            android:layout_marginRight="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="10dp">
+
+            <EditText
+                android:id="@+id/driver_id_number"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:hint="NRC/Id number"
+                android:inputType="number"
+                android:maxLength="6"
+                android:layout_gravity="center"
+                android:textAlignment="center"
+                android:ems="10"
+                android:textSize="20sp"
+                android:textStyle="normal"
+                android:background="@drawable/edittext_background2"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="/"
+                android:textColor="#9f0e1c"
+                android:textSize="40sp"
+                android:layout_gravity="bottom"/>
+
+            <EditText
+                android:id="@+id/driver_id_number2"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:maxLength="2"
+                android:layout_gravity="center"
+                android:ems="10"
+                android:textSize="20sp"
+                android:textStyle="normal"
+                android:background="@drawable/edittext_background2"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="/"
+                android:textColor="#9f0e1c"
+                android:textSize="40sp"
+                android:layout_gravity="bottom"/>
+
+
+            <EditText
+                android:id="@+id/driver_id_number3"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:inputType="number"
+                android:maxLength="1"
+                android:layout_gravity="center"
+                android:ems="10"
+                android:textSize="20sp"
+                android:textStyle="normal"
+                android:background="@drawable/edittext_background2"/>
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/driver_personal_details"
+            android:layout_marginRight="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="10dp">
+            <EditText
+                android:id="@+id/driver_gender"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint="Gender"
+                android:inputType="text"
+                android:layout_marginRight="3dp"
+                android:layout_gravity="center"
+                android:ems="10"
+                android:textAlignment="center"
+                android:textSize="20sp"
+                android:textStyle="normal"
+                android:background="@drawable/edittext_background2"/>
+            <EditText
+                android:id="@+id/driver_birth_day"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint="Date of Birth"
+                android:layout_gravity="center"
+                android:layout_marginLeft="3dp"
+                android:ems="10"
+                android:textSize="20sp"
+                android:textStyle="normal"
+                android:textAlignment="center"
+                android:clickable="true"
+                android:editable="false"
+                android:focusable="false"
+                android:background="@drawable/edittext_background2"/>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:id="@+id/license_details"
+            android:layout_marginRight="15dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="10dp">
+            <EditText
+                android:id="@+id/license_place_of_issue"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint="Place of issue"
+                android:layout_marginRight="3dp"
+                android:layout_gravity="center"
+                android:textAlignment="center"
+                android:ems="10"
+                android:textSize="20sp"
+                android:textStyle="normal"
+                android:background="@drawable/edittext_background2"/>
+            <EditText
+                android:id="@+id/license_expiry_date"
+                android:layout_weight="1"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:hint="License expiry date"
+                android:layout_marginLeft="3dp"
+                android:layout_gravity="center"
+                android:textAlignment="center"
+                android:ems="10"
+                android:textSize="20sp"
+                android:textStyle="normal"
+                android:clickable="true"
+                android:editable="false"
+                android:focusable="false"
+                android:background="@drawable/edittext_background2"/>
+        </LinearLayout>
+
+
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="20dp"
+                android:id="@+id/next_page"
+                android:text="Confirm"
+                android:layout_gravity="center"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/button_background3"
+                android:textColor="#fff"/>
+
+
+    </LinearLayout>
+
+</ScrollView>

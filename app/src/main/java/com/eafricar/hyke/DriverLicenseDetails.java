@@ -15,8 +15,11 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.google.android.gms.tasks.Continuation;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -37,7 +40,8 @@ public class DriverLicenseDetails extends AppCompatActivity {
     private ImageView mDriverLicenseImage;
 
     private EditText mDriversFirstName, mDriversMiddleName, mDriversLastName,
-            mDriversLicenseNumber, mDriverIdNumber, mDriverGender,
+            mDriversLicenseNumber,mDriversLicenseNumber2,mDriversLicenseNumber3,
+            mDriverIdNumber,mDriverIdNumber2,mDriverIdNumber3, mDriverGender,
             mDriverDateOfBirth, mDriverPlaceofIssue, mDriverExpiryDate;
 
     private Button mBack, mNext;
@@ -50,7 +54,11 @@ public class DriverLicenseDetails extends AppCompatActivity {
     private String mLastName;
     private String mMiddleName;
     private String mLicense;
+    private String mLicense2;
+    private String mLicense3;
     private String mNRC;
+    private String mNRC2;
+    private String mNRC3;
     private String mGender;
     private String mDOB;
     private String mPOI;
@@ -79,7 +87,11 @@ public class DriverLicenseDetails extends AppCompatActivity {
         mDriversMiddleName = (EditText) findViewById(R.id.driver_license_middlename);
         mDriversLastName = (EditText) findViewById(R.id.driver_license_lastname);
         mDriversLicenseNumber = (EditText) findViewById(R.id.driver_license_number);
+        mDriversLicenseNumber2 = (EditText) findViewById(R.id.driver_license_number2);
+        mDriversLicenseNumber3 = (EditText) findViewById(R.id.driver_license_number3);
         mDriverIdNumber = (EditText) findViewById(R.id.driver_id_number);
+        mDriverIdNumber2 = (EditText) findViewById(R.id.driver_id_number2);
+        mDriverIdNumber3 = (EditText) findViewById(R.id.driver_id_number3);
         mDriverGender = (EditText) findViewById(R.id.driver_gender);
         mDriverDateOfBirth = (EditText) findViewById(R.id.driver_birth_day);
         mDriverPlaceofIssue = (EditText) findViewById(R.id.license_place_of_issue);
@@ -121,7 +133,7 @@ public class DriverLicenseDetails extends AppCompatActivity {
                 c.set(Calendar.YEAR, year);
                 c.set(Calendar.MONTH, monthOfYear);
                 c.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                updateLabel();
+                updateLabel2();
             }
         };
 
@@ -150,7 +162,6 @@ public class DriverLicenseDetails extends AppCompatActivity {
                         .show();
             }
         });
-
 
         mNext.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -228,12 +239,23 @@ public class DriverLicenseDetails extends AppCompatActivity {
         mDriverDateOfBirth.setText(sdf.format(c.getTime()));
     }
 
+    private void updateLabel2() {
+        String myFormat = "dd/MM/yy"; //In which you need put here
+        SimpleDateFormat sdf = new SimpleDateFormat(myFormat, Locale.US);
+
+        mDriverExpiryDate.setText(sdf.format(c.getTime()));
+    }
+
     private void saveUserInformation() {
         mName = mDriversFirstName.getText().toString();
         mLastName = mDriversLastName.getText().toString();
         mMiddleName = mDriversMiddleName.getText().toString();
         mLicense = mDriversLicenseNumber.getText().toString();
+        mLicense2 = mDriversLicenseNumber2.getText().toString();
+        mLicense3 = mDriversLicenseNumber3.getText().toString();
         mNRC = mDriverIdNumber.getText().toString();
+        mNRC2 = mDriverIdNumber2.getText().toString();
+        mNRC3 = mDriverIdNumber3.getText().toString();
         mDOB = mDriverDateOfBirth.getText().toString();
         mGender = mDriverGender.getText().toString();
         mPOI = mDriverPlaceofIssue.getText().toString();
@@ -245,7 +267,11 @@ public class DriverLicenseDetails extends AppCompatActivity {
         userInfo.put("last name", mLastName);
         userInfo.put("middle name", mMiddleName);
         userInfo.put("license", mLicense);
+        userInfo.put("license2", mLicense2);
+        userInfo.put("license3", mLicense3);
         userInfo.put("id Number", mNRC);
+        userInfo.put("id Number", mNRC2);
+        userInfo.put("id Number", mNRC3);
         userInfo.put("Date of Birth", mDOB);
         userInfo.put("Gender", mGender);
         userInfo.put("Place of Issue", mPOI);
@@ -275,10 +301,38 @@ public class DriverLicenseDetails extends AppCompatActivity {
                     return;
                 }
             });
-            uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+
+            Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+                @Override
+                public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
+                    if (!task.isSuccessful()){
+                        throw task.getException();
+                    }
+                    return filePath.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if (task.isSuccessful()){
+                        Uri downloadUrl = task.getResult();
+
+                        Map newImage = new HashMap();
+                        newImage.put("driverLicenseImageUrl", downloadUrl.toString());
+                        mDriverDatabase.updateChildren(newImage);
+
+                        finish();
+                        return;
+                    }
+                }
+            });
+
+
+        /*    uploadTask.addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                  //  Uri downloadUrl = taskSnapshot.getDownloadUrl();
+
+                    Uri downloadUrl = taskSnapshot.getMetadata().getReference().getDownloadUrl();
 
                     Map newImage = new HashMap();
                     newImage.put("driverLicenseImageUrl", downloadUrl.toString());
@@ -287,7 +341,7 @@ public class DriverLicenseDetails extends AppCompatActivity {
                     finish();
                     return;
                 }
-            });
+            }); */
         } else {
             finish();
         }

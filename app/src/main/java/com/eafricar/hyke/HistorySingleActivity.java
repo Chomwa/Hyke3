@@ -2,10 +2,15 @@ package com.eafricar.hyke;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.graphics.Color;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -27,6 +32,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -61,17 +67,21 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
     private TextView rideDate;
     private TextView userName;
     private TextView userPhone;
+    private TextView mRatingTxt;
+    private TextView mRidePriceTxt;
+    private TextView mRidePriceStatusTxt;
 
     private ImageView userImage;
 
     private RatingBar mRatingBar;
 
-    private Button mPay;
+    private Button mPayPalPay, mCashPay, mMobileMoneyPay;
 
     private DatabaseReference historyRideInfoDb;
 
     private LatLng destinationLatLng, pickupLatLng;
     private String distance;
+    private String ridePriceTotal;
     private Double ridePrice;
     private Boolean customerPaid = false;
 
@@ -99,17 +109,26 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
         rideDate = (TextView) findViewById(R.id.rideDate);
         userName = (TextView) findViewById(R.id.userName);
         userPhone = (TextView) findViewById(R.id.userPhone);
+        mRatingTxt= (TextView) findViewById(R.id.rating_text);
+        mRidePriceTxt = (TextView) findViewById(R.id.ridePricetxt);
+        mRidePriceStatusTxt = (TextView) findViewById(R.id.ridePriceStatus);
 
         userImage = (ImageView) findViewById(R.id.userImage);
 
         mRatingBar = (RatingBar) findViewById(R.id.ratingBar);
 
-        mPay = findViewById(R.id.pay);
+        mPayPalPay = findViewById(R.id.pay);
+        mCashPay = findViewById(R.id.cash_pay);
+        mMobileMoneyPay = findViewById(R.id.mobile_money_pay);
+
 
         currentUserId = FirebaseAuth.getInstance().getCurrentUser().getUid();
 
         historyRideInfoDb = FirebaseDatabase.getInstance().getReference().child("history").child(rideId);
         getRideInformation();
+
+
+
 
     }
 
@@ -144,11 +163,17 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
                         }
                         if (child.getKey().equals("customerPaid")){
                             customerPaid =true;
+                            mRidePriceStatusTxt.setText("Paid");
+                            mRidePriceStatusTxt.setTextColor(Color.parseColor("#a4c639"));
+                            mCashPay.setVisibility(View.GONE);
+
                         }
                         if (child.getKey().equals("distance")){
                             distance = child.getValue().toString();
                             rideDistance.setText(distance.substring(0, Math.min(distance.length(), 5)) + " km");
-                            ridePrice = Double.valueOf(distance) * 0.5;
+                            ridePrice = Double.valueOf(distance) * 6.5;
+                            ridePriceTotal= String.valueOf(ridePrice);
+                            mRidePriceTxt.setText("ZMW" + ridePriceTotal.substring(0,Math.min(ridePriceTotal.length(),3)));
 
                         }
                         if (child.getKey().equals("destination")){
@@ -157,6 +182,9 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
                         if (child.getKey().equals("location")){
                             pickupLatLng = new LatLng(Double.valueOf(child.child("from").child("lat").getValue().toString()), Double.valueOf(child.child("from").child("lng").getValue().toString()));
                             destinationLatLng = new LatLng(Double.valueOf(child.child("to").child("lat").getValue().toString()), Double.valueOf(child.child("to").child("lng").getValue().toString()));
+
+                           // mMap.moveCamera(CameraUpdateFactory.newLatLng(pickupLatLng));
+                           // mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
                             if(destinationLatLng != new LatLng(0,0)){
                                 getRouteToMarker();
                             }
@@ -172,7 +200,18 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
 
     private void displayCustomerRelatedObjects() {
         mRatingBar.setVisibility(View.VISIBLE);
-        mPay.setVisibility(View.VISIBLE);
+
+        if (customerPaid ){
+            mCashPay.setVisibility(View.VISIBLE);
+            mMobileMoneyPay.setVisibility(View.GONE);
+            mPayPalPay.setVisibility(View.GONE);
+        }else{
+            mCashPay.setVisibility(View.VISIBLE);
+            mMobileMoneyPay.setVisibility(View.GONE);
+            mPayPalPay.setVisibility(View.GONE);
+        }
+
+        mRatingTxt.setVisibility(View.VISIBLE);
         mRatingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
             @Override
             public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
@@ -182,16 +221,61 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
             }
         });
         if(customerPaid){
-            mPay.setEnabled(false);
+            mPayPalPay.setEnabled(false);
+            mCashPay.setEnabled(false);
+            mMobileMoneyPay.setEnabled(false);
         }else{
-            mPay.setEnabled(true);
+            mPayPalPay.setEnabled(true);
+            mCashPay.setEnabled(true);
+            mMobileMoneyPay.setEnabled(true);
         }
-        mPay.setOnClickListener(new View.OnClickListener() {
+        mPayPalPay.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 payPalPayment();
             }
         });
+        mCashPay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                paidDialogue();
+            }
+        });
+        mMobileMoneyPay.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new AlertDialog.Builder(HistorySingleActivity.this)
+                        .setTitle("Ooops!")
+                        .setMessage("This service is still under construction, choose another method of payment")
+                        .setPositiveButton("Done", null)
+                        .show();
+            }
+        });
+    }
+
+    private void paidDialogue() {
+
+        //show dialogue that amount has been paid
+        new AlertDialog.Builder(this)
+                .setTitle("Paid!")
+                .setMessage("Your amount has been paid, Thank you!")
+                .setPositiveButton("Done", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        historyRideInfoDb.child("customerPaid").setValue(true);
+                        mPayPalPay.setEnabled(false);
+                        mCashPay.setEnabled(false);
+                        mMobileMoneyPay.setEnabled(false);
+                        mCashPay.setVisibility(View.GONE);
+                         //Change Ride price status text from pending to paid
+
+                        mRidePriceStatusTxt.setText("Paid");
+                        mRidePriceStatusTxt.setTextColor(Color.parseColor("#a4c639"));
+                    }
+                })
+                .show();
+
+
     }
 
     private int PAYPAL_REQUEST_CODE = 1;
@@ -200,7 +284,7 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
             .clientId(PayPalConfig.PAYPAL_CLIENT_ID);
 
     private void payPalPayment() {
-        PayPalPayment payment = new PayPalPayment(new BigDecimal(ridePrice), "USD", "Uber Ride",
+        PayPalPayment payment = new PayPalPayment(new BigDecimal(ridePrice), "USD", "HyKe Ride",
                 PayPalPayment.PAYMENT_INTENT_SALE);
 
         Intent intent = new Intent(this, PaymentActivity.class);
@@ -226,7 +310,7 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
                         if(paymentResponse.equals("approved")){
                             Toast.makeText(getApplicationContext(), "Payment successful", Toast.LENGTH_LONG).show();
                             historyRideInfoDb.child("customerPaid").setValue(true);
-                            mPay.setEnabled(false);
+                            mPayPalPay.setEnabled(false);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -249,8 +333,6 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
 
 
 
-
-
     private void getUserInformation(String otherUserDriverOrCustomer, String otherUserId) {
         DatabaseReference mOtherUserDB = FirebaseDatabase.getInstance().getReference().child("Users").child(otherUserDriverOrCustomer).child(otherUserId);
         mOtherUserDB.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -258,11 +340,11 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()){
                     Map<String, Object> map = (Map<String, Object>) dataSnapshot.getValue();
-                    if(map.get("name") != null){
-                        userName.setText(map.get("name").toString());
+                    if(map.get("firstName") != null){
+                        userName.setText(map.get("firstName").toString());
                     }
-                    if(map.get("phone") != null){
-                        userPhone.setText(map.get("phone").toString());
+                    if(map.get("phoneNumber") != null){
+                        userPhone.setText(map.get("phoneNumber").toString());
                     }
                     if(map.get("profileImageUrl") != null){
                         Glide.with(getApplication()).load(map.get("profileImageUrl").toString()).into(userImage);
@@ -286,6 +368,7 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
         Routing routing = new Routing.Builder()
                 .travelMode(AbstractRouting.TravelMode.DRIVING)
                 .withListener(this)
+                .key("AIzaSyAQd2Ng-Jd37kBuVF2bSdcDyWuRqnzW5BM")
                 .alternativeRoutes(false)
                 .waypoints(pickupLatLng, destinationLatLng)
                 .build();
@@ -294,12 +377,28 @@ public class HistorySingleActivity extends AppCompatActivity implements OnMapRea
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
+
+        //changing map style to Night style
+        try {
+            boolean isSuccess = googleMap.setMapStyle(
+                    MapStyleOptions.loadRawResourceStyle(this, R.raw.my_map_style)
+            );
+
+            if (!isSuccess)
+                Log.e("ERROR","Map Style Failed to Load!");
+        }
+        catch (Resources.NotFoundException ex)
+        {
+            ex.printStackTrace();
+        }
         mMap=googleMap;
+
+
     }
 
 
     private List<Polyline> polylines;
-    private static final int[] COLORS = new int[]{R.color.primary_dark_material_light};
+    private static final int[] COLORS = new int[]{R.color.dividerColor2};
     @Override
     public void onRoutingFailure(RouteException e) {
         if(e != null) {

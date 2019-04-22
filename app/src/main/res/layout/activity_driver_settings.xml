@@ -14,6 +14,16 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/back"
+            android:layout_gravity="left"
+            android:layout_margin="5dp"
+            android:textColor="#fff"
+            android:background="@null"
+            android:src="@drawable/ic_arrow_back_maroon_24dp"/>
+
         <de.hdodenhof.circleimageview.CircleImageView
             xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="150dp"
@@ -24,95 +34,369 @@
             android:layout_gravity="center"
             android:layout_marginTop="10dp"/>
 
-        <EditText
-            android:id="@+id/name"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="center"
-            android:layout_marginBottom="20sp"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/edittext_background2"
-            android:ems="10"
-            android:hint="Name"
-            android:textAlignment="center"
-            android:textSize="20sp"
-            android:textStyle="normal" />
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:id="@+id/edit_section"
+            android:visibility="gone">
 
-        <EditText
-            android:id="@+id/phone"
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <EditText
+                    android:id="@+id/name"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/edittext_background2"
+                    android:hint="First Name"
+                    android:textAlignment="center"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="20sp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginRight="2dp"
+                    android:ems="10"
+                    android:textSize="20sp"
+                    android:textStyle="normal"/>
+                <EditText
+                    android:id="@+id/lastname"
+                    android:layout_weight="1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/edittext_background2"
+                    android:hint="Last Name"
+                    android:textAlignment="center"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="20sp"
+                    android:layout_marginTop="20dp"
+                    android:layout_marginLeft="2dp"
+                    android:ems="10"
+                    android:textSize="20sp"
+                    android:textStyle="normal" />
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center"
+                android:layout_marginBottom="20sp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/edittext_background2"
+                android:ems="10"
+                android:hint="Email"
+                android:inputType="textEmailAddress"
+                android:textAlignment="center"
+                android:textSize="20sp"
+                android:textStyle="normal" />
+
+            <EditText
+                android:id="@+id/phone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center"
+                android:layout_marginBottom="20sp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/edittext_background2"
+                android:ems="10"
+                android:hint="Phone"
+                android:inputType="phone"
+                android:textAlignment="center"
+                android:textSize="20sp"
+                android:textStyle="normal" />
+            <EditText
+                android:id="@+id/car"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/edittext_background2"
+                android:hint="Car"
+                android:textAlignment="center"
+                android:visibility="gone"
+                android:layout_marginBottom="20sp"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:ems="10"
+                android:textSize="20sp"
+                android:textStyle="normal"
+                android:layout_centerHorizontal="true"/>
+            <RadioGroup
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/radioGroup"
+                android:orientation="horizontal"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center">
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="HyKeShared"
+                    android:id="@+id/HykeShared"/>
+                <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="HyKePersonal"
+                    android:id="@+id/HykePersonal"/>
+
+                <RadioButton
+                    android:id="@+id/HykeTaxi"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="HyKeTaxi" />
+            </RadioGroup>
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/confirm"
+                android:text="confirm"
+                android:layout_gravity="center"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/button_background3"
+                android:textColor="#fff"/>
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/done"
+                android:text="Cancel"
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:textColor="#fff"
+                android:layout_centerHorizontal="true"
+                android:background="@drawable/button_background3"/>
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="center"
-            android:layout_marginBottom="20sp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/edittext_background2"
-            android:ems="10"
-            android:hint="Phone"
-            android:inputType="phone"
-            android:textAlignment="center"
-            android:textSize="20sp"
-            android:textStyle="normal" />
-        <EditText
-            android:id="@+id/car"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/edittext_background2"
-            android:hint="Car"
-            android:textAlignment="center"
-            android:layout_marginBottom="20sp"
-            android:layout_gravity="center"
-            android:layout_marginTop="10dp"
-            android:ems="10"
-            android:textSize="20sp"
-            android:textStyle="normal"
-            android:layout_centerHorizontal="true"/>
-        <RadioGroup
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/radioGroup"
-            android:orientation="horizontal"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="center">
-            <RadioButton
+            android:orientation="vertical"
+            android:id="@+id/text_section"
+            android:visibility="visible">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/txtnametitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="center"
+                        android:text="First Name"
+                        android:layout_gravity="left"
+                        android:textColor="#000000"
+                        android:layout_marginBottom="2dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginRight="5dp"
+                        android:layout_marginLeft="20dp"
+                        android:textStyle="normal"/>
+
+                    <TextView
+                        android:id="@+id/txtname"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:layout_gravity="left"
+                        android:layout_marginBottom="20sp"
+                        android:layout_marginTop="3dp"
+                        android:layout_marginRight="2dp"
+                        android:layout_marginLeft="20dp"
+                        android:textStyle="normal"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/txtlastnametitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Last Name"
+                        android:layout_gravity="left"
+                        android:layout_marginBottom="2dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginRight="2dp"
+                        android:layout_marginLeft="20dp"
+                        android:textColor="#000000"
+                        android:textStyle="normal"/>
+
+                    <TextView
+                        android:id="@+id/txtlastname"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAlignment="center"
+                        android:layout_gravity="left"
+                        android:text=""
+                        android:layout_marginBottom="20sp"
+                        android:layout_marginTop="3dp"
+                        android:layout_marginLeft="20dp"
+                        android:textStyle="normal" />
+                </LinearLayout>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txtemailtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Email"
+                    android:layout_gravity="left"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="2dp"
+                    android:layout_marginLeft="20dp"
+                    android:textColor="#000000"
+                    android:textStyle="normal"/>
+
+                <TextView
+                    android:id="@+id/txtemail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:layout_marginBottom="10sp"
+                    android:layout_gravity="left"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginLeft="20dp"
+                    android:textStyle="normal"/>
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Hyke Shared"
-                android:id="@+id/HykeShared"/>
-            <RadioButton
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txtphonetitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Phone Number"
+                    android:layout_gravity="left"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="2dp"
+                    android:layout_marginLeft="20dp"
+                    android:textColor="#000000"
+                    android:textStyle="normal"/>
+
+                <TextView
+                    android:id="@+id/txtphone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="10dp"
+                    android:text=""
+                    android:layout_gravity="left"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginLeft="20dp"
+                    android:textStyle="normal"/>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <TextView
+                    android:id="@+id/txtcartitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="2dp"
+                    android:layout_marginBottom="2dp"
+                    android:text="Car"
+                    android:textColor="#000000"
+                    android:textStyle="normal" />
+
+                <TextView
+                    android:id="@+id/txtcar"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="left"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginBottom="10sp"
+                    android:text=""
+                    android:textStyle="normal" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txtservicetitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Service"
+                    android:layout_gravity="left"
+                    android:layout_marginBottom="2dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginRight="2dp"
+                    android:layout_marginLeft="20dp"
+                    android:textColor="#000000"
+                    android:textStyle="normal"/>
+
+                <TextView
+                    android:id="@+id/txtservice"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:layout_marginBottom="10sp"
+                    android:layout_gravity="left"
+                    android:layout_marginTop="3dp"
+                    android:layout_marginLeft="20dp"
+                    android:textStyle="normal"/>
+            </LinearLayout>
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="HyKe Personal"
-                android:id="@+id/HykePersonal"/>
-
-            <RadioButton
-                android:id="@+id/HykeTaxi"
+                android:text="Driver License Details"
+                android:textColor="#3872c7"
+                android:id="@+id/driver_license"
+                android:layout_margin="20dp"
+                android:clickable="true"/>
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Hyke Taxi" />
-        </RadioGroup>
+                android:text="Vehicle Information"
+                android:textColor="#3872c7"
+                android:id="@+id/vehicle_information"
+                android:layout_margin="20dp"
+                android:clickable="true"/>
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/confirm"
-            android:text="confirm"
-            android:layout_gravity="center"
-            android:layout_centerHorizontal="true"
-            android:background="#9f0e1c"
-            android:textColor="#fff"/>
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/back"
-            android:text="back"
-            android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:textColor="#fff"
-            android:layout_centerHorizontal="true"
-            android:background="#9f0e1c" />
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/editbutton"
+                android:text="Edit"
+                android:layout_gravity="center"
+                android:layout_centerHorizontal="true"
+                android:textColor="#fff"
+                android:background="@drawable/button_background3"/>
+
+        </LinearLayout>
+
+
     </LinearLayout>
-
 
 </ScrollView>

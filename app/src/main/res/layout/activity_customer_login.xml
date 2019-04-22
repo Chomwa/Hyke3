@@ -29,6 +29,7 @@
             android:layout_marginRight="5dp"
             android:layout_marginTop="20dp"
             android:background="@drawable/edit_text_bottom_border"
+            android:drawableLeft="@drawable/ic_email_white_24dp"
             android:ems="10"
             android:hint="Email"
             android:inputType="textEmailAddress"
@@ -43,6 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
+            android:drawableLeft="@drawable/ic_lock_white_24dp"
             android:layout_marginRight="5dp"
             android:layout_marginTop="10dp"
             android:background="@drawable/edit_text_bottom_border"
@@ -55,15 +57,42 @@
             android:textSize="20sp"
             android:textStyle="normal" />
 
+        <TextView
+            android:id="@+id/registration_text_view1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:padding="5dp"
+            android:textAllCaps="false"
+            android:textColor="#ffffff"
+            android:textStyle="italic" />
+
         <Button
             android:id="@+id/login"
+            style="@style/button_style3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="5dp"
+            android:bottomLeftRadius="40dp"
+            android:bottomRightRadius="10dp"
+            android:text="Log In"
+            android:textAllCaps="false"
+            android:textColor="#9f0e1c"
+            android:topLeftRadius="10dp"
+            android:topRightRadius="10dp" />
+
+        <Button
+            android:id="@+id/create_account"
             style="@style/button_style"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="5dp"
+            android:layout_marginTop="20dp"
             android:layout_marginRight="5dp"
-            android:layout_marginTop="10dp"
-            android:text="Log In"
+            android:layout_marginBottom="5dp"
+            android:text="Create an Account"
             android:textAllCaps="false"
             android:textColor="#fff" />
 
@@ -71,17 +100,26 @@
             android:id="@+id/text_forgot_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:text="Forgot password? Tap Here"
-            android:onClick="onClick"
+            android:layout_marginLeft="5dp"
             android:clickable="true"
             android:focusable="true"
             android:textColor="#ffffff"
             android:layout_gravity="left"
             android:textStyle="italic"
-            android:textAlignment="center" />
+            android:visibility="gone"/>
 
-        <TextView
+
+        <ProgressBar
+            android:id="@+id/pBar"
+            style="@android:style/Widget.ProgressBar.Large"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:visibility="gone"/>
+
+ <!--       <TextView
             android:id="@+id/textview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -90,9 +128,9 @@
             android:text="or connect with"
             android:textAlignment="center"
             android:textColor="#ffffff"
-            android:textStyle="bold|italic" />
+            android:textStyle="bold|italic" /> -->
 
-        <LinearLayout
+ <!--       <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10px"
@@ -119,9 +157,9 @@
                 android:text="Sign In using your Phone number"
                 android:textAllCaps="false"
                 android:textColor="#fff" />
-        </LinearLayout>
+        </LinearLayout> -->
 
-        <LinearLayout
+  <!--     <LinearLayout
             android:id="@+id/prof_section"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -233,37 +271,29 @@
 
             </LinearLayout>
 
-        </LinearLayout>
+        </LinearLayout>  -->
 
         <LinearLayout
             android:id="@+id/registration_section"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
-            android:layout_marginBottom="2dp"
             android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
             android:layout_marginRight="10dp"
+            android:layout_marginBottom="2dp"
             android:background="@drawable/registration_linear_layout_background"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/registration_text_view1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="10dp"
-                android:text="Don't have an account?"
-                android:textAllCaps="false"
-                android:textColor="#ffffff"
-                android:textStyle="italic|bold" />
 
             <TextView
                 android:id="@+id/registration_text_view2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center"
                 android:layout_marginLeft="5dp"
-                android:layout_marginTop="3dp"
-                android:text="In that case,you are missing out on:"
+                android:layout_marginTop="5dp"
+                android:text="By tapping create an account, I agree to"
                 android:textAllCaps="false"
                 android:textColor="#ffffff"
                 android:textStyle="italic" />
@@ -272,44 +302,16 @@
                 android:id="@+id/registration_text_view3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:layout_marginTop="3dp"
-                android:text="- Cost Sharing with multiple  passengers and Low Rates"
-                android:textColor="#ffffff"
-                android:textStyle="normal" />
-
-            <TextView
-                android:id="@+id/registration_text_view4"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:text="- A ride focused on your safety"
-                android:textColor="#ffffff"
-                android:textStyle="normal" />
-
-            <TextView
-                android:id="@+id/registration_text_view5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="5dp"
-                android:text="- Making friends and Connections"
-                android:textColor="#ffffff"
-                android:textStyle="normal" />
-
-            <Button
-                android:id="@+id/create_account"
-                style="@style/button_style"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:layout_marginLeft="5dp"
-                android:layout_marginRight="5dp"
-                android:layout_marginTop="20dp"
-                android:text="Create an Account"
+                android:layout_gravity="center"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="2dp"
+                android:text="HyKe's Terms and Conditions."
                 android:textAllCaps="false"
-                android:textColor="#fff" />
+                android:textColor="#ffffff"
+                android:textStyle="italic" />
         </LinearLayout>
 
     </LinearLayout>
+
 
 </ScrollView>
